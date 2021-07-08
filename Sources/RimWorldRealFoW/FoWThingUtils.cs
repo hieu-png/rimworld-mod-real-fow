@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using RimWorldRealFoW.ThingComps;
-using RimWorldRealFoW.ThingComps.ThingSubComps;
+using RimWorldRealFoW;
 using Verse;
 
-namespace RimWorldRealFoW.Utils
+namespace RimWorldRealFoW
 {
 	// Token: 0x02000009 RID: 9
 	public static class FoWThingUtils

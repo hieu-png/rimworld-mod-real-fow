@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using RimWorldRealFoW.Utils;
+using RimWorldRealFoW;
 using Verse;
 
-namespace RimWorldRealFoW.ThingComps.ThingSubComps
+namespace RimWorldRealFoW
 {
 	// Token: 0x02000011 RID: 17
 	public class CompViewBlockerWatcher : ThingSubComp

@@ -1,7 +1,7 @@
 ﻿using System;
 using Verse;
 
-namespace RimWorldRealFoW.ThingComps.Properties
+namespace RimWorldRealFoW
 {
 	// Token: 0x0200000D RID: 13
 	public class CompProperties_AffectVision : CompProperties

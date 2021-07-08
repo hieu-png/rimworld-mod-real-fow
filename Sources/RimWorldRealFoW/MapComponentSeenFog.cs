@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using HarmonyLib;
 using RimWorld;
-using RimWorldRealFoW.SectionLayers;
-using RimWorldRealFoW.ShadowCasters;
-using RimWorldRealFoW.ThingComps;
-using RimWorldRealFoW.ThingComps.ThingSubComps;
-using RimWorldRealFoW.Utils;
+using RimWorldRealFoW;
 using UnityEngine;
 using Verse;
 

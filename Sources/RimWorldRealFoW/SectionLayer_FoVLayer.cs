@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using RimWorld;
-using RimWorldRealFoW.Utils;
+using RimWorldRealFoW;
 using UnityEngine;
 using Verse;
 
-namespace RimWorldRealFoW.SectionLayers
+namespace RimWorldRealFoW
 {
 	// Token: 0x02000007 RID: 7
 	public class SectionLayer_FoVLayer : SectionLayer

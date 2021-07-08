@@ -1,7 +1,7 @@
 ﻿using System;
 using RimWorld;
 
-namespace RimWorldRealFoW.ShadowCasters
+namespace RimWorldRealFoW
 {
 	// Token: 0x02000006 RID: 6
 	public class ShadowCaster

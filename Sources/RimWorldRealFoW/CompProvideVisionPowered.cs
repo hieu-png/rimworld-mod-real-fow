@@ -1,8 +1,8 @@
 ﻿using System;
-using RimWorldRealFoW.ThingComps.Properties;
+using RimWorldRealFoW;
 using Verse;
 
-namespace RimWorldRealFoW.ThingComps
+namespace RimWorldRealFoW
 {
 	// Token: 0x0200000B RID: 11
 	public class CompProvideVisionPowered : ThingComp

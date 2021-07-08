@@ -6,7 +6,7 @@ using UnityEngine;
 using Verse;
 using Verse.AI;
 
-namespace Rimefeller
+namespace RimWorldRealFoW
 {
 	// Token: 0x02000003 RID: 3
 	[StaticConstructorOnStartup]

@@ -1,7 +1,7 @@
 ﻿using System;
 using Verse;
 
-namespace RimWorldRealFoW.ThingComps.ThingSubComps
+namespace RimWorldRealFoW
 {
 	// Token: 0x02000010 RID: 16
 	public abstract class ThingSubComp

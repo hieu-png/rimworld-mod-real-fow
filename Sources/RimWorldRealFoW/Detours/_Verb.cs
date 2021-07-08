@@ -1,9 +1,7 @@
 ﻿using System;
 using RimWorld;
-using RimWorldRealFoW.ShadowCasters;
-using RimWorldRealFoW.ThingComps;
-using RimWorldRealFoW.ThingComps.ThingSubComps;
-using RimWorldRealFoW.Utils;
+using RimWorldRealFoW;
+using RimWorldRealFoW;
 using UnityEngine;
 using Verse;
 

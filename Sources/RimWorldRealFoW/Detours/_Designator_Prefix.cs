@@ -1,7 +1,7 @@
 ﻿using System;
 using HarmonyLib;
-using RimWorldRealFoW.ThingComps.ThingSubComps;
-using RimWorldRealFoW.Utils;
+using RimWorldRealFoW;
+using RimWorldRealFoW;
 using Verse;
 
 namespace RimWorldRealFoW.Detours

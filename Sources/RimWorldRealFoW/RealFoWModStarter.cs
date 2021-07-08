@@ -5,7 +5,7 @@ using System.Reflection;
 using HarmonyLib;
 using RimWorld;
 using RimWorldRealFoW.Detours;
-using RimWorldRealFoW.ThingComps;
+using RimWorldRealFoW;
 using UnityEngine;
 using Verse;
 using Verse.AI;

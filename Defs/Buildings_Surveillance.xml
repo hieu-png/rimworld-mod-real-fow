@@ -79,6 +79,8 @@
 			<li>Woody</li>
 			<li>Stony</li>
 		</stuffCategories>
+		<thingCategories Inherit="False">
+		</thingCategories>
 		<graphicData>
 			<texPath>Things/Buildings/WatchTower</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
@@ -176,9 +178,6 @@
 		<rotatable>false</rotatable>
 		<tickerType>Normal</tickerType>
 		<minifiedDef>MinifiedThing</minifiedDef>
-		<thingCategories>
-			<li>BuildingsSecurity</li>
-		</thingCategories>
 		<statBases>
 			<Mass>0.2</Mass>
 			<MaxHitPoints>5</MaxHitPoints>

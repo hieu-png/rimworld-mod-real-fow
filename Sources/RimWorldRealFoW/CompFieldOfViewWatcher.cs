@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using RimWorld;
-using RimWorldRealFoW.ShadowCasters;
-using RimWorldRealFoW.Utils;
+using RimWorldRealFoW;
 using UnityEngine;
 using Verse;
 using Verse.AI;
 
-namespace RimWorldRealFoW.ThingComps.ThingSubComps
+namespace RimWorldRealFoW
 {
 	// Token: 0x02000014 RID: 20
 	public class CompFieldOfViewWatcher : ThingSubComp

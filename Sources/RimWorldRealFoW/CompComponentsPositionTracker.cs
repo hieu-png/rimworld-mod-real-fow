@@ -1,8 +1,8 @@
 ﻿using System;
-using RimWorldRealFoW.Utils;
+using RimWorldRealFoW;
 using Verse;
 
-namespace RimWorldRealFoW.ThingComps.ThingSubComps
+namespace RimWorldRealFoW
 {
 	// Token: 0x0200000F RID: 15
 	public class CompComponentsPositionTracker : ThingSubComp

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using RimWorldRealFoW.SectionLayers;
+using RimWorldRealFoW;
 using UnityEngine;
 using Verse;
 

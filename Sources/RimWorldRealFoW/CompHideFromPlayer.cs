@@ -1,9 +1,9 @@
 ﻿using System;
 using RimWorld;
-using RimWorldRealFoW.Utils;
+using RimWorldRealFoW;
 using Verse;
 
-namespace RimWorldRealFoW.ThingComps.ThingSubComps
+namespace RimWorldRealFoW
 {
 	// Token: 0x02000012 RID: 18
 	public class CompHideFromPlayer : ThingSubComp
