@@ -1,16 +1,4 @@
-﻿//   Copyright 2017 Luca De Petrillo
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
+﻿using System;
 using RimWorld;
 using RimWorldRealFoW.ShadowCasters;
 using RimWorldRealFoW.ThingComps;
@@ -19,92 +7,124 @@ using RimWorldRealFoW.Utils;
 using UnityEngine;
 using Verse;
 
-namespace RimWorldRealFoW.Detours {
-	static class _Verb {
-		private static void CanHitCellFromCellIgnoringRange_Postfix(this Verb __instance, ref bool __result, IntVec3 sourceSq, IntVec3 targetLoc, bool includeCorners = false) {
-			if (__result && __instance.verbProps.requireLineOfSight) {
-				__result = (__instance.caster.Faction != null && seenByFaction(__instance.caster, targetLoc)) || fovLineOfSight(sourceSq, targetLoc, __instance.caster);
+namespace RimWorldRealFoW.Detours
+{
+	// Token: 0x0200002A RID: 42
+	internal static class _Verb
+	{
+		// Token: 0x0600008D RID: 141 RVA: 0x000093E0 File Offset: 0x000075E0
+		private static void CanHitCellFromCellIgnoringRange_Postfix(this Verb __instance, ref bool __result, IntVec3 sourceSq, IntVec3 targetLoc, bool includeCorners = false)
+		{
+			bool flag = __result && __instance.verbProps.requireLineOfSight;
+			if (flag)
+			{
+				__result = ((__instance.caster.Faction != null && _Verb.seenByFaction(__instance.caster, targetLoc)) || _Verb.fovLineOfSight(sourceSq, targetLoc, __instance.caster));
 			}
 		}
 
-		private static bool seenByFaction(Thing thing, IntVec3 targetLoc) {
-			MapComponentSeenFog seenFog = thing.Map.getMapComponentSeenFog();
-			if (seenFog != null) {
-				return seenFog.isShown(thing.Faction, targetLoc);
-			}
-
-			return true;
+		// Token: 0x0600008E RID: 142 RVA: 0x00009434 File Offset: 0x00007634
+		private static bool seenByFaction(Thing thing, IntVec3 targetLoc)
+		{
+			MapComponentSeenFog mapComponentSeenFog = thing.Map.getMapComponentSeenFog();
+			bool flag = mapComponentSeenFog != null;
+			return !flag || mapComponentSeenFog.isShown(thing.Faction, targetLoc);
 		}
 
-		private static bool fovLineOfSight(IntVec3 sourceSq, IntVec3 targetLoc, Thing thing) {
-			// If the thing is mannable, then use the manning pawn to perform the calculation.
+		// Token: 0x0600008F RID: 143 RVA: 0x0000946C File Offset: 0x0000766C
+		private static bool fovLineOfSight(IntVec3 sourceSq, IntVec3 targetLoc, Thing thing)
+		{
 			CompMannable compMannable = thing.TryGetComp<CompMannable>();
-			if (compMannable != null) {
+			bool flag = compMannable != null;
+			if (flag)
+			{
 				thing = compMannable.ManningPawn;
-				// Apply interaction cell offset.
-				sourceSq += (thing.Position - thing.InteractionCell);
+				sourceSq += thing.Position - thing.InteractionCell;
 			}
-
-			// If not a pawn, then doesn't need a fov calculation.
-			if (!(thing is Pawn)) {
-				return true;
+			bool flag2 = !(thing is Pawn);
+			bool result;
+			if (flag2)
+			{
+				result = true;
 			}
-
-			MapComponentSeenFog seenFog = thing.Map.getMapComponentSeenFog();
-			CompMainComponent compMain = (CompMainComponent) thing.TryGetComp(CompMainComponent.COMP_DEF);
-			CompFieldOfViewWatcher compFoV = compMain.compFieldOfViewWatcher;
-			// If requires moving, calculate only the base sight.
-			int sightRange = Mathf.RoundToInt(compFoV.calcPawnSightRange(sourceSq, true, !thing.Position.AdjacentToCardinal(sourceSq)));
-
-			if (!sourceSq.InHorDistOf(targetLoc, sightRange)) {
-				// If out of sightRange.
-				return false;
-			}
-
-
-			// Limit to needed octant.
-			IntVec3 dir = targetLoc - sourceSq;
-
-			byte octant;
-			if (dir.x >= 0) {
-				if (dir.z >= 0) {
-					if (dir.x >= dir.z) {
-						octant = 0;
-					} else {
-						octant = 1;
-					}
-				} else {
-					if (dir.x >= -dir.z) {
-						octant = 7;
-					} else {
-						octant = 6;
-					}
+			else
+			{
+				MapComponentSeenFog mapComponentSeenFog = thing.Map.getMapComponentSeenFog();
+				CompMainComponent compMainComponent = (CompMainComponent)thing.TryGetComp(CompMainComponent.COMP_DEF);
+				CompFieldOfViewWatcher compFieldOfViewWatcher = compMainComponent.compFieldOfViewWatcher;
+				int num = Mathf.RoundToInt(compFieldOfViewWatcher.calcPawnSightRange(sourceSq, true, !thing.Position.AdjacentToCardinal(sourceSq)));
+				bool flag3 = !sourceSq.InHorDistOf(targetLoc, (float)num);
+				if (flag3)
+				{
+					result = false;
 				}
-			} else {
-				if (dir.z >= 0) {
-					if (-dir.x >= dir.z) {
-						octant = 3;
-					} else {
-						octant = 2;
+				else
+				{
+					IntVec3 intVec = targetLoc - sourceSq;
+					bool flag4 = intVec.x >= 0;
+					byte specificOctant;
+					if (flag4)
+					{
+						bool flag5 = intVec.z >= 0;
+						if (flag5)
+						{
+							bool flag6 = intVec.x >= intVec.z;
+							if (flag6)
+							{
+								specificOctant = 0;
+							}
+							else
+							{
+								specificOctant = 1;
+							}
+						}
+						else
+						{
+							bool flag7 = intVec.x >= -intVec.z;
+							if (flag7)
+							{
+								specificOctant = 7;
+							}
+							else
+							{
+								specificOctant = 6;
+							}
+						}
 					}
-				} else {
-					if (-dir.x >= -dir.z) {
-						octant = 4;
-					} else {
-						octant = 5;
+					else
+					{
+						bool flag8 = intVec.z >= 0;
+						if (flag8)
+						{
+							bool flag9 = -intVec.x >= intVec.z;
+							if (flag9)
+							{
+								specificOctant = 3;
+							}
+							else
+							{
+								specificOctant = 2;
+							}
+						}
+						else
+						{
+							bool flag10 = -intVec.x >= -intVec.z;
+							if (flag10)
+							{
+								specificOctant = 4;
+							}
+							else
+							{
+								specificOctant = 5;
+							}
+						}
 					}
+					Map map = thing.Map;
+					bool[] array = new bool[1];
+					ShadowCaster.computeFieldOfViewWithShadowCasting(sourceSq.x, sourceSq.z, num, mapComponentSeenFog.viewBlockerCells, map.Size.x, map.Size.z, false, null, null, null, array, 0, 0, 0, null, 0, 0, 0, 0, 0, specificOctant, targetLoc.x, targetLoc.z);
+					result = array[0];
 				}
 			}
-
-			Map map = thing.Map;
-			bool[] targetFound = new bool[1];
-			ShadowCaster.computeFieldOfViewWithShadowCasting(sourceSq.x, sourceSq.z, sightRange,
-					seenFog.viewBlockerCells, map.Size.x, map.Size.z, 
-					false, null, null, null,
-					targetFound, 0, 0, 0,
-					null, 0, 0, 0, 0, 0,
-					octant, targetLoc.x, targetLoc.z);
-			return targetFound[0];
+			return result;
 		}
 	}
 }

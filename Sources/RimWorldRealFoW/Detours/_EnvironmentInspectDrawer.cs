@@ -1,17 +1,22 @@
-﻿using RimWorldRealFoW.Utils;
+﻿using System;
+using RimWorldRealFoW.Utils;
 using Verse;
 
-namespace RimWorldRealFoW.Detours {
-	public static class _EnvironmentStatsDrawer {
-
-		public static void ShouldShowWindowNow_Postfix(ref bool __result) {
-			if (__result) {
-				Map map = Find.CurrentMap;
-				MapComponentSeenFog mapCmq = map.getMapComponentSeenFog();
-
-				__result = (mapCmq == null || mapCmq.knownCells[map.cellIndices.CellToIndex(UI.MouseCell())]);
+namespace RimWorldRealFoW.Detours
+{
+	// Token: 0x02000020 RID: 32
+	public static class _EnvironmentStatsDrawer
+	{
+		// Token: 0x06000081 RID: 129 RVA: 0x00008FE8 File Offset: 0x000071E8
+		public static void ShouldShowWindowNow_Postfix(ref bool __result)
+		{
+			bool flag = __result;
+			if (flag)
+			{
+				Map currentMap = Find.CurrentMap;
+				MapComponentSeenFog mapComponentSeenFog = currentMap.getMapComponentSeenFog();
+				__result = (mapComponentSeenFog == null || mapComponentSeenFog.knownCells[currentMap.cellIndices.CellToIndex(UI.MouseCell())]);
 			}
 		}
 	}
-	
 }

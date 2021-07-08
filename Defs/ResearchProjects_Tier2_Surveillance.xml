@@ -4,16 +4,12 @@
   <!--=============================== Tier 2.5 Microelectronics ===================================-->
 
   <ResearchProjectDef>
-    <defName>SurveillanceCamera</defName>
-    <label>surveillance camera</label>
-    <description>Allows the production of surveillance cameras.</description>
+    <defName>WatchTelescope</defName>
+    <label>watch telescope</label>
+    <description>Allows the production of watch telescope.</description>
     <baseCost>1200</baseCost>
-    <techLevel>Industrial</techLevel>
-    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
-    <prerequisites>
-      <li>MicroelectronicsBasics</li>
-    </prerequisites>
-    <researchViewX>8</researchViewX>
-    <researchViewY>1</researchViewY>
+    <techLevel>Medieval</techLevel>
+    <researchViewX>1</researchViewX>
+    <researchViewY>6</researchViewY>
   </ResearchProjectDef>
 </Defs>

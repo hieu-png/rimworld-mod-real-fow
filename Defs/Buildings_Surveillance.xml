@@ -1,34 +1,30 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
-
 	<!-- Surveillance Camera -->
-	<ThingDef ParentName="BuildingBase">
+	<ThingDef Name="BaseVisionStuff" ParentName="BuildingBase" Abstract="True">
 		<thingClass>Building</thingClass>
-
-		<defName>SurveillanceCamera</defName>
-		<label>surveillance camera</label>
-		<description>Surveillance camera that provide vision for an area.</description>
-
 		<category>Building</category>
-		<minifiedDef>MinifiedThing</minifiedDef>
-		<altitudeLayer>Skyfaller</altitudeLayer>
-		<passability>Standable</passability>
 		<selectable>true</selectable>
-		<fillPercent>0.20</fillPercent>
-		<leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
-		<soundImpactDefault>BulletImpact_Metal</soundImpactDefault>
 		<designationCategory>Security</designationCategory>
-		<rotatable>false</rotatable>
-		
-		<terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
-		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
-
-		<clearBuildingArea>false</clearBuildingArea>
-
 		<thingCategories>
 			<li>BuildingsSecurity</li>
 		</thingCategories>
-
+		<stealable>false</stealable>
+	</ThingDef>
+	<ThingDef ParentName="BaseVisionStuff">
+		<defName>SurveillanceCamera</defName>
+		<label>surveillance camera</label>
+		<description>Surveillance camera that provide vision for an area.</description>
+		<minifiedDef>MinifiedThing</minifiedDef>
+		<altitudeLayer>Skyfaller</altitudeLayer>
+		<passability>Standable</passability>
+		<fillPercent>0.20</fillPercent>
+		<leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
+		<soundImpactDefault>BulletImpact_Metal</soundImpactDefault>
+		<rotatable>false</rotatable>
+		<terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
+		<clearBuildingArea>false</clearBuildingArea>
 		<graphicData>
 			<texPath>Things/Buildings/SurveillanceCamera</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
@@ -40,61 +36,49 @@
 				<rect>(0.2,0.2,0.6,0.6)</rect>
 			</damageData>
 		</graphicData>
-
 		<costList>
 			<Steel>30</Steel>
 			<ComponentIndustrial>1</ComponentIndustrial>
 		</costList>
-
 		<statBases>
 			<Mass>4</Mass>
 			<Beauty>-10</Beauty>
-
 			<MaxHitPoints>50</MaxHitPoints>
 			<WorkToBuild>2000</WorkToBuild>
-			<Flammability>1.0</Flammability>
+			<Flammability>0.1</Flammability>
 		</statBases>
-
 		<comps>
-			<li Class="CompProperties_Breakdownable"/>
 			<li Class="CompProperties_Flickable"/>
 			<li Class="CompProperties_Power">
 				<compClass>CompPowerTrader</compClass>
-				<basePowerConsumption>55</basePowerConsumption>
+				<basePowerConsumption>50</basePowerConsumption>
 			</li>
-			<li Class="RimWorldRealFoW.ThingComps.Properties.CompProperties_ProvideVision">
-				<viewRadius>12</viewRadius>
+			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
+				<viewRadius>35</viewRadius>
 			</li>
 		</comps>
-
 		<researchPrerequisites>
-			<li>SurveillanceCamera</li>
+			<li>Electricity</li>
 		</researchPrerequisites>
+		<building>
+			<ai_chillDestination>false</ai_chillDestination>
+		</building>
+		<specialDisplayRadius>34.9</specialDisplayRadius>
 	</ThingDef>
-	
 	<!-- Watch Tower -->
-	<ThingDef ParentName="BuildingBase">
-		<thingClass>Building</thingClass>
-
+	<ThingDef ParentName="BaseVisionStuff">
 		<defName>WatchTower</defName>
 		<label>watch tower</label>
 		<description>Watch Tower that increase vision when colonists stand on it.</description>
-
-		<category>Building</category>
 		<altitudeLayer>Building</altitudeLayer>
 		<passability>Standable</passability>
-		<selectable>true</selectable>
 		<leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
-		<designationCategory>Security</designationCategory>
 		<rotatable>false</rotatable>
-		<stealable>false</stealable>
-
 		<stuffCategories>
 			<li>Metallic</li>
 			<li>Woody</li>
 			<li>Stony</li>
 		</stuffCategories>
-
 		<graphicData>
 			<texPath>Things/Buildings/WatchTower</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
@@ -103,36 +87,183 @@
 				<rect>(0.1,0.1,1.8,1.8)</rect>
 			</damageData>
 		</graphicData>
-
 		<castEdgeShadows>true</castEdgeShadows>
 		<staticSunShadowHeight>1.0</staticSunShadowHeight>
-		
-		<fillPercent>0.70</fillPercent>
-
+		<fillPercent>0.75</fillPercent>
 		<size>(2,2)</size>
-
-		<pathCost>200</pathCost>
+		<pathCost>50</pathCost>
 		<pathCostIgnoreRepeat>true</pathCostIgnoreRepeat>
-
-		<costStuffCount>200</costStuffCount>
-
+		<costStuffCount>150</costStuffCount>
 		<placeWorkers>
 			<li>PlaceWorker_NotUnderRoof</li>
 		</placeWorkers>
-
 		<statBases>
 			<MaxHitPoints>450</MaxHitPoints>
-			<WorkToBuild>5500</WorkToBuild>
+			<WorkToBuild>4500</WorkToBuild>
 			<Mass>20</Mass>
 			<Flammability>1.0</Flammability>
-			<Beauty>-60</Beauty>
+			<Beauty>-10</Beauty>
 		</statBases>
-
 		<comps>
-			<li Class="RimWorldRealFoW.ThingComps.Properties.CompProperties_AffectVision">
-				<fovMultiplier>1.75</fovMultiplier>
+			<li Class="RimWorldRealFoW.CompProperties_AffectVision">
+				<fovMultiplier>1.4</fovMultiplier>
 			</li>
 		</comps>
+		<specialDisplayRadius>125.9</specialDisplayRadius>
 	</ThingDef>
-
+	<!-- Watch Scope -->
+	<ThingDef ParentName="BaseVisionStuff">
+		<defName>WatchTelescope</defName>
+		<label>watch telescope</label>
+		<description>Watch Telescope that increase vision when colonists stand on it.</description>
+		<minifiedDef>MinifiedThing</minifiedDef>
+		<altitudeLayer>Building</altitudeLayer>
+		<passability>Standable</passability>
+		<leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
+		<rotatable>false</rotatable>
+		<costList>
+			<Steel>30</Steel>
+			<ComponentIndustrial>3</ComponentIndustrial>
+		</costList>
+		<graphicData>
+			<texPath>Things/Buildings/WatchTelescope</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>(2,2)</drawSize>
+			<damageData>
+				<cornerTL>Damage/Corner</cornerTL>
+				<cornerTR>Damage/Corner</cornerTR>
+				<cornerBL>Damage/Corner</cornerBL>
+				<cornerBR>Damage/Corner</cornerBR>
+			</damageData>
+		</graphicData>
+		<castEdgeShadows>false</castEdgeShadows>
+		<fillPercent>0.1</fillPercent>
+		<size>(1,2)</size>
+		<pathCost>0</pathCost>
+		<pathCostIgnoreRepeat>true</pathCostIgnoreRepeat>
+		<statBases>
+			<MaxHitPoints>50</MaxHitPoints>
+			<WorkToBuild>1000</WorkToBuild>
+			<Mass>1</Mass>
+			<Flammability>0.1</Flammability>
+			<Beauty>0</Beauty>
+		</statBases>
+		<comps>
+			<li Class="RimWorldRealFoW.CompProperties_AffectVision">
+				<fovMultiplier>1.7</fovMultiplier>
+			</li>
+		</comps>
+		<constructionSkillPrerequisite>4</constructionSkillPrerequisite>
+		<researchPrerequisites>
+			<li>WatchTelescope</li>
+		</researchPrerequisites>
+		<specialDisplayRadius>152.9</specialDisplayRadius>
+	</ThingDef>
+	<!-- Security Bell -->
+	<ThingDef ParentName="BaseVisionStuff">
+		<defName>SecurityBell</defName>
+		<label>security bell</label>
+		<description>Bell to see if enemies are coming. It reveals a very narrow range of vision. The enemy disappears when you step on it..</description>
+		<graphicData>
+			<texPath>Things/Buildings/SecurityBell</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<damageData>
+				<rect>(0,0,1,0.15)</rect>
+			</damageData>
+		</graphicData>
+		<altitudeLayer>Building</altitudeLayer>
+		<drawerType>RealtimeOnly</drawerType>
+		<rotatable>false</rotatable>
+		<tickerType>Normal</tickerType>
+		<minifiedDef>MinifiedThing</minifiedDef>
+		<thingCategories>
+			<li>BuildingsSecurity</li>
+		</thingCategories>
+		<statBases>
+			<Mass>0.2</Mass>
+			<MaxHitPoints>5</MaxHitPoints>
+			<WorkToBuild>300</WorkToBuild>
+			<Flammability>0.5</Flammability>
+			<Beauty>-1</Beauty>
+			<Cleanliness>0</Cleanliness>
+		</statBases>
+		<costList>
+			<Steel>5</Steel>
+		</costList>
+		<designationCategory>Security</designationCategory>
+		<comps>
+			<li Class="CompProperties_Refuelable">
+				<fuelConsumptionRate>0.5</fuelConsumptionRate>
+				<fuelCapacity>5.0</fuelCapacity>
+				<fuelFilter>
+					<thingDefs>
+						<li>Steel</li>
+					</thingDefs>
+				</fuelFilter>
+				<initialFuelPercent>1</initialFuelPercent>
+			</li>
+			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
+				<viewRadius>3</viewRadius>
+			</li>
+		</comps>
+		<building>
+			<expandHomeArea>false</expandHomeArea>
+			<ai_chillDestination>false</ai_chillDestination>
+		</building>
+		<specialDisplayRadius>2.9</specialDisplayRadius>
+		<!--
+	<placingDraggableDimensions>1</placingDraggableDimensions>
+-->
+	</ThingDef>
+	<!-- Inspector Parrot -->
+	<ThingDef ParentName="BaseVisionStuff">
+		<defName>InspectorParrot</defName>
+		<label>inspector parrot</label>
+		<description>It's a parrot that monitors your surroundings and tells you what's going on. It consumes woodLog.</description>
+		<graphicData>
+			<texPath>Things/Buildings/InspectorParrot</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>(1,1)</drawSize>
+			<damageData>
+				<rect>(0,0,1,0.15)</rect>
+			</damageData>
+		</graphicData>
+		<size>(1,1)</size>
+		<altitudeLayer>Building</altitudeLayer>
+		<drawerType>RealtimeOnly</drawerType>
+		<rotatable>false</rotatable>
+		<tickerType>Normal</tickerType>
+		<minifiedDef>MinifiedThing</minifiedDef>
+		<statBases>
+			<Mass>0.2</Mass>
+			<MaxHitPoints>40</MaxHitPoints>
+			<WorkToBuild>300</WorkToBuild>
+			<Flammability>1</Flammability>
+			<Beauty>-1</Beauty>
+			<Cleanliness>-2</Cleanliness>
+		</statBases>
+		<costList>
+			<WoodLog>40</WoodLog>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Refuelable">
+				<fuelConsumptionRate>4.4</fuelConsumptionRate>
+				<fuelCapacity>40.0</fuelCapacity>
+				<fuelFilter>
+					<thingDefs>
+						<li>WoodLog</li>
+					</thingDefs>
+				</fuelFilter>
+				<initialFuelPercent>1</initialFuelPercent>
+			</li>
+			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
+				<viewRadius>18</viewRadius>
+			</li>
+		</comps>
+		<building>
+			<expandHomeArea>false</expandHomeArea>
+			<ai_chillDestination>false</ai_chillDestination>
+		</building>
+		<specialDisplayRadius>17.9</specialDisplayRadius>
+	</ThingDef>
 </Defs>

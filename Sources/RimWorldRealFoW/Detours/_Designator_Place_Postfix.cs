@@ -1,21 +1,33 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
 using RimWorldRealFoW.Utils;
 using Verse;
 
-namespace RimWorldRealFoW.Detours {
-	public static class _Designator_Place_Postfix {
-		public static void CanDesignateCell_Postfix(ref IntVec3 c, ref Designator __instance, ref AcceptanceReport __result) {
-			if (__result.Accepted) {
+namespace RimWorldRealFoW.Detours
+{
+	// Token: 0x0200001D RID: 29
+	public static class _Designator_Place_Postfix
+	{
+		// Token: 0x0600007D RID: 125 RVA: 0x00008DAC File Offset: 0x00006FAC
+		public static void CanDesignateCell_Postfix(ref IntVec3 c, ref Designator __instance, ref AcceptanceReport __result)
+		{
+			bool accepted = __result.Accepted;
+			if (accepted)
+			{
 				Traverse traverse = Traverse.Create(__instance);
-				CellRect cellRect = GenAdj.OccupiedRect(c, traverse.Field("placingRot").GetValue<Rot4>(),  traverse.Property("PlacingDef").GetValue<BuildableDef>().Size);
-
-				Map map = traverse.Property("Map").GetValue<Map>();
-				MapComponentSeenFog seenFog = map.getMapComponentSeenFog();
-				if (seenFog != null) {
-					foreach (IntVec3 cell in cellRect) {
-						if (!seenFog.knownCells[map.cellIndices.CellToIndex(cell)]) {
+				CellRect cellRect = GenAdj.OccupiedRect(c, traverse.Field("placingRot").GetValue<Rot4>(), traverse.Property("PlacingDef", null).GetValue<BuildableDef>().Size);
+				Map value = traverse.Property("Map", null).GetValue<Map>();
+				MapComponentSeenFog mapComponentSeenFog = value.getMapComponentSeenFog();
+				bool flag = mapComponentSeenFog != null;
+				if (flag)
+				{
+					foreach (IntVec3 c2 in cellRect)
+					{
+						bool flag2 = !mapComponentSeenFog.knownCells[value.cellIndices.CellToIndex(c2)];
+						if (flag2)
+						{
 							__result = "CannotPlaceInUndiscovered".Translate();
-							return;
+							break;
 						}
 					}
 				}

@@ -1,16 +1,5 @@
-﻿//   Copyright 2017 Luca De Petrillo
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
+﻿using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using RimWorld;
 using RimWorldRealFoW.SectionLayers;
@@ -18,387 +7,524 @@ using RimWorldRealFoW.ShadowCasters;
 using RimWorldRealFoW.ThingComps;
 using RimWorldRealFoW.ThingComps.ThingSubComps;
 using RimWorldRealFoW.Utils;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
-namespace RimWorldRealFoW {
-	public class MapComponentSeenFog : MapComponent {
-		public short[][] factionsShownCells = null;
-		public bool[] knownCells = null;
-
-		public int[] playerVisibilityChangeTick = null;
-
-		public bool[] viewBlockerCells = null;
-
-		private IntVec3[] idxToCellCache;
-
-		private List<CompHideFromPlayer>[] compHideFromPlayerGrid;
-		private byte[] compHideFromPlayerGridCount;
-
-		public List<CompAffectVision>[] compAffectVisionGrid;
-
-		private Designation[] mineDesignationGrid;
-
-		private int maxFactionLoadId;
-
-		private int mapCellLength;
-		public int mapSizeX;
-		public int mapSizeZ;
-		private FogGrid fogGrid;
-		private MapDrawer mapDrawer;
-
-		private ThingGrid thingGrid;
-
-		public bool initialized = false;
-
-		public List<CompFieldOfViewWatcher> fowWatchers;
-
-		private Section[] sections = null;
-		int sectionsSizeX;
-		int sectionsSizeY;
-
-		int currentGameTick = 0;
-
-		public MapComponentSeenFog(Map map) : base(map) {
-			mapCellLength = map.cellIndices.NumGridCells;
-			mapSizeX = map.Size.x;
-			mapSizeZ = map.Size.z;
-
-			fogGrid = map.fogGrid;
-			thingGrid = map.thingGrid;
-			mapDrawer = map.mapDrawer;
-
-			fowWatchers = new List<CompFieldOfViewWatcher>(1000);
-
-			maxFactionLoadId = 0;
-			foreach (Faction faction in Find.World.factionManager.AllFactionsListForReading) {
-				maxFactionLoadId = Math.Max(maxFactionLoadId, faction.loadID);
+namespace RimWorldRealFoW
+{
+	// Token: 0x02000004 RID: 4
+	public class MapComponentSeenFog : MapComponent
+	{
+		// Token: 0x06000008 RID: 8 RVA: 0x000023F4 File Offset: 0x000005F4
+		public MapComponentSeenFog(Map map) : base(map)
+		{
+			this.mapCellLength = map.cellIndices.NumGridCells;
+			this.mapSizeX = map.Size.x;
+			this.mapSizeZ = map.Size.z;
+			this.fogGrid = map.fogGrid;
+			this.thingGrid = map.thingGrid;
+			this.mapDrawer = map.mapDrawer;
+			this.fowWatchers = new List<CompFieldOfViewWatcher>(1000);
+			this.maxFactionLoadId = 0;
+			foreach (Faction faction in Find.World.factionManager.AllFactionsListForReading)
+			{
+				this.maxFactionLoadId = Math.Max(this.maxFactionLoadId, faction.loadID);
 			}
-			factionsShownCells = new short[maxFactionLoadId + 1][];
-
-			knownCells = new bool[mapCellLength];
-			viewBlockerCells = new bool[mapCellLength];
-			playerVisibilityChangeTick = new int[mapCellLength];
-
-			mineDesignationGrid = new Designation[mapCellLength];
-
-			idxToCellCache = new IntVec3[mapCellLength];
-			compHideFromPlayerGrid = new List<CompHideFromPlayer>[mapCellLength];
-			compHideFromPlayerGridCount = new byte[mapCellLength];
-			compAffectVisionGrid = new List<CompAffectVision>[mapCellLength];
-			for (int i = 0; i < mapCellLength; i++) {
-				idxToCellCache[i] = CellIndicesUtility.IndexToCell(i, mapSizeX);
-
-				compHideFromPlayerGrid[i] = new List<CompHideFromPlayer>(16);
-				compHideFromPlayerGridCount[i] = 0;
-				compAffectVisionGrid[i] = new List<CompAffectVision>(16);
-
-				playerVisibilityChangeTick[i] = 0;
+			this.factionsShownCells = new short[this.maxFactionLoadId + 1][];
+			this.knownCells = new bool[this.mapCellLength];
+			this.viewBlockerCells = new bool[this.mapCellLength];
+			this.playerVisibilityChangeTick = new int[this.mapCellLength];
+			this.mineDesignationGrid = new Designation[this.mapCellLength];
+			this.idxToCellCache = new IntVec3[this.mapCellLength];
+			this.compHideFromPlayerGrid = new List<CompHideFromPlayer>[this.mapCellLength];
+			this.compHideFromPlayerGridCount = new byte[this.mapCellLength];
+			this.compAffectVisionGrid = new List<CompAffectVision>[this.mapCellLength];
+			for (int i = 0; i < this.mapCellLength; i++)
+			{
+				this.idxToCellCache[i] = CellIndicesUtility.IndexToCell(i, this.mapSizeX);
+				this.compHideFromPlayerGrid[i] = new List<CompHideFromPlayer>(16);
+				this.compHideFromPlayerGridCount[i] = 0;
+				this.compAffectVisionGrid[i] = new List<CompAffectVision>(16);
+				this.playerVisibilityChangeTick[i] = 0;
 			}
 		}
 
-		public override void MapComponentTick() {
-#if InternalProfile
-			ProfilingUtils.startProfiling("0-calibration");
-			ProfilingUtils.stopProfiling("0-calibration");
-#endif
-
-			currentGameTick = Find.TickManager.TicksGame;
-
-			if (!initialized) {
-				initialized = true;
-
-				init();
+		// Token: 0x06000009 RID: 9 RVA: 0x00002608 File Offset: 0x00000808
+		public override void MapComponentTick()
+		{
+			this.currentGameTick = Find.TickManager.TicksGame;
+			bool flag = !this.initialized;
+			if (flag)
+			{
+				this.initialized = true;
+				this.init();
 			}
 		}
 
-		public short[] getFactionShownCells(Faction faction) {
-			if (faction == null) {
-				return null;
+		// Token: 0x0600000A RID: 10 RVA: 0x00002644 File Offset: 0x00000844
+		public short[] getFactionShownCells(Faction faction)
+		{
+			bool flag = faction == null;
+			short[] result;
+			if (flag)
+			{
+				result = null;
 			}
-
-			if (maxFactionLoadId < faction.loadID) {
-				// Increase the jagged array.
-				maxFactionLoadId = faction.loadID + 1;
-				Array.Resize(ref factionsShownCells, maxFactionLoadId + 1);
+			else
+			{
+				bool flag2 = this.maxFactionLoadId < faction.loadID;
+				if (flag2)
+				{
+					this.maxFactionLoadId = faction.loadID + 1;
+					Array.Resize<short[]>(ref this.factionsShownCells, this.maxFactionLoadId + 1);
+				}
+				bool flag3 = this.factionsShownCells[faction.loadID] == null;
+				if (flag3)
+				{
+					this.factionsShownCells[faction.loadID] = new short[this.mapCellLength];
+				}
+				result = this.factionsShownCells[faction.loadID];
 			}
-
-			// Lazy init faction shown grids (some mods could create dummy factions not used, causing a huge amount of memory waste).
-			if (factionsShownCells[faction.loadID] == null) {
-				factionsShownCells[faction.loadID] = new short[mapCellLength];
-			}
-
-			return factionsShownCells[faction.loadID];
+			return result;
 		}
 
-		public bool isShown(Faction faction, IntVec3 cell) {
-			return isShown(faction, cell.x, cell.z);
-		}
-		
-		public bool isShown(Faction faction, int x, int z) {
-			return getFactionShownCells(faction)[(z * mapSizeX) + x] != 0;
+		// Token: 0x0600000B RID: 11 RVA: 0x000026D4 File Offset: 0x000008D4
+		public bool isShown(Faction faction, IntVec3 cell)
+		{
+			return this.isShown(faction, cell.x, cell.z);
 		}
 
-		public void registerCompHideFromPlayerPosition(CompHideFromPlayer comp, int x, int z) {
-			if (x >= 0 && z >= 0 && x < mapSizeX && z < mapSizeZ) {
-				int idx = (z * mapSizeX) + x;
-				compHideFromPlayerGrid[idx].Add(comp);
-				compHideFromPlayerGridCount[idx]++;
-
-			}
-		}
-		public void deregisterCompHideFromPlayerPosition(CompHideFromPlayer comp, int x, int z) {
-			if (x >= 0 && z >= 0 && x < mapSizeX && z < mapSizeZ) {
-				int idx = (z * mapSizeX) + x;
-				compHideFromPlayerGrid[idx].Remove(comp);
-				compHideFromPlayerGridCount[idx]--;
-			}
+		// Token: 0x0600000C RID: 12 RVA: 0x000026FC File Offset: 0x000008FC
+		public bool isShown(Faction faction, int x, int z)
+		{
+			return this.getFactionShownCells(faction)[z * this.mapSizeX + x] != 0;
 		}
 
-		public void registerCompAffectVisionPosition(CompAffectVision comp, int x, int z) {
-			if (x >= 0 && z >= 0 && x < mapSizeX  && z < mapSizeZ) {
-				compAffectVisionGrid[(z * mapSizeX) + x].Add(comp);
-			}
-		}
-		public void deregisterCompAffectVisionPosition(CompAffectVision comp, int x, int z) {
-			if (x >= 0 && z >= 0 && x < mapSizeX && z < mapSizeZ) {
-				compAffectVisionGrid[(z * mapSizeX) + x].Remove(comp);
+		// Token: 0x0600000D RID: 13 RVA: 0x00002724 File Offset: 0x00000924
+		public void registerCompHideFromPlayerPosition(CompHideFromPlayer comp, int x, int z)
+		{
+			bool flag = x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ;
+			if (flag)
+			{
+				int num = z * this.mapSizeX + x;
+				this.compHideFromPlayerGrid[num].Add(comp);
+				byte[] array = this.compHideFromPlayerGridCount;
+				int num2 = num;
+				array[num2] += 1;
 			}
 		}
 
-		public void registerMineDesignation(Designation des) {
-			IntVec3 targetCell = des.target.Cell;
-			mineDesignationGrid[(targetCell.z * mapSizeX) + targetCell.x] = des;
+		// Token: 0x0600000E RID: 14 RVA: 0x00002784 File Offset: 0x00000984
+		public void deregisterCompHideFromPlayerPosition(CompHideFromPlayer comp, int x, int z)
+		{
+			bool flag = x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ;
+			if (flag)
+			{
+				int num = z * this.mapSizeX + x;
+				this.compHideFromPlayerGrid[num].Remove(comp);
+				byte[] array = this.compHideFromPlayerGridCount;
+				int num2 = num;
+				array[num2] -= 1;
+			}
 		}
 
-		public void deregisterMineDesignation(Designation des) {
-			IntVec3 targetCell = des.target.Cell;
-			mineDesignationGrid[(targetCell.z * mapSizeX) + targetCell.x] = null;
+		// Token: 0x0600000F RID: 15 RVA: 0x000027E4 File Offset: 0x000009E4
+		public void registerCompAffectVisionPosition(CompAffectVision comp, int x, int z)
+		{
+			bool flag = x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ;
+			if (flag)
+			{
+				this.compAffectVisionGrid[z * this.mapSizeX + x].Add(comp);
+			}
 		}
-		
-		private void init() {
-			// Retrieve map sections and store in a linear array.
-			Section[,] mapDrawerSections = (Section[,])Traverse.Create(mapDrawer).Field("sections").GetValue();
-			sectionsSizeX = mapDrawerSections.GetLength(0);
-			sectionsSizeY = mapDrawerSections.GetLength(1);
 
-			sections = new Section[sectionsSizeX * sectionsSizeY];
-			for (int y = 0; y < sectionsSizeY; y++) {
-				for (int x = 0; x < sectionsSizeX; x++) {
-					sections[y * sectionsSizeX + x] = mapDrawerSections[x, y];
+		// Token: 0x06000010 RID: 16 RVA: 0x00002830 File Offset: 0x00000A30
+		public void deregisterCompAffectVisionPosition(CompAffectVision comp, int x, int z)
+		{
+			bool flag = x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ;
+			if (flag)
+			{
+				this.compAffectVisionGrid[z * this.mapSizeX + x].Remove(comp);
+			}
+		}
+
+		// Token: 0x06000011 RID: 17 RVA: 0x0000287C File Offset: 0x00000A7C
+		public void registerMineDesignation(Designation des)
+		{
+			IntVec3 cell = des.target.Cell;
+			this.mineDesignationGrid[cell.z * this.mapSizeX + cell.x] = des;
+		}
+
+		// Token: 0x06000012 RID: 18 RVA: 0x000028B4 File Offset: 0x00000AB4
+		public void deregisterMineDesignation(Designation des)
+		{
+			IntVec3 cell = des.target.Cell;
+			this.mineDesignationGrid[cell.z * this.mapSizeX + cell.x] = null;
+		}
+
+		// Token: 0x06000013 RID: 19 RVA: 0x000028EC File Offset: 0x00000AEC
+		private void init()
+		{
+			Section[,] array = (Section[,])Traverse.Create(this.mapDrawer).Field("sections").GetValue();
+			this.sectionsSizeX = array.GetLength(0);
+			this.sectionsSizeY = array.GetLength(1);
+			this.sections = new Section[this.sectionsSizeX * this.sectionsSizeY];
+			for (int i = 0; i < this.sectionsSizeY; i++)
+			{
+				for (int j = 0; j < this.sectionsSizeX; j++)
+				{
+					this.sections[i * this.sectionsSizeX + j] = array[j, i];
 				}
 			}
-
-			// Initialize mining designators (add notifications intercepted by detours aren't fired on load).
-			List<Designation> designations = map.designationManager.allDesignations;
-			for (int i = 0; i < designations.Count; i++) {
-				Designation des = designations[i];
-				if (des.def == DesignationDefOf.Mine && !des.target.HasThing) {
-					registerMineDesignation(des);
+			List<Designation> allDesignations = this.map.designationManager.allDesignations;
+			for (int k = 0; k < allDesignations.Count; k++)
+			{
+				Designation designation = allDesignations[k];
+				bool flag = designation.def == DesignationDefOf.Mine && !designation.target.HasThing;
+				if (flag)
+				{
+					this.registerMineDesignation(designation);
 				}
 			}
-
-			// Reveal the starting position if home map and no pawns (landing).
-			if (map.IsPlayerHome && map.mapPawns.ColonistsSpawnedCount == 0) {
+			bool flag2 = this.map.IsPlayerHome && this.map.mapPawns.ColonistsSpawnedCount == 0;
+			if (flag2)
+			{
 				IntVec3 playerStartSpot = MapGenerator.PlayerStartSpot;
-				int baseViewRange = Mathf.RoundToInt(DefDatabase<RealFoWModDefaultsDef>.GetNamed(RealFoWModDefaultsDef.DEFAULT_DEF_NAME).baseViewRange);
-				ShadowCaster.computeFieldOfViewWithShadowCasting(playerStartSpot.x, playerStartSpot.z, baseViewRange,
-					viewBlockerCells, map.Size.x, map.Size.z, 
-					false, null, null, null, // Directly updating known cells. No need to call incrementSeen.
-					knownCells, 0, 0, mapSizeX, 
-					null, 0, 0, 0, 0, 0);
-
-				for (int i = 0; i < mapCellLength; i++) {
-					if (knownCells[i]) {
-						IntVec3 cell = CellIndicesUtility.IndexToCell(i, mapSizeX);
-						foreach (Thing t in map.thingGrid.ThingsListAtFast(cell)) {
-							CompMainComponent compMain = (CompMainComponent) t.TryGetComp(CompMainComponent.COMP_DEF);
-							if (compMain != null && compMain.compHideFromPlayer != null) {
-								compMain.compHideFromPlayer.forceSeen();
+				int radius = Mathf.RoundToInt(DefDatabase<RealFoWModDefaultsDef>.GetNamed(RealFoWModDefaultsDef.DEFAULT_DEF_NAME, true).baseViewRange);
+				ShadowCaster.computeFieldOfViewWithShadowCasting(playerStartSpot.x, playerStartSpot.z, radius, this.viewBlockerCells, this.map.Size.x, this.map.Size.z, false, null, null, null, this.knownCells, 0, 0, this.mapSizeX, null, 0, 0, 0, 0, 0, byte.MaxValue, -1, -1);
+				for (int l = 0; l < this.mapCellLength; l++)
+				{
+					bool flag3 = this.knownCells[l];
+					if (flag3)
+					{
+						IntVec3 c = CellIndicesUtility.IndexToCell(l, this.mapSizeX);
+						foreach (Thing this2 in this.map.thingGrid.ThingsListAtFast(c))
+						{
+							CompMainComponent compMainComponent = (CompMainComponent)this2.TryGetComp(CompMainComponent.COMP_DEF);
+							bool flag4 = compMainComponent != null && compMainComponent.compHideFromPlayer != null;
+							if (flag4)
+							{
+								compMainComponent.compHideFromPlayer.forceSeen();
 							}
 						}
 					}
 				}
 			}
-
-			// Update all thing FoV and visibility.
-			foreach (Thing thing in map.listerThings.AllThings) {
-				if (thing.Spawned) {
-					CompMainComponent compMain = (CompMainComponent) thing.TryGetComp(CompMainComponent.COMP_DEF);
-					if (compMain != null) {
-						if (compMain.compComponentsPositionTracker != null) {
-							compMain.compComponentsPositionTracker.updatePosition();
+			foreach (Thing thing in this.map.listerThings.AllThings)
+			{
+				bool spawned = thing.Spawned;
+				if (spawned)
+				{
+					CompMainComponent compMainComponent2 = (CompMainComponent)thing.TryGetComp(CompMainComponent.COMP_DEF);
+					bool flag5 = compMainComponent2 != null;
+					if (flag5)
+					{
+						bool flag6 = compMainComponent2.compComponentsPositionTracker != null;
+						if (flag6)
+						{
+							compMainComponent2.compComponentsPositionTracker.updatePosition();
 						}
-						if (compMain.compFieldOfViewWatcher != null) {
-							compMain.compFieldOfViewWatcher.updateFoV();
+						bool flag7 = compMainComponent2.compFieldOfViewWatcher != null;
+						if (flag7)
+						{
+							compMainComponent2.compFieldOfViewWatcher.updateFoV(false);
 						}
-						if (compMain.compHideFromPlayer != null) {
-							compMain.compHideFromPlayer.updateVisibility(true);
+						bool flag8 = compMainComponent2.compHideFromPlayer != null;
+						if (flag8)
+						{
+							compMainComponent2.compHideFromPlayer.updateVisibility(true, false);
 						}
 					}
 				}
 			}
-
-			// Redraw everything.
-			mapDrawer.RegenerateEverythingNow();
+			this.mapDrawer.RegenerateEverythingNow();
 		}
 
-		public override void ExposeData() {
+		// Token: 0x06000014 RID: 20 RVA: 0x00002C68 File Offset: 0x00000E68
+		public override void ExposeData()
+		{
 			base.ExposeData();
-
-			DataExposeUtility.BoolArray(ref knownCells, map.Size.x * map.Size.z, "revealedCells");
+			DataExposeUtility.BoolArray(ref this.knownCells, this.map.Size.x * this.map.Size.z, "revealedCells");
 		}
 
-		public void revealCell(int idx) {
-			if (!knownCells[idx]) {
-				ref IntVec3 cell = ref idxToCellCache[idx];
-
-				knownCells[idx] = true;
-				
-				Designation designation = mineDesignationGrid[idx];
-				if (designation != null && cell.GetFirstMineable(map) == null) {
+		// Token: 0x06000015 RID: 21 RVA: 0x00002CA4 File Offset: 0x00000EA4
+		public void revealCell(int idx)
+		{
+			bool flag = !this.knownCells[idx];
+			if (flag)
+			{
+				ref IntVec3 ptr = ref this.idxToCellCache[idx];
+				this.knownCells[idx] = true;
+				Designation designation = this.mineDesignationGrid[idx];
+				bool flag2 = designation != null && ptr.GetFirstMineable(this.map) == null;
+				if (flag2)
+				{
 					designation.Delete();
 				}
-
-				if (initialized) {
-					setMapMeshDirtyFlag(idx);
-
-					// Refresh overlays
-					map.fertilityGrid.Drawer.SetDirty();
-					map.roofGrid.Drawer.SetDirty();
-					map.terrainGrid.Drawer.SetDirty();
+				bool flag3 = this.initialized;
+				if (flag3)
+				{
+					this.setMapMeshDirtyFlag(idx);
+					this.map.fertilityGrid.Drawer.SetDirty();
+					this.map.roofGrid.Drawer.SetDirty();
+					this.map.terrainGrid.Drawer.SetDirty();
 				}
-
-				if (compHideFromPlayerGridCount[idx] != 0) {
-					List<CompHideFromPlayer> comps = compHideFromPlayerGrid[idx];
-					int compCount = comps.Count;
-					for (int i = 0; i < compCount; i++) {
-						comps[i].updateVisibility(true);
+				bool flag4 = this.compHideFromPlayerGridCount[idx] > 0;
+				if (flag4)
+				{
+					List<CompHideFromPlayer> list = this.compHideFromPlayerGrid[idx];
+					int count = list.Count;
+					for (int i = 0; i < count; i++)
+					{
+						list[i].updateVisibility(true, false);
 					}
 				}
 			}
 		}
 
-		public void incrementSeen(Faction faction, short[] factionShownCells, int idx) {
-			if ((++factionShownCells[idx] == 1) && faction.def.isPlayer) {
-				ref IntVec3 cell = ref idxToCellCache[idx];
-
-				if (!knownCells[idx]) {
-					knownCells[idx] = true;
-
-					// Refresh overlays
-					if (initialized) {
-						map.fertilityGrid.Drawer.SetDirty();
-						map.roofGrid.Drawer.SetDirty();
-						map.terrainGrid.Drawer.SetDirty();
+		// Token: 0x06000016 RID: 22 RVA: 0x00002DB4 File Offset: 0x00000FB4
+		public void incrementSeen(Faction faction, short[] factionShownCells, int idx)
+		{
+			short num = (short)(factionShownCells[idx] + 1);
+			factionShownCells[idx] = num;
+			bool flag = num == 1 && faction.def.isPlayer;
+			if (flag)
+			{
+				ref IntVec3 ptr = ref this.idxToCellCache[idx];
+				bool flag2 = !this.knownCells[idx];
+				if (flag2)
+				{
+					this.knownCells[idx] = true;
+					bool flag3 = this.initialized;
+					if (flag3)
+					{
+						this.map.fertilityGrid.Drawer.SetDirty();
+						this.map.roofGrid.Drawer.SetDirty();
+						this.map.terrainGrid.Drawer.SetDirty();
 					}
-
-					Designation designation = mineDesignationGrid[idx];
-					if (designation != null && cell.GetFirstMineable(map) == null) {
+					Designation designation = this.mineDesignationGrid[idx];
+					bool flag4 = designation != null && ptr.GetFirstMineable(this.map) == null;
+					if (flag4)
+					{
 						designation.Delete();
 					}
 				}
-
-				if (initialized) {
-					setMapMeshDirtyFlag(idx);
+				bool flag5 = this.initialized;
+				if (flag5)
+				{
+					this.setMapMeshDirtyFlag(idx);
 				}
-
-				if (compHideFromPlayerGridCount[idx] != 0) {
-					List<CompHideFromPlayer> comps = compHideFromPlayerGrid[idx];
-					int compCount = comps.Count;
-					for (int i = 0; i < compCount; i++) {
-						comps[i].updateVisibility(true);
+				bool flag6 = this.compHideFromPlayerGridCount[idx] > 0;
+				if (flag6)
+				{
+					List<CompHideFromPlayer> list = this.compHideFromPlayerGrid[idx];
+					int count = list.Count;
+					for (int i = 0; i < count; i++)
+					{
+						list[i].updateVisibility(true, false);
 					}
 				}
 			}
 		}
 
-		public void decrementSeen(Faction faction, short[] factionShownCells, int idx) {
-			if ((--factionShownCells[idx] == 0) && faction.def.isPlayer) {
-				playerVisibilityChangeTick[idx] = currentGameTick;
-
-				if (initialized) {
-					setMapMeshDirtyFlag(idx);
+		// Token: 0x06000017 RID: 23 RVA: 0x00002F04 File Offset: 0x00001104
+		public void decrementSeen(Faction faction, short[] factionShownCells, int idx)
+		{
+			short num = (short)(factionShownCells[idx] - 1);
+			factionShownCells[idx] = num;
+			bool flag = num == 0 && faction.def.isPlayer;
+			if (flag)
+			{
+				this.playerVisibilityChangeTick[idx] = this.currentGameTick;
+				bool flag2 = this.initialized;
+				if (flag2)
+				{
+					this.setMapMeshDirtyFlag(idx);
 				}
-
-				if (compHideFromPlayerGridCount[idx] != 0) {
-					List<CompHideFromPlayer> comps = compHideFromPlayerGrid[idx];
-					int compCount = comps.Count;
-					for (int i = 0; i < compCount; i++) {
-						comps[i].updateVisibility(true);
+				bool flag3 = this.compHideFromPlayerGridCount[idx] > 0;
+				if (flag3)
+				{
+					List<CompHideFromPlayer> list = this.compHideFromPlayerGrid[idx];
+					int count = list.Count;
+					for (int i = 0; i < count; i++)
+					{
+						list[i].updateVisibility(true, false);
 					}
 				}
 			}
 		}
 
-		private void setMapMeshDirtyFlag(int idx) {
-			int x = idx % mapSizeX;
-			int z = idx / mapSizeX;
-
-			int sectionX = x / 17;
-			int sectionY = z / 17;
-
-
-			// Update visibility change tick for this cell and proximal ones.
-			int minProxX = Math.Max(0, x - 1);
-			int maxProxZ = Math.Min(z + 2, mapSizeZ);
-			int horizontalCellsCount = Math.Min(x + 2, mapSizeX) - minProxX;
-
-			int startHorizontalIdx;
-			for (int proxZ = Math.Max(0, z - 1); proxZ < maxProxZ; proxZ++) {
-				startHorizontalIdx = (proxZ * mapSizeX) + minProxX;
-				for (int horizontalPos = 0; horizontalPos < horizontalCellsCount; horizontalPos++) {
-					playerVisibilityChangeTick[startHorizontalIdx + horizontalPos] = currentGameTick;
+		// Token: 0x06000018 RID: 24 RVA: 0x00002FA8 File Offset: 0x000011A8
+		private void setMapMeshDirtyFlag(int idx)
+		{
+			int num = idx % this.mapSizeX;
+			int num2 = idx / this.mapSizeX;
+			int num3 = num / 17;
+			int num4 = num2 / 17;
+			int num5 = Math.Max(0, num - 1);
+			int num6 = Math.Min(num2 + 2, this.mapSizeZ);
+			int num7 = Math.Min(num + 2, this.mapSizeX) - num5;
+			for (int i = Math.Max(0, num2 - 1); i < num6; i++)
+			{
+				int num8 = i * this.mapSizeX + num5;
+				for (int j = 0; j < num7; j++)
+				{
+					this.playerVisibilityChangeTick[num8 + j] = this.currentGameTick;
 				}
 			}
-
-			
-			// Update current section.
-			sections[sectionY * sectionsSizeX + sectionX].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
-
-			
-			// Update neighbours sections if needed.
-			int relSecX = x % 17;
-			int relSecZ = z % 17;
-			if (relSecX == 0) {
-				if (sectionX != 0) {
-					sections[sectionY * sectionsSizeX + sectionX].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
-					if (relSecZ == 0) {
-						if (sectionY != 0) {
-							sections[(sectionY - 1) * sectionsSizeX + (sectionX - 1)].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
-						}
-					} else if (relSecZ == 16) {
-						if (sectionY < sectionsSizeY) {
-							sections[(sectionY + 1) * sectionsSizeX + (sectionX - 1)].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
+			this.sections[num4 * this.sectionsSizeX + num3].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
+			int num9 = num % 17;
+			int num10 = num2 % 17;
+			bool flag = num9 == 0;
+			if (flag)
+			{
+				bool flag2 = num3 != 0;
+				if (flag2)
+				{
+					this.sections[num4 * this.sectionsSizeX + num3].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
+					bool flag3 = num10 == 0;
+					if (flag3)
+					{
+						bool flag4 = num4 != 0;
+						if (flag4)
+						{
+							this.sections[(num4 - 1) * this.sectionsSizeX + (num3 - 1)].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
 						}
 					}
-				}
-			} else if (relSecX == 16) {
-				if (sectionX < sectionsSizeX) {
-					sections[sectionY * sectionsSizeX + (sectionX + 1)].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
-					if (relSecZ == 0) {
-						if (sectionY != 0) {
-							sections[(sectionY - 1) * sectionsSizeX + (sectionX + 1)].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
-						}
-					} else if (relSecZ == 16) {
-						if (sectionY < sectionsSizeY) {
-							sections[(sectionY + 1) * sectionsSizeX + (sectionX + 1)].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
+					else
+					{
+						bool flag5 = num10 == 16;
+						if (flag5)
+						{
+							bool flag6 = num4 < this.sectionsSizeY;
+							if (flag6)
+							{
+								this.sections[(num4 + 1) * this.sectionsSizeX + (num3 - 1)].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
+							}
 						}
 					}
 				}
 			}
-
-			if (relSecZ == 0) {
-				if (sectionY != 0) {
-					sections[(sectionY - 1) * sectionsSizeX + sectionX].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
+			else
+			{
+				bool flag7 = num9 == 16;
+				if (flag7)
+				{
+					bool flag8 = num3 < this.sectionsSizeX;
+					if (flag8)
+					{
+						this.sections[num4 * this.sectionsSizeX + (num3 + 1)].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
+						bool flag9 = num10 == 0;
+						if (flag9)
+						{
+							bool flag10 = num4 != 0;
+							if (flag10)
+							{
+								this.sections[(num4 - 1) * this.sectionsSizeX + (num3 + 1)].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
+							}
+						}
+						else
+						{
+							bool flag11 = num10 == 16;
+							if (flag11)
+							{
+								bool flag12 = num4 < this.sectionsSizeY;
+								if (flag12)
+								{
+									this.sections[(num4 + 1) * this.sectionsSizeX + (num3 + 1)].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
+								}
+							}
+						}
+					}
 				}
-			} else if (relSecZ == 16) {
-				if (sectionY < sectionsSizeY) {
-					sections[(sectionY + 1) * sectionsSizeX + sectionX].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
+			}
+			bool flag13 = num10 == 0;
+			if (flag13)
+			{
+				bool flag14 = num4 != 0;
+				if (flag14)
+				{
+					this.sections[(num4 - 1) * this.sectionsSizeX + num3].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
+				}
+			}
+			else
+			{
+				bool flag15 = num10 == 16;
+				if (flag15)
+				{
+					bool flag16 = num4 < this.sectionsSizeY;
+					if (flag16)
+					{
+						this.sections[(num4 + 1) * this.sectionsSizeX + num3].dirtyFlags |= SectionLayer_FoVLayer.mapMeshFlag;
+					}
 				}
 			}
 		}
+
+		// Token: 0x04000005 RID: 5
+		public short[][] factionsShownCells = null;
+
+		// Token: 0x04000006 RID: 6
+		public bool[] knownCells = null;
+
+		// Token: 0x04000007 RID: 7
+		public int[] playerVisibilityChangeTick = null;
+
+		// Token: 0x04000008 RID: 8
+		public bool[] viewBlockerCells = null;
+
+		// Token: 0x04000009 RID: 9
+		private IntVec3[] idxToCellCache;
+
+		// Token: 0x0400000A RID: 10
+		private List<CompHideFromPlayer>[] compHideFromPlayerGrid;
+
+		// Token: 0x0400000B RID: 11
+		private byte[] compHideFromPlayerGridCount;
+
+		// Token: 0x0400000C RID: 12
+		public List<CompAffectVision>[] compAffectVisionGrid;
+
+		// Token: 0x0400000D RID: 13
+		private Designation[] mineDesignationGrid;
+
+		// Token: 0x0400000E RID: 14
+		private int maxFactionLoadId;
+
+		// Token: 0x0400000F RID: 15
+		private int mapCellLength;
+
+		// Token: 0x04000010 RID: 16
+		public int mapSizeX;
+
+		// Token: 0x04000011 RID: 17
+		public int mapSizeZ;
+
+		// Token: 0x04000012 RID: 18
+		private FogGrid fogGrid;
+
+		// Token: 0x04000013 RID: 19
+		private MapDrawer mapDrawer;
+
+		// Token: 0x04000014 RID: 20
+		private ThingGrid thingGrid;
+
+		// Token: 0x04000015 RID: 21
+		public bool initialized = false;
+
+		// Token: 0x04000016 RID: 22
+		public List<CompFieldOfViewWatcher> fowWatchers;
+
+		// Token: 0x04000017 RID: 23
+		private Section[] sections = null;
+
+		// Token: 0x04000018 RID: 24
+		private int sectionsSizeX;
+
+		// Token: 0x04000019 RID: 25
+		private int sectionsSizeY;
+
+		// Token: 0x0400001A RID: 26
+		private int currentGameTick = 0;
 	}
 }

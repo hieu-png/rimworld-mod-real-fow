@@ -12,18 +12,37 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\SteamLibrary\SteamApps\common\RimWorld\Mods\RealFoW\Assemblies\</OutputPath>
+    <OutputPath>Assemblies\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>2</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
     <Prefer32Bit>false</Prefer32Bit>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <DocumentationFile>Assemblies\RimWorldFoWMod.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>BasicDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -63,18 +82,51 @@
     <DefineConstants>InternalProfile</DefineConstants>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\0Harmony.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp, Version=0.16.6198.16102, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>libs\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp_prepatched">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\Assembly-CSharp_prepatched.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ISharpZipLib">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\ISharpZipLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Posix">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\Mono.Posix.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Security">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\Mono.Security.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel.Internals, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\System.ServiceModel.Internals.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -89,7 +141,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AccessibilityModule">
-      <HintPath>libs\UnityEngine.AccessibilityModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.AccessibilityModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
@@ -105,7 +157,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ARModule">
-      <HintPath>libs\UnityEngine.ARModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.ARModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
@@ -113,7 +165,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
-      <HintPath>libs\UnityEngine.AudioModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ClothModule">
@@ -121,7 +173,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ClusterInputModule">
-      <HintPath>libs\UnityEngine.ClusterInputModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.ClusterInputModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ClusterRendererModule">
@@ -129,7 +181,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>libs\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CrashReportingModule">
@@ -137,7 +189,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.DirectorModule">
-      <HintPath>libs\UnityEngine.DirectorModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.DirectorModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.DSPGraphModule">
@@ -145,7 +197,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.FileSystemHttpModule">
-      <HintPath>libs\UnityEngine.FileSystemHttpModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.FileSystemHttpModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.GameCenterModule">
@@ -153,7 +205,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.GridModule">
-      <HintPath>libs\UnityEngine.GridModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.GridModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.HotReloadModule">
@@ -161,15 +213,15 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>libs\UnityEngine.ImageConversionModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>libs\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>libs\UnityEngine.InputLegacyModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.InputModule">
@@ -177,7 +229,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.JSONSerializeModule">
-      <HintPath>libs\UnityEngine.JSONSerializeModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.LocalizationModule">
@@ -185,7 +237,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
-      <HintPath>libs\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PerformanceReportingModule">
@@ -193,7 +245,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.Physics2DModule">
-      <HintPath>libs\UnityEngine.Physics2DModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
@@ -201,7 +253,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ProfilerModule">
-      <HintPath>libs\UnityEngine.ProfilerModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.ProfilerModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ScreenCaptureModule">
@@ -209,7 +261,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.SharedInternalsModule">
-      <HintPath>libs\UnityEngine.SharedInternalsModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.SharedInternalsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.SpriteMaskModule">
@@ -225,117 +277,117 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.SubstanceModule">
-      <HintPath>libs\UnityEngine.SubstanceModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.SubstanceModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TerrainModule">
-      <HintPath>libs\UnityEngine.TerrainModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.TerrainModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TerrainPhysicsModule">
-      <HintPath>libs\UnityEngine.TerrainPhysicsModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.TerrainPhysicsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TextCoreModule">
-      <HintPath>libs\UnityEngine.TextCoreModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.TextCoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>libs\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TilemapModule">
-      <HintPath>libs\UnityEngine.TilemapModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.TilemapModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TLSModule">
-      <HintPath>libs\UnityEngine.TLSModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.TLSModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>libs\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UIElementsModule">
-      <HintPath>libs\UnityEngine.UIElementsModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
-      <HintPath>libs\UnityEngine.UIModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.UIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UmbraModule">
-      <HintPath>libs\UnityEngine.UmbraModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.UmbraModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UNETModule">
-      <HintPath>libs\UnityEngine.UNETModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.UNETModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityAnalyticsModule">
-      <HintPath>libs\UnityEngine.UnityAnalyticsModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityConnectModule">
-      <HintPath>libs\UnityEngine.UnityConnectModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.UnityConnectModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityTestProtocolModule">
-      <HintPath>libs\UnityEngine.UnityTestProtocolModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.UnityTestProtocolModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule">
-      <HintPath>libs\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestAudioModule">
-      <HintPath>libs\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>libs\UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestTextureModule">
-      <HintPath>libs\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestWWWModule">
-      <HintPath>libs\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.VehiclesModule">
-      <HintPath>libs\UnityEngine.VehiclesModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.VehiclesModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.VFXModule">
-      <HintPath>libs\UnityEngine.VFXModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.VFXModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.VideoModule">
-      <HintPath>libs\UnityEngine.VideoModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.VRModule">
-      <HintPath>libs\UnityEngine.VRModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.VRModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.WindModule">
-      <HintPath>libs\UnityEngine.WindModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.WindModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.XRModule">
-      <HintPath>libs\UnityEngine.XRModule.dll</HintPath>
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.XRModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sources\RimWorldRealFoW\Detours\Profiling\_TickManager.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Building_AdminCamera.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_GenView.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_RoofGrid.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_TerrainGrid.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_FertilityGrid.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_Designation.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\Profiling\_EditWindow_DebugInspector.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_MainTabWindow_Wildlife.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_BeautyUtility.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_MoteBubble.cs" />
@@ -350,105 +402,57 @@
     <Compile Include="Sources\RimWorldRealFoW\Detours\_ReservationUtility.cs" />
     <Compile Include="Sources\RimWorldRealFoW\RealFoWModDefaultsDef.cs" />
     <Compile Include="Sources\RimWorldRealFoW\RealFoWModSettings.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ThingComps\CompMainComponent.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ThingComps\ThingSubComps\CompComponentsPositionTracker.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ThingComps\CompProvideVision.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ThingComps\CompAffectVision.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ThingComps\Properties\CompProperties_AffectVision.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ThingComps\Properties\CompProperties_ProvideVision.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ThingComps\ThingSubComps\ThingSubComp.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Utils\MapUtils.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Utils\FoWThingUtils.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompProvideVisionPowered.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompMainComponent.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompProperties_ProvideVisionPowered.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompComponentsPositionTracker.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompProvideVision.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompAffectVision.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompProperties_AffectVision.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompProperties_ProvideVision.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\ThingSubComp.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\MapUtils.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\FoWThingUtils.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_LetterStack.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ThingComps\ThingSubComps\CompViewBlockerWatcher.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompViewBlockerWatcher.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_GenMapUI.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ThingComps\ThingSubComps\CompHideFromPlayer.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompHideFromPlayer.cs" />
     <Compile Include="Sources\RimWorldRealFoW\MapComponentSeenFog.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ThingComps\ThingSubComps\CompHiddenable.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ThingComps\ThingSubComps\CompFieldOfViewWatcher.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompHiddenable.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompFieldOfViewWatcher.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_MouseoverReadout.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_Selector.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\SectionLayers\SectionLayer_FoVLayer.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ShadowCasters\ShadowCaster.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\SectionLayer_FoVLayer.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\ShadowCaster.cs" />
     <Compile Include="Sources\RimWorldRealFoW\RealFoWModStarter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_Verb.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_Messages.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Utils\ProfilingUtils.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="rimworld-mod-real-fow.licenseheader" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="LICENSE.md" />
-    <None Include=".gitignore" />
-  </ItemGroup>
-  <ItemGroup>
-    <AdditionalFiles Include="1.0\Assemblies\0Harmony.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AdditionalFiles>
-    <AdditionalFiles Include="1.0\Assemblies\RimWorldFoWMod.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AdditionalFiles>
-    <AdditionalFiles Include="1.0\Defs\Buildings_Surveillance.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AdditionalFiles>
-    <AdditionalFiles Include="1.0\Defs\Mod_Defaults.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AdditionalFiles>
-    <AdditionalFiles Include="1.0\Defs\ResearchProjects_Tier2_Surveillance.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AdditionalFiles>
-    <Content Include="About\About.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="About\Preview.png" />
-    <Content Include="Defs\Mod_Defaults.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Defs\ResearchProjects_Tier2_Surveillance.xml" />
-    <Content Include="Defs\Buildings_Surveillance.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Languages\English\Keyed\Preferences.xml" />
-    <Content Include="Languages\SpanishLatin\DefInjected\ResearchProjectDef\ResearchProjects_Tier2_Surveillance.xml" />
-    <Content Include="Languages\SpanishLatin\DefInjected\ThingDef\Buildings_Surveillance.xml" />
-    <Content Include="Languages\SpanishLatin\Keyed\Preferences.xml" />
-    <Content Include="Languages\Spanish\DefInjected\ResearchProjectDef\ResearchProjects_Tier2_Surveillance.xml" />
-    <Content Include="Languages\Spanish\DefInjected\ThingDef\Buildings_Surveillance.xml" />
-    <Content Include="Languages\Spanish\Keyed\Preferences.xml" />
-    <AdditionalFiles Include="LoadFolders.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AdditionalFiles>
-    <Content Include="Textures\Things\Buildings\SurveillanceCamera.png" />
-    <Content Include="Textures\Things\Buildings\WatchTower.png" />
-    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Q /Y /S /I "$(ProjectDir)About\*" "$(TargetDir)..\About"
-      xcopy /Q /Y /S /I "$(ProjectDir)Defs\*" "$(TargetDir)..\Defs"
-      xcopy /Q /Y /S /I "$(ProjectDir)Textures\*" "$(TargetDir)..\Textures"
-      xcopy /Q /Y /S /I "$(ProjectDir)Languages\*" "$(TargetDir)..\Languages"
-      xcopy /Q /Y /S /I "$(ProjectDir)1.0\*" "$(TargetDir)..\1.0"
-      xcopy /Q /Y "$(ProjectDir)LoadFolders.xml" "$(TargetDir)..\"
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>del /Q "$(TargetDir)\*"
-      rd /S /Q "$(TargetDir)..\Defs"
-      rd /S /Q "$(TargetDir)..\Textures"
-      rd /S /Q "$(TargetDir)..\Languages"
-      rd /S /Q "$(TargetDir)..\1.0"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
-  <Target Name="AfterBuild" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <Exec WorkingDirectory="$(TargetDir)" Command="xcopy /Q /Y /S /I &quot;$(ProjectDir)libs\Debug\*&quot; &quot;$(TargetDir)&quot;" />
-    <Exec WorkingDirectory="$(TargetDir)" Command="&quot;c:\Program Files (x86)\Mono\bin\pdb2mdb.bat&quot; &quot;$(TargetPath)&quot;" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

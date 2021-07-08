@@ -1,49 +1,62 @@
-﻿//   Copyright 2017 Luca De Petrillo
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
+﻿using System;
 using RimWorldRealFoW.Utils;
 using UnityEngine;
 using Verse;
 
-namespace RimWorldRealFoW.Detours {
-	public static class _MouseoverReadout {
-		private static readonly Vector2 BotLeft = new Vector2(15f, 65f);
-
-		public static bool MouseoverReadoutOnGUI_Prefix(MouseoverReadout __instance) {
-			if (Event.current.type != EventType.Repaint) {
-				return true;
+namespace RimWorldRealFoW.Detours
+{
+	// Token: 0x02000028 RID: 40
+	public static class _MouseoverReadout
+	{
+		// Token: 0x0600008A RID: 138 RVA: 0x00009230 File Offset: 0x00007430
+		public static bool MouseoverReadoutOnGUI_Prefix(MouseoverReadout __instance)
+		{
+			bool flag = Event.current.type != EventType.Repaint;
+			bool result;
+			if (flag)
+			{
+				result = true;
 			}
-			if (Find.MainTabsRoot.OpenTab != null) {
-				return true;
+			else
+			{
+				bool flag2 = Find.MainTabsRoot.OpenTab != null;
+				if (flag2)
+				{
+					result = true;
+				}
+				else
+				{
+					IntVec3 c = UI.MouseCell();
+					bool flag3 = !c.InBounds(Find.CurrentMap);
+					if (flag3)
+					{
+						result = true;
+					}
+					else
+					{
+						MapComponentSeenFog mapComponentSeenFog = Find.CurrentMap.getMapComponentSeenFog();
+						bool flag4 = !c.Fogged(Find.CurrentMap) && mapComponentSeenFog != null && !mapComponentSeenFog.knownCells[Find.CurrentMap.cellIndices.CellToIndex(c)];
+						if (flag4)
+						{
+							GenUI.DrawTextWinterShadow(new Rect(256f, (float)(UI.screenHeight - 256), -256f, 256f));
+							Text.Font = GameFont.Small;
+							GUI.color = new Color(1f, 1f, 1f, 0.8f);
+							Rect rect = new Rect(_MouseoverReadout.BotLeft.x, (float)UI.screenHeight - _MouseoverReadout.BotLeft.y, 999f, 999f);
+							Widgets.Label(rect, "NotVisible".Translate());
+							GUI.color = Color.white;
+							result = false;
+						}
+						else
+						{
+							result = true;
+						}
+					}
+				}
 			}
-			IntVec3 c = UI.MouseCell();
-			if (!c.InBounds(Find.CurrentMap)) {
-				return true;
-			}
-
-			MapComponentSeenFog seenFog = Find.CurrentMap.getMapComponentSeenFog();
-			if (!c.Fogged(Find.CurrentMap) && (seenFog != null && !seenFog.knownCells[Find.CurrentMap.cellIndices.CellToIndex(c)])) {
-				GenUI.DrawTextWinterShadow(new Rect(256f, (float)(UI.screenHeight - 256), -256f, 256f));
-				Text.Font = GameFont.Small;
-				GUI.color = new Color(1f, 1f, 1f, 0.8f);
-
-				Rect rect = new Rect(_MouseoverReadout.BotLeft.x, (float)UI.screenHeight - _MouseoverReadout.BotLeft.y, 999f, 999f);
-				Widgets.Label(rect, "NotVisible".Translate());
-				GUI.color = Color.white;
-				return false;
-			}
-
-			return true;
+			return result;
 		}
+
+		// Token: 0x04000089 RID: 137
+		private static readonly Vector2 BotLeft = new Vector2(15f, 65f);
 	}
 }

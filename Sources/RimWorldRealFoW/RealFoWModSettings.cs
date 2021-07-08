@@ -1,96 +1,120 @@
-﻿//   Copyright 2017 Luca De Petrillo
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-using RimWorldRealFoW.SectionLayers;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using RimWorldRealFoW.SectionLayers;
 using UnityEngine;
 using Verse;
 
-namespace RimWorldRealFoW {
-	public class RealFoWModSettings : ModSettings {
-		public enum FogFadeSpeedEnum { Slow = 5, Medium = 20, Fast = 40, Disabled = 100 }
-		public enum FogAlpha { Dark = 127, Medium = 86, Light = 64 }
-
-		public static FogFadeSpeedEnum fogFadeSpeed = FogFadeSpeedEnum.Medium;
-		public static FogAlpha fogAlpha = FogAlpha.Medium;
-
-		public static void DoSettingsWindowContents(Rect rect) {
-			Listing_Standard list = new Listing_Standard(GameFont.Small);
-			list.ColumnWidth = rect.width;
-			list.Begin(rect);
-
-			if (list.ButtonTextLabeled("fogAlphaSetting_title".Translate(), ("fogAlphaSetting_" + fogAlpha).Translate())) {
-				List<FloatMenuOption> optionList = new List<FloatMenuOption>();
-				foreach (FogAlpha enumValue in Enum.GetValues(typeof(FogAlpha))) {
-					FogAlpha localValue = enumValue;
-					optionList.Add(new FloatMenuOption(("fogAlphaSetting_" + localValue).Translate(), delegate {
-						fogAlpha = localValue;
-
-						applySettings();
+namespace RimWorldRealFoW
+{
+	// Token: 0x02000003 RID: 3
+	public class RealFoWModSettings : ModSettings
+	{
+		// Token: 0x06000003 RID: 3 RVA: 0x00002070 File Offset: 0x00000270
+		public static void DoSettingsWindowContents(Rect rect)
+		{
+			Listing_Standard listing_Standard = new Listing_Standard(GameFont.Small);
+			listing_Standard.ColumnWidth = rect.width;
+			listing_Standard.Begin(rect);
+			bool flag = listing_Standard.ButtonTextLabeled("fogAlphaSetting_title".Translate(), ("fogAlphaSetting_" + RealFoWModSettings.fogAlpha).Translate());
+			if (flag)
+			{
+				List<FloatMenuOption> list = new List<FloatMenuOption>();
+				foreach (object obj in Enum.GetValues(typeof(RealFoWModSettings.FogAlpha)))
+				{
+					RealFoWModSettings.FogAlpha localValue3 = (RealFoWModSettings.FogAlpha)obj;
+					RealFoWModSettings.FogAlpha localValue = localValue3;
+					list.Add(new FloatMenuOption(("fogAlphaSetting_" + localValue).Translate(), delegate ()
+					{
+						RealFoWModSettings.fogAlpha = localValue;
+						RealFoWModSettings.applySettings();
 					}, MenuOptionPriority.Default, null, null, 0f, null, null));
 				}
-				Find.WindowStack.Add(new FloatMenu(optionList));
+				Find.WindowStack.Add(new FloatMenu(list));
 			}
 			Text.Font = GameFont.Tiny;
-			list.Label("fogAlphaSetting_desc".Translate());
+			listing_Standard.Label("fogAlphaSetting_desc".Translate(), -1f, null);
 			Text.Font = GameFont.Small;
-
-			list.Gap();
-			list.GapLine();
-
-			if (list.ButtonTextLabeled("fogFadeSpeedSetting_title".Translate(), ("fogFadeSpeedSetting_" + fogFadeSpeed).Translate())) {
-				List<FloatMenuOption> optionList = new List<FloatMenuOption>();
-				foreach (FogFadeSpeedEnum enumValue in Enum.GetValues(typeof(FogFadeSpeedEnum))) {
-					FogFadeSpeedEnum localValue = enumValue;
-					optionList.Add(new FloatMenuOption(("fogFadeSpeedSetting_" + localValue).Translate(), delegate {
-						fogFadeSpeed = localValue;
-
-						applySettings();
+			listing_Standard.Gap(12f);
+			listing_Standard.GapLine(12f);
+			bool flag2 = listing_Standard.ButtonTextLabeled("fogFadeSpeedSetting_title".Translate(), ("fogFadeSpeedSetting_" + RealFoWModSettings.fogFadeSpeed).Translate());
+			if (flag2)
+			{
+				List<FloatMenuOption> list2 = new List<FloatMenuOption>();
+				foreach (object obj2 in Enum.GetValues(typeof(RealFoWModSettings.FogFadeSpeedEnum)))
+				{
+					RealFoWModSettings.FogFadeSpeedEnum localValue2 = (RealFoWModSettings.FogFadeSpeedEnum)obj2;
+					RealFoWModSettings.FogFadeSpeedEnum localValue = localValue2;
+					list2.Add(new FloatMenuOption(("fogFadeSpeedSetting_" + localValue).Translate(), delegate ()
+					{
+						RealFoWModSettings.fogFadeSpeed = localValue;
+						RealFoWModSettings.applySettings();
 					}, MenuOptionPriority.Default, null, null, 0f, null, null));
 				}
-				Find.WindowStack.Add(new FloatMenu(optionList));
+				Find.WindowStack.Add(new FloatMenu(list2));
 			}
 			Text.Font = GameFont.Tiny;
-			list.Label("fogFadeSpeedSetting_desc".Translate());
+			listing_Standard.Label("fogFadeSpeedSetting_desc".Translate(), -1f, null);
 			Text.Font = GameFont.Small;
-
-			list.End();
+			listing_Standard.End();
 		}
 
-		public static void applySettings() {
-			SectionLayer_FoVLayer.prefFadeSpeedMult = (int) fogFadeSpeed;
-			SectionLayer_FoVLayer.prefEnableFade = (int) fogFadeSpeed != 100;
-
-			SectionLayer_FoVLayer.prefFogAlpha = (byte)fogAlpha;
-
-			// If playing, redraw everything.
-			if (Current.ProgramState == ProgramState.Playing) {
-				foreach (Map map in Find.Maps) {
-					if (map.mapDrawer != null) {
+		// Token: 0x06000004 RID: 4 RVA: 0x00002304 File Offset: 0x00000504
+		public static void applySettings()
+		{
+			SectionLayer_FoVLayer.prefFadeSpeedMult = (int)RealFoWModSettings.fogFadeSpeed;
+			SectionLayer_FoVLayer.prefEnableFade = (RealFoWModSettings.fogFadeSpeed != RealFoWModSettings.FogFadeSpeedEnum.Disabled);
+			SectionLayer_FoVLayer.prefFogAlpha = (byte)RealFoWModSettings.fogAlpha;
+			bool flag = Current.ProgramState == ProgramState.Playing;
+			if (flag)
+			{
+				foreach (Map map in Find.Maps)
+				{
+					bool flag2 = map.mapDrawer != null;
+					if (flag2)
+					{
 						map.mapDrawer.RegenerateEverythingNow();
 					}
 				}
 			}
 		}
 
-		public override void ExposeData() {
+		// Token: 0x06000005 RID: 5 RVA: 0x000023A4 File Offset: 0x000005A4
+		public override void ExposeData()
+		{
 			base.ExposeData();
+			Scribe_Values.Look<RealFoWModSettings.FogFadeSpeedEnum>(ref RealFoWModSettings.fogFadeSpeed, "fogFadeSpeed", RealFoWModSettings.FogFadeSpeedEnum.Medium, false);
+			Scribe_Values.Look<RealFoWModSettings.FogAlpha>(ref RealFoWModSettings.fogAlpha, "fogAlpha", RealFoWModSettings.FogAlpha.Medium, false);
+			RealFoWModSettings.applySettings();
+		}
 
-			Scribe_Values.Look(ref fogFadeSpeed, "fogFadeSpeed", FogFadeSpeedEnum.Medium);
-			Scribe_Values.Look(ref fogAlpha, "fogAlpha", FogAlpha.Medium);
+		// Token: 0x04000003 RID: 3
+		public static RealFoWModSettings.FogFadeSpeedEnum fogFadeSpeed = RealFoWModSettings.FogFadeSpeedEnum.Medium;
 
-			applySettings();
+		// Token: 0x04000004 RID: 4
+		public static RealFoWModSettings.FogAlpha fogAlpha = RealFoWModSettings.FogAlpha.Medium;
+
+		// Token: 0x0200002C RID: 44
+		public enum FogFadeSpeedEnum
+		{
+			// Token: 0x0400008B RID: 139
+			Slow = 5,
+			// Token: 0x0400008C RID: 140
+			Medium = 20,
+			// Token: 0x0400008D RID: 141
+			Fast = 40,
+			// Token: 0x0400008E RID: 142
+			Disabled = 100
+		}
+
+		// Token: 0x0200002D RID: 45
+		public enum FogAlpha
+		{
+			// Token: 0x04000090 RID: 144
+			Dark = 127,
+			// Token: 0x04000091 RID: 145
+			Medium = 86,
+			// Token: 0x04000092 RID: 146
+			Light = 64
 		}
 	}
 }

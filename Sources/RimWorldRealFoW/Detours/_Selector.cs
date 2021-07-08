@@ -1,32 +1,20 @@
-﻿//   Copyright 2017 Luca De Petrillo
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
+﻿using System;
 using RimWorld.Planet;
 using RimWorldRealFoW.Utils;
 using Verse;
 
-namespace RimWorldRealFoW.Detours {
-
-	public static class _Selector {
-		public static bool Select_Prefix(object obj) {
+namespace RimWorldRealFoW.Detours
+{
+	// Token: 0x02000029 RID: 41
+	public static class _Selector
+	{
+		// Token: 0x0600008C RID: 140 RVA: 0x00009390 File Offset: 0x00007590
+		public static bool Select_Prefix(object obj)
+		{
 			Thing thing = obj as Thing;
 			Pawn pawn = obj as Pawn;
-			if (thing != null && !thing.Destroyed && (pawn == null || !pawn.IsWorldPawn()) && !thing.fowIsVisible()) {
-				return false;
-			}
-
-			return true;
+			bool flag = thing != null && !thing.Destroyed && (pawn == null || !pawn.IsWorldPawn()) && !thing.fowIsVisible(false);
+			return !flag;
 		}
 	}
 }
-

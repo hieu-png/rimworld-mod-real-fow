@@ -1,232 +1,302 @@
-﻿//   Copyright 2017 Luca De Petrillo
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using HarmonyLib;
 using RimWorld;
 using RimWorldRealFoW.Detours;
 using RimWorldRealFoW.ThingComps;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-#if InternalProfile
-using RimWorldRealFoW.Detours.Profiling;
-#endif
-#if Profile
-using System.Runtime.InteropServices;
-#endif
 using UnityEngine;
 using Verse;
 using Verse.AI;
 
-namespace RimWorldRealFoW {
+namespace RimWorldRealFoW
+{
+	// Token: 0x02000005 RID: 5
 	[StaticConstructorOnStartup]
-	public class RealFoWModStarter : Mod {
-
-#if Profile
-		[DllImport("__Internal")]
-		private static extern void mono_profiler_load(string args);
-#endif
-
-		static Harmony harmony;
-		static RealFoWModStarter() {
-
-#if Profile
-			mono_profiler_load(@"default:time,file=d:/rimworld-prof.mprf");
-#endif
-
-			harmony = new Harmony("com.github.lukakama.rimworldmodrealfow");
-			injectDetours();
-			harmony = null;
+	public class RealFoWModStarter : Mod
+	{
+		// Token: 0x06000019 RID: 25 RVA: 0x000032A5 File Offset: 0x000014A5
+		static RealFoWModStarter()
+		{
+			RealFoWModStarter.injectDetours();
+			RealFoWModStarter.harmony = null;
 		}
 
-		public RealFoWModStarter(ModContentPack content) : base(content) {
-			//LongEventHandler.QueueLongEvent(injectDetours, "Real Fog of War - Init.", false, null);
-			LongEventHandler.QueueLongEvent(injectComponents, "Real Fog of War - Init.", false, null);
-
-			GetSettings<RealFoWModSettings>();
+		// Token: 0x0600001A RID: 26 RVA: 0x000032C3 File Offset: 0x000014C3
+		public RealFoWModStarter(ModContentPack content) : base(content)
+		{
+			LongEventHandler.QueueLongEvent(new Action(RealFoWModStarter.injectComponents), "Real Fog of War - Init.", false, null, true);
+			base.GetSettings<RealFoWModSettings>();
 		}
 
-		public override string SettingsCategory() {
-			return Content.Name;
+		// Token: 0x0600001B RID: 27 RVA: 0x000032F0 File Offset: 0x000014F0
+		public override string SettingsCategory()
+		{
+			return base.Content.Name;
 		}
 
-		public override void DoSettingsWindowContents(Rect rect) {
+		// Token: 0x0600001C RID: 28 RVA: 0x0000330D File Offset: 0x0000150D
+		public override void DoSettingsWindowContents(Rect rect)
+		{
 			RealFoWModSettings.DoSettingsWindowContents(rect);
 		}
-		
-		public static void injectComponents() {
-			foreach (ThingDef def in DefDatabase<ThingDef>.AllDefs) {
-				ThingCategory thingCategory = def.category;
-				if (typeof(ThingWithComps).IsAssignableFrom(def.thingClass) && 
-						(thingCategory == ThingCategory.Pawn ||
-							thingCategory == ThingCategory.Building ||
-							thingCategory == ThingCategory.Item ||
-							thingCategory == ThingCategory.Filth ||
-							thingCategory == ThingCategory.Gas ||
-							def.IsBlueprint)) {
-					addComponentAsFirst(def, CompMainComponent.COMP_DEF);
+
+		// Token: 0x0600001D RID: 29 RVA: 0x00003318 File Offset: 0x00001518
+		public static void injectComponents()
+		{
+			foreach (ThingDef thingDef in DefDatabase<ThingDef>.AllDefs)
+			{
+				ThingCategory category = thingDef.category;
+				bool flag = typeof(ThingWithComps).IsAssignableFrom(thingDef.thingClass) && (category == ThingCategory.Pawn || category == ThingCategory.Building || category == ThingCategory.Item || category == ThingCategory.Filth || category == ThingCategory.Gas || thingDef.IsBlueprint);
+				if (flag)
+				{
+					RealFoWModStarter.addComponentAsFirst(thingDef, CompMainComponent.COMP_DEF);
 				}
 			}
 		}
 
-		public static void addComponentAsFirst(ThingDef def, CompProperties compProperties) {
-			if (!def.comps.Contains(compProperties)) {
+		// Token: 0x0600001E RID: 30 RVA: 0x000033B4 File Offset: 0x000015B4
+		public static void addComponentAsFirst(ThingDef def, CompProperties compProperties)
+		{
+			bool flag = !def.comps.Contains(compProperties);
+			if (flag)
+			{
 				def.comps.Insert(0, compProperties);
 			}
 		}
 
-		public static void injectDetours() {
-			patchMethod(typeof(Verb), typeof(_Verb), "CanHitCellFromCellIgnoringRange");
-			patchMethod(typeof(Selector), typeof(_Selector), "Select");
-			patchMethod(typeof(MouseoverReadout), typeof(_MouseoverReadout), "MouseoverReadoutOnGUI");
-			patchMethod(typeof(BeautyUtility), typeof(_BeautyUtility), "FillBeautyRelevantCells");
-
-			patchMethod(typeof(MainTabWindow_Wildlife), typeof(_MainTabWindow_Wildlife), "get_Pawns");
-
-			patchMethod(typeof(Pawn), typeof(_Pawn), "DrawGUIOverlay");
-			
-			patchMethod(typeof(GenMapUI), typeof(_GenMapUI), "DrawThingLabel", typeof(Thing), typeof(string), typeof(Color));
-			patchMethod(typeof(SectionLayer_ThingsGeneral), typeof(_SectionLayer_ThingsGeneral), "TakePrintFrom");
-			patchMethod(typeof(SectionLayer_ThingsPowerGrid), typeof(_SectionLayer_ThingsPowerGrid), "TakePrintFrom");
-			patchMethod(typeof(ReservationUtility), typeof(_ReservationUtility), "CanReserve");
-			patchMethod(typeof(ReservationUtility), typeof(_ReservationUtility), "CanReserveAndReach");
-			patchMethod(typeof(HaulAIUtility), typeof(_HaulAIUtility), "HaulToStorageJob");
-
-			patchMethod(typeof(EnvironmentStatsDrawer), typeof(_EnvironmentStatsDrawer), "ShouldShowWindowNow");
-			
-			patchMethod(typeof(Messages), typeof(_Messages), "Message", typeof(string), typeof(LookTargets), typeof(MessageTypeDef), typeof(bool));
-			patchMethod(typeof(LetterStack), typeof(_LetterStack), "ReceiveLetter", typeof(TaggedString), typeof(TaggedString), typeof(LetterDef), typeof(LookTargets), typeof(Faction), typeof(Quest), typeof(List<ThingDef>), typeof(string));
-
-			patchMethod(typeof(MoteBubble), typeof(_MoteBubble), "Draw", new Type[] {});
-			patchMethod(typeof(GenView), typeof(_GenView), "ShouldSpawnMotesAt", new Type[]{typeof(IntVec3), typeof(Map)});
-
-			patchMethod(typeof(FertilityGrid), typeof(_FertilityGrid), "CellBoolDrawerGetBoolInt");
-			patchMethod(typeof(TerrainGrid), typeof(_TerrainGrid), "CellBoolDrawerGetBoolInt");
-			patchMethod(typeof(RoofGrid), typeof(_RoofGrid), "GetCellBool");
-			
-
-			// Area only designators:
-			patchMethod(typeof(Designator_AreaBuildRoof), typeof(_Designator_Prefix), "CanDesignateCell");
-			patchMethod(typeof(Designator_AreaNoRoof), typeof(_Designator_Prefix), "CanDesignateCell");
-			patchMethod(typeof(Designator_ZoneAdd_Growing), typeof(_Designator_Prefix), "CanDesignateCell");
-			patchMethod(typeof(Designator_ZoneAddStockpile), typeof(_Designator_Prefix), "CanDesignateCell");
-
-			// Area + thing designators:
-			patchMethod(typeof(Designator_Claim), typeof(_Designator_Prefix), "CanDesignateCell");
-			patchMethod(typeof(Designator_Claim), typeof(_Designator_Prefix), "CanDesignateThing");
-			patchMethod(typeof(Designator_Deconstruct), typeof(_Designator_Prefix), "CanDesignateCell");
-			patchMethod(typeof(Designator_Deconstruct), typeof(_Designator_Prefix), "CanDesignateThing");
-			patchMethod(typeof(Designator_Haul), typeof(_Designator_Prefix), "CanDesignateCell");
-			patchMethod(typeof(Designator_Haul), typeof(_Designator_Prefix), "CanDesignateThing");
-			patchMethod(typeof(Designator_Hunt), typeof(_Designator_Prefix), "CanDesignateCell");
-			patchMethod(typeof(Designator_Hunt), typeof(_Designator_Prefix), "CanDesignateThing");
-			patchMethod(typeof(Designator_Plants), typeof(_Designator_Prefix), "CanDesignateCell");
-			patchMethod(typeof(Designator_Plants), typeof(_Designator_Prefix), "CanDesignateThing");
-			patchMethod(typeof(Designator_PlantsHarvest), typeof(_Designator_Prefix), "CanDesignateThing");
-			patchMethod(typeof(Designator_PlantsHarvestWood), typeof(_Designator_Prefix), "CanDesignateThing");
-			patchMethod(typeof(Designator_RemoveFloor), typeof(_Designator_Prefix), "CanDesignateCell");
-			patchMethod(typeof(Designator_SmoothSurface), typeof(_Designator_Prefix), "CanDesignateCell");
-			patchMethod(typeof(Designator_Tame), typeof(_Designator_Prefix), "CanDesignateCell");
-			patchMethod(typeof(Designator_Tame), typeof(_Designator_Prefix), "CanDesignateThing");
-			patchMethod(typeof(Designator_Uninstall), typeof(_Designator_Prefix), "CanDesignateCell");
-			patchMethod(typeof(Designator_Uninstall), typeof(_Designator_Prefix), "CanDesignateThing");
-			
-			// Placing designators:
-			patchMethod(typeof(Designator_Build), typeof(_Designator_Place_Postfix), "CanDesignateCell");
-			patchMethod(typeof(Designator_Install), typeof(_Designator_Place_Postfix), "CanDesignateCell");
-			
-			// Specific designatos:
-			patchMethod(typeof(Designator_Mine), typeof(_Designator_Mine), "CanDesignateCell");
-			
-			// Designation
-			patchMethod(typeof(Designation), typeof(_Designation), "Notify_Added");
-			patchMethod(typeof(Designation), typeof(_Designation), "Notify_Removing");
-
-#if InternalProfile
-			// Profiling
-			patchMethod(typeof(EditWindow_DebugInspector), typeof(_EditWindow_DebugInspector), "CurrentDebugString");
-			patchMethod(typeof(TickManager), typeof(_TickManager), "DoSingleTick");
-#endif
+		// Token: 0x0600001F RID: 31 RVA: 0x000033E8 File Offset: 0x000015E8
+		public static void injectDetours()
+		{
+			RealFoWModStarter.patchMethod(typeof(Verb), typeof(_Verb), "CanHitCellFromCellIgnoringRange");
+			RealFoWModStarter.patchMethod(typeof(Selector), typeof(_Selector), "Select");
+			RealFoWModStarter.patchMethod(typeof(MouseoverReadout), typeof(_MouseoverReadout), "MouseoverReadoutOnGUI");
+			RealFoWModStarter.patchMethod(typeof(BeautyUtility), typeof(_BeautyUtility), "FillBeautyRelevantCells");
+			RealFoWModStarter.patchMethod(typeof(MainTabWindow_Wildlife), typeof(_MainTabWindow_Wildlife), "get_Pawns");
+			RealFoWModStarter.patchMethod(typeof(Pawn), typeof(_Pawn), "DrawGUIOverlay");
+			RealFoWModStarter.patchMethod(typeof(GenMapUI), typeof(_GenMapUI), "DrawThingLabel", new Type[]
+			{
+				typeof(Thing),
+				typeof(string),
+				typeof(Color)
+			});
+			RealFoWModStarter.patchMethod(typeof(SectionLayer_ThingsGeneral), typeof(_SectionLayer_ThingsGeneral), "TakePrintFrom");
+			RealFoWModStarter.patchMethod(typeof(SectionLayer_ThingsPowerGrid), typeof(_SectionLayer_ThingsPowerGrid), "TakePrintFrom");
+			RealFoWModStarter.patchMethod(typeof(ReservationUtility), typeof(_ReservationUtility), "CanReserve");
+			RealFoWModStarter.patchMethod(typeof(ReservationUtility), typeof(_ReservationUtility), "CanReserveAndReach");
+			RealFoWModStarter.patchMethod(typeof(HaulAIUtility), typeof(_HaulAIUtility), "HaulToStorageJob");
+			RealFoWModStarter.patchMethod(typeof(EnvironmentStatsDrawer), typeof(_EnvironmentStatsDrawer), "ShouldShowWindowNow");
+			RealFoWModStarter.patchMethod(typeof(Messages), typeof(_Messages), "Message", new Type[]
+			{
+				typeof(string),
+				typeof(LookTargets),
+				typeof(MessageTypeDef),
+				typeof(bool)
+			});
+			RealFoWModStarter.patchMethod(typeof(LetterStack), typeof(_LetterStack), "ReceiveLetter", new Type[]
+			{
+				typeof(TaggedString),
+				typeof(TaggedString),
+				typeof(LetterDef),
+				typeof(LookTargets),
+				typeof(Faction),
+				typeof(Quest),
+				typeof(List<ThingDef>),
+				typeof(string)
+			});
+			RealFoWModStarter.patchMethod(typeof(MoteBubble), typeof(_MoteBubble), "Draw", new Type[0]);
+			RealFoWModStarter.patchMethod(typeof(GenView), typeof(_GenView), "ShouldSpawnMotesAt", new Type[]
+			{
+				typeof(IntVec3),
+				typeof(Map)
+			});
+			RealFoWModStarter.patchMethod(typeof(FertilityGrid), typeof(_FertilityGrid), "CellBoolDrawerGetBoolInt");
+			RealFoWModStarter.patchMethod(typeof(TerrainGrid), typeof(_TerrainGrid), "CellBoolDrawerGetBoolInt");
+			RealFoWModStarter.patchMethod(typeof(RoofGrid), typeof(_RoofGrid), "GetCellBool");
+			RealFoWModStarter.patchMethod(typeof(Designator_AreaBuildRoof), typeof(_Designator_Prefix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_AreaNoRoof), typeof(_Designator_Prefix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_ZoneAdd_Growing), typeof(_Designator_Prefix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_ZoneAddStockpile), typeof(_Designator_Prefix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_Claim), typeof(_Designator_Prefix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_Claim), typeof(_Designator_Prefix), "CanDesignateThing");
+			RealFoWModStarter.patchMethod(typeof(Designator_Deconstruct), typeof(_Designator_Prefix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_Deconstruct), typeof(_Designator_Prefix), "CanDesignateThing");
+			RealFoWModStarter.patchMethod(typeof(Designator_Haul), typeof(_Designator_Prefix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_Haul), typeof(_Designator_Prefix), "CanDesignateThing");
+			RealFoWModStarter.patchMethod(typeof(Designator_Hunt), typeof(_Designator_Prefix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_Hunt), typeof(_Designator_Prefix), "CanDesignateThing");
+			RealFoWModStarter.patchMethod(typeof(Designator_Plants), typeof(_Designator_Prefix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_Plants), typeof(_Designator_Prefix), "CanDesignateThing");
+			RealFoWModStarter.patchMethod(typeof(Designator_PlantsHarvest), typeof(_Designator_Prefix), "CanDesignateThing");
+			RealFoWModStarter.patchMethod(typeof(Designator_PlantsHarvestWood), typeof(_Designator_Prefix), "CanDesignateThing");
+			RealFoWModStarter.patchMethod(typeof(Designator_RemoveFloor), typeof(_Designator_Prefix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_SmoothSurface), typeof(_Designator_Prefix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_Tame), typeof(_Designator_Prefix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_Tame), typeof(_Designator_Prefix), "CanDesignateThing");
+			RealFoWModStarter.patchMethod(typeof(Designator_Uninstall), typeof(_Designator_Prefix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_Uninstall), typeof(_Designator_Prefix), "CanDesignateThing");
+			RealFoWModStarter.patchMethod(typeof(Designator_Build), typeof(_Designator_Place_Postfix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_Install), typeof(_Designator_Place_Postfix), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designator_Mine), typeof(_Designator_Mine), "CanDesignateCell");
+			RealFoWModStarter.patchMethod(typeof(Designation), typeof(_Designation), "Notify_Added");
+			RealFoWModStarter.patchMethod(typeof(Designation), typeof(_Designation), "Notify_Removing");
 		}
 
-		public static void patchMethod(Type sourceType, Type targetType, string methodName) {
-			patchMethod(sourceType, targetType, methodName, null);
+		// Token: 0x06000020 RID: 32 RVA: 0x00003AA2 File Offset: 0x00001CA2
+		public static void patchMethod(Type sourceType, Type targetType, string methodName)
+		{
+			RealFoWModStarter.patchMethod(sourceType, targetType, methodName, null);
 		}
 
-		public static void patchMethod(Type sourceType, Type targetType, string methodName, params Type[] types) {
-			MethodInfo method = null;
-			if (types != null) {
-				method = sourceType.GetMethod(methodName, GenGeneric.BindingFlagsAll, null, types, null);
-			} else {
-				method = sourceType.GetMethod(methodName, GenGeneric.BindingFlagsAll);
+		// Token: 0x06000021 RID: 33 RVA: 0x00003AB0 File Offset: 0x00001CB0
+		public static void patchMethod(Type sourceType, Type targetType, string methodName, params Type[] types)
+		{
+			bool flag = types != null;
+			MethodInfo method;
+			if (flag)
+			{
+				method = sourceType.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, types, null);
 			}
-
-			if (sourceType != method.DeclaringType) {
-				Log.Message("Inconsistent method declaring type for method " + methodName + ": expected " + sourceType + " but found " + method.DeclaringType);
+			else
+			{
+				method = sourceType.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 			}
-
-			if (method != null) {
-				MethodInfo newMethodPrefix = null;
-				if (types != null) {
-					newMethodPrefix = targetType.GetMethod(methodName + "_Prefix", GenGeneric.BindingFlagsAll, null, types, null);
-					if (newMethodPrefix == null) {
-						newMethodPrefix = targetType.GetMethod(methodName + "_Prefix", GenGeneric.BindingFlagsAll, null, (new Type[] { sourceType }).Concat(types).ToArray(), null);
+			bool flag2 = sourceType != method.DeclaringType;
+			if (flag2)
+			{
+				Log.Message(string.Concat(new object[]
+				{
+					"Inconsistent method declaring type for method ",
+					methodName,
+					": expected ",
+					sourceType,
+					" but found ",
+					method.DeclaringType
+				}), false);
+			}
+			bool flag3 = method != null;
+			if (flag3)
+			{
+				MethodInfo methodInfo = null;
+				bool flag4 = types != null;
+				if (flag4)
+				{
+					methodInfo = targetType.GetMethod(methodName + "_Prefix", BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, types, null);
+					bool flag5 = methodInfo == null;
+					if (flag5)
+					{
+						methodInfo = targetType.GetMethod(methodName + "_Prefix", BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[]
+						{
+							sourceType
+						}.Concat(types).ToArray<Type>(), null);
 					}
 				}
-				if (newMethodPrefix == null) {
-					newMethodPrefix = targetType.GetMethod(methodName + "_Prefix", GenGeneric.BindingFlagsAll);
+				bool flag6 = methodInfo == null;
+				if (flag6)
+				{
+					methodInfo = targetType.GetMethod(methodName + "_Prefix", BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 				}
-
-				MethodInfo newMethodPostfix = null;
-				if (types != null) {
-					newMethodPostfix = targetType.GetMethod(methodName + "_Postfix", GenGeneric.BindingFlagsAll, null, types, null);
-					if (newMethodPostfix == null) {
-						newMethodPostfix = targetType.GetMethod(methodName + "_Postfix", GenGeneric.BindingFlagsAll, null, (new Type[] { sourceType }).Concat(types).ToArray(), null);
+				MethodInfo methodInfo2 = null;
+				bool flag7 = types != null;
+				if (flag7)
+				{
+					methodInfo2 = targetType.GetMethod(methodName + "_Postfix", BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, types, null);
+					bool flag8 = methodInfo2 == null;
+					if (flag8)
+					{
+						methodInfo2 = targetType.GetMethod(methodName + "_Postfix", BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[]
+						{
+							sourceType
+						}.Concat(types).ToArray<Type>(), null);
 					}
 				}
-				if (newMethodPostfix == null) {
-					newMethodPostfix = targetType.GetMethod(methodName + "_Postfix", GenGeneric.BindingFlagsAll);
+				bool flag9 = methodInfo2 == null;
+				if (flag9)
+				{
+					methodInfo2 = targetType.GetMethod(methodName + "_Postfix", BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 				}
-
-				if (newMethodPrefix != null || newMethodPostfix != null) {
-					if (patchWithHarmony(method, newMethodPrefix, newMethodPostfix)) {
-						Log.Message("Patched method " + method.ToString() + " from source " + sourceType + " to " + targetType + ".");
-					} else {
-						Log.Warning("Unable to patch method " + method.ToString() + " from source " + sourceType + " to " + targetType + ".");
+				bool flag10 = methodInfo != null || methodInfo2 != null;
+				if (flag10)
+				{
+					bool flag11 = RealFoWModStarter.patchWithHarmony(method, methodInfo, methodInfo2);
+					if (flag11)
+					{
+						Log.Message(string.Concat(new object[]
+						{
+							"Patched method ",
+							method.ToString(),
+							" from source ",
+							sourceType,
+							" to ",
+							targetType,
+							"."
+						}), false);
 					}
-				} else {
-					Log.Warning("Target method prefix or suffix " + methodName + " not found for patch from source " + sourceType + " to " + targetType + ".");
+					else
+					{
+						Log.Warning(string.Concat(new object[]
+						{
+							"Unable to patch method ",
+							method.ToString(),
+							" from source ",
+							sourceType,
+							" to ",
+							targetType,
+							"."
+						}), false);
+					}
 				}
-			} else {
-				Log.Warning("Source method " + methodName + " not found for patch from source " + sourceType + " to " + targetType + ".");
+				else
+				{
+					Log.Warning(string.Concat(new object[]
+					{
+						"Target method prefix or suffix ",
+						methodName,
+						" not found for patch from source ",
+						sourceType,
+						" to ",
+						targetType,
+						"."
+					}), false);
+				}
+			}
+			else
+			{
+				Log.Warning(string.Concat(new object[]
+				{
+					"Source method ",
+					methodName,
+					" not found for patch from source ",
+					sourceType,
+					" to ",
+					targetType,
+					"."
+				}), false);
 			}
 		}
 
-		public static bool patchWithHarmony(MethodInfo original, MethodInfo prefix, MethodInfo postfix) {
-			try {
-				HarmonyMethod harmonyPrefix = prefix != null ? new HarmonyMethod(prefix) : null;
-				HarmonyMethod harmonyPostfix = postfix != null ? new HarmonyMethod(postfix) : null;
-
-				harmony.Patch(original, harmonyPrefix, harmonyPostfix);
-
-				return true;
-			} catch (Exception ex) {
-				Log.Warning("Error patching with Harmony: " + ex.Message);
-				Log.Warning(ex.StackTrace);
-				return false;
+		// Token: 0x06000022 RID: 34 RVA: 0x00003D94 File Offset: 0x00001F94
+		public static bool patchWithHarmony(MethodInfo original, MethodInfo prefix, MethodInfo postfix)
+		{
+			bool result;
+			try
+			{
+				HarmonyMethod prefix2 = (prefix != null) ? new HarmonyMethod(prefix) : null;
+				HarmonyMethod postfix2 = (postfix != null) ? new HarmonyMethod(postfix) : null;
+				RealFoWModStarter.harmony.Patch(original, prefix2, postfix2, null, null);
+				result = true;
 			}
+			catch (Exception ex)
+			{
+				Log.Warning("Error patching with Harmony: " + ex.Message, false);
+				Log.Warning(ex.StackTrace, false);
+				result = false;
+			}
+			return result;
 		}
+
+		// Token: 0x0400001B RID: 27
+		private static Harmony harmony = new Harmony("com.github.lukakama.rimworldmodrealfow");
 	}
 }

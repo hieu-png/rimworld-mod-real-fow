@@ -1,10 +1,16 @@
-﻿using RimWorldRealFoW.Utils;
+﻿using System;
+using RimWorldRealFoW.Utils;
 using Verse;
 
-namespace RimWorldRealFoW.Detours {
-	public static class _GenMapUI {
-		public static bool DrawThingLabel_Prefix(Thing thing) {
-			return thing.fowIsVisible();
+namespace RimWorldRealFoW.Detours
+{
+	// Token: 0x02000027 RID: 39
+	public static class _GenMapUI
+	{
+		// Token: 0x06000089 RID: 137 RVA: 0x00009214 File Offset: 0x00007414
+		public static bool DrawThingLabel_Prefix(Thing thing)
+		{
+			return thing.fowIsVisible(false);
 		}
 	}
 }
