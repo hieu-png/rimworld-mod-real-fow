@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<DesignatorDropdownGroupDef>
+		<defName>SurveillanceCamera</defName>
+		<label>Surveillance Camera</label>
+	</DesignatorDropdownGroupDef>
+	<!-- Surveillance Camera -->
+	<ThingDef Name="BaseCamera" ParentName="BaseVisionStuff" Abstract="True">
+		<designatorDropdown>SurveillanceCamera</designatorDropdown>
+		<minifiedDef>MinifiedThing</minifiedDef>
+		<passability>Standable</passability>
+		<fillPercent>0</fillPercent>
+		<leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
+		<soundImpactDefault>BulletImpact_Metal</soundImpactDefault>
+		<rotatable>false</rotatable>
+		<terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+		<statBases>
+			<Mass>4</Mass>
+			<Beauty>-1</Beauty>
+			<MaxHitPoints>50</MaxHitPoints>
+			<WorkToBuild>2000</WorkToBuild>
+			<Flammability>0.1</Flammability>
+		</statBases>
+		<comps>
+			<li Class="CompProperties_Flickable"/>
+		</comps>
+		<researchPrerequisites>
+			<li>CameraSecurity</li>
+		</researchPrerequisites>
+		<building>
+			<ai_chillDestination>false</ai_chillDestination>
+		</building>
+	</ThingDef>
+	<ThingDef ParentName="BaseCamera">
+		<defName>SurveillanceCamera_UnderRoof</defName>
+		<label>ceiling surveillance camera</label>
+		<description>Surveillance camera that provide vision for an area. Cheaper for indoor build.</description>
+		<altitudeLayer>Skyfaller</altitudeLayer>
+		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
+		<clearBuildingArea>false</clearBuildingArea>
+		<placeWorkers>
+			<li>RimWorldRealFoW.PlaceWorker_UnderRoof</li>
+		</placeWorkers>
+		<graphicData>
+			<texPath>Things/Buildings/SurveillanceCamera_UnderRoof</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<shadowData>
+				<volume>(0.3, 0.6, 0.3)</volume>
+				<offset>(0,0,-0.1)</offset>
+			</shadowData>
+			<damageData>
+				<rect>(0.2,0.2,0.6,0.6)</rect>
+			</damageData>
+		</graphicData>
+		<costList>
+			<Steel>25</Steel>
+			<ComponentIndustrial>2</ComponentIndustrial>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTrader</compClass>
+				<basePowerConsumption>75</basePowerConsumption>
+			</li>
+			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
+				<viewRadius>20</viewRadius>
+			</li>
+		</comps>
+		<researchPrerequisites>
+			<li>Electricity</li>
+		</researchPrerequisites>
+		<specialDisplayRadius>19.9</specialDisplayRadius>
+	</ThingDef>
+	<ThingDef ParentName="BaseCamera">
+		<defName>SurveillanceCamera_Ground</defName>
+		<label>Ground surveillance camera</label>
+		<description>Surveillance camera that provide vision for an area.</description>
+		<altitudeLayer>Building</altitudeLayer>
+		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
+		<graphicData>
+			<texPath>Things/Buildings/SurveillanceCamera_Ground</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<shadowData>
+				<volume>(0.3, 0.6, 0.3)</volume>
+				<offset>(0,0,-0.1)</offset>
+			</shadowData>
+			<damageData>
+				<rect>(0.2,0.2,0.6,0.6)</rect>
+			</damageData>
+		</graphicData>
+		<costList>
+			<Steel>30</Steel>
+			<ComponentIndustrial>3</ComponentIndustrial>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTrader</compClass>
+				<basePowerConsumption>150</basePowerConsumption>
+			</li>
+			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
+				<viewRadius>30</viewRadius>
+			</li>
+		</comps>
+		<researchPrerequisites>
+			<li>Electricity</li>
+		</researchPrerequisites>
+		<specialDisplayRadius>29.9</specialDisplayRadius>
+	</ThingDef>
+	<ThingDef ParentName="BaseCamera">
+		
+		<defName>SurveillanceCamera_High</defName>
+		<label>surveillance camera post</label>
+		<description>.</description>
+		<fillPercent>0.2</fillPercent>
+		<graphicData>
+			<graphicClass>Graphic_Single</graphicClass>
+			<texPath>Things/Buildings/SurveillanceCamera_High</texPath>
+			<drawSize>(2,3.5)</drawSize>
+		</graphicData>
+		<tickerType>Rare</tickerType>
+		<costList>
+			<Steel>70</Steel>
+			<ComponentIndustrial>4</ComponentIndustrial>
+		</costList>
+		<statBases Inherid="False">
+			<Mass>20</Mass>
+			<Beauty>0</Beauty>
+			<MaxHitPoints>100</MaxHitPoints>
+			<WorkToBuild>3000</WorkToBuild>
+			<Flammability>0.1</Flammability>
+		</statBases>
+		<size>(1,1)</size>
+		<comps>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTrader</compClass>
+				<basePowerConsumption>250</basePowerConsumption>
+			</li>
+			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
+				<viewRadius>50</viewRadius>
+			</li>
+		</comps>
+		<researchPrerequisites>
+			<li>Electricity</li>
+		</researchPrerequisites>
+		<specialDisplayRadius>49.9</specialDisplayRadius>
+		<placeWorkers>
+			<li>PlaceWorker_NotUnderRoof</li>
+		</placeWorkers>
+		<uiIconOffset>(0, 0.2)</uiIconOffset>
+	</ThingDef>
+	<ThingDef ParentName="BaseVisionStuff">
+		<defName>SecurityBell</defName>
+		<label>security bell</label>
+		<description>Bell to see if enemies are coming. It reveals a very narrow range of vision. The enemy disappears when you step on it..</description>
+		<graphicData>
+			<texPath>Things/Buildings/SecurityBell</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<damageData>
+				<rect>(0,0,1,0.15)</rect>
+			</damageData>
+		</graphicData>
+		<altitudeLayer>Building</altitudeLayer>
+		<drawerType>RealtimeOnly</drawerType>
+		<rotatable>false</rotatable>
+		<tickerType>Normal</tickerType>
+		<minifiedDef>MinifiedThing</minifiedDef>
+		<statBases>
+			<Mass>0.2</Mass>
+			<MaxHitPoints>5</MaxHitPoints>
+			<WorkToBuild>300</WorkToBuild>
+			<Flammability>0.5</Flammability>
+			<Beauty>-1</Beauty>
+			<Cleanliness>0</Cleanliness>
+		</statBases>
+		<costList>
+			<Steel>5</Steel>
+		</costList>
+		<designationCategory>Security</designationCategory>
+		<comps>
+			<li Class="CompProperties_Refuelable">
+				<fuelConsumptionRate>0.5</fuelConsumptionRate>
+				<fuelCapacity>5.0</fuelCapacity>
+				<fuelFilter>
+					<thingDefs>
+						<li>Steel</li>
+					</thingDefs>
+				</fuelFilter>
+				<initialFuelPercent>1</initialFuelPercent>
+			</li>
+			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
+				<viewRadius>3</viewRadius>
+			</li>
+		</comps>
+		<building>
+			<expandHomeArea>false</expandHomeArea>
+			<ai_chillDestination>false</ai_chillDestination>
+		</building>
+		<specialDisplayRadius>2.9</specialDisplayRadius>
+		<!--
+	<placingDraggableDimensions>1</placingDraggableDimensions>
+-->
+	</ThingDef>
+</Defs>

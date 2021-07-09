@@ -2,7 +2,15 @@
 <Defs>
 
   <!--=============================== Tier 2.5 Microelectronics ===================================-->
-
+  <ResearchProjectDef>
+    <defName>CameraSecurity</defName>
+    <label>Security camera</label>
+    <description>Allows the usage of security camera to watch.</description>
+    <baseCost>800</baseCost>
+    <techLevel>Industrial</techLevel>
+    <researchViewX>1</researchViewX>
+    <researchViewY>6</researchViewY>
+  </ResearchProjectDef>
   <ResearchProjectDef>
     <defName>WatchTelescope</defName>
     <label>watch telescope</label>

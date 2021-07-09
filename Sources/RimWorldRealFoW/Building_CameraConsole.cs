@@ -10,7 +10,7 @@ namespace RimWorldRealFoW
 {
 	// Token: 0x02000003 RID: 3
 	[StaticConstructorOnStartup]
-	public class Building_AdminCameraController : Building
+	public class Building_CameraConsole : Building
 	{/*
 		// Token: 0x06000016 RID: 22 RVA: 0x000028F8 File Offset: 0x00000AF8
 		public override void ExposeData()

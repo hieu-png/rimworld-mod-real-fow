@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+	<!-- Watch Tower -->
+	<ThingDef ParentName="BaseVisionStuff">
+		<defName>WatchTower</defName>
+		<label>watch tower</label>
+		<description>Watch Tower that increase vision when colonists stand on it.</description>
+		<altitudeLayer>Building</altitudeLayer>
+		<passability>Standable</passability>
+		<leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
+		<rotatable>false</rotatable>
+		<stuffCategories>
+			<li>Metallic</li>
+			<li>Woody</li>
+			<li>Stony</li>
+		</stuffCategories>
+		<thingCategories Inherit="False">
+		</thingCategories>
+		<graphicData>
+			<texPath>Things/Buildings/WatchTower</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>(2,2)</drawSize>
+			<damageData>
+				<rect>(0.1,0.1,1.8,1.8)</rect>
+			</damageData>
+		</graphicData>
+		<castEdgeShadows>true</castEdgeShadows>
+		<staticSunShadowHeight>1.0</staticSunShadowHeight>
+		<fillPercent>0.75</fillPercent>
+		<size>(2,2)</size>
+		<pathCost>50</pathCost>
+		<pathCostIgnoreRepeat>true</pathCostIgnoreRepeat>
+		<costStuffCount>150</costStuffCount>
+		<placeWorkers>
+			<li>PlaceWorker_NotUnderRoof</li>
+		</placeWorkers>
+		<statBases>
+			<MaxHitPoints>450</MaxHitPoints>
+			<WorkToBuild>4500</WorkToBuild>
+			<Mass>20</Mass>
+			<Flammability>1.0</Flammability>
+			<Beauty>-10</Beauty>
+		</statBases>
+		<comps>
+			<li Class="RimWorldRealFoW.CompProperties_AffectVision">
+				<fovMultiplier>1.4</fovMultiplier>
+			</li>
+		</comps>
+		<specialDisplayRadius>125.9</specialDisplayRadius>
+	</ThingDef>
+	<!-- Watch Scope -->
+	<ThingDef ParentName="BaseVisionStuff">
+		<defName>WatchTelescope</defName>
+		<label>watch telescope</label>
+		<description>Watch Telescope that increase vision when colonists stand on it.</description>
+		<minifiedDef>MinifiedThing</minifiedDef>
+		<altitudeLayer>Building</altitudeLayer>
+		<passability>Standable</passability>
+		<leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
+		<rotatable>false</rotatable>
+		<costList>
+			<Steel>30</Steel>
+			<ComponentIndustrial>3</ComponentIndustrial>
+		</costList>
+		<graphicData>
+			<texPath>Things/Buildings/WatchTelescope</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>(2,2)</drawSize>
+			<damageData>
+				<cornerTL>Damage/Corner</cornerTL>
+				<cornerTR>Damage/Corner</cornerTR>
+				<cornerBL>Damage/Corner</cornerBL>
+				<cornerBR>Damage/Corner</cornerBR>
+			</damageData>
+		</graphicData>
+		<castEdgeShadows>false</castEdgeShadows>
+		<fillPercent>0.1</fillPercent>
+		<size>(1,2)</size>
+		<pathCost>0</pathCost>
+		<pathCostIgnoreRepeat>true</pathCostIgnoreRepeat>
+		<statBases>
+			<MaxHitPoints>50</MaxHitPoints>
+			<WorkToBuild>1000</WorkToBuild>
+			<Mass>1</Mass>
+			<Flammability>0.1</Flammability>
+			<Beauty>0</Beauty>
+		</statBases>
+		<comps>
+			<li Class="RimWorldRealFoW.CompProperties_AffectVision">
+				<fovMultiplier>1.7</fovMultiplier>
+			</li>
+		</comps>
+		<constructionSkillPrerequisite>4</constructionSkillPrerequisite>
+		<researchPrerequisites>
+			<li>WatchTelescope</li>
+		</researchPrerequisites>
+		<specialDisplayRadius>152.9</specialDisplayRadius>
+	</ThingDef>
+
+</Defs>

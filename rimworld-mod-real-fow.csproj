@@ -382,7 +382,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sources\RimWorldRealFoW\Building_AdminCamera.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Building_CameraConsole.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\PlaceWorker_UnderRoof.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_GenView.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_RoofGrid.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_TerrainGrid.cs" />

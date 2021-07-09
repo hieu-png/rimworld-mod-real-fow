@@ -93,33 +93,27 @@ namespace RimWorldRealFoW
 		// Token: 0x06000069 RID: 105 RVA: 0x00006E0C File Offset: 0x0000500C
 		public override void CompTick()
 		{
-			bool flag = this.disabled;
-			if (!flag)
+			if (!this.disabled)
 			{
 				int ticksGame = Find.TickManager.TicksGame;
-				bool flag2 = this.pawn != null;
-				if (flag2)
+				if (this.pawn != null)
 				{
-					bool flag3 = this.pawnPather == null;
-					if (flag3)
+					if (this.pawnPather == null)
 					{
 						this.pawnPather = this.pawn.pather;
 					}
-					bool flag4 = this.pawnPather != null && this.pawnPather.Moving;
-					if (flag4)
+					if (this.pawnPather != null && this.pawnPather.Moving)
 					{
 						this.lastMovementTick = ticksGame;
 					}
-					bool flag5 = this.lastPosition != CompFieldOfViewWatcher.iv3Invalid && this.lastPosition != this.parent.Position;
-					if (flag5)
+					if (this.lastPosition != CompFieldOfViewWatcher.iv3Invalid && this.lastPosition != this.parent.Position)
 					{
 						this.lastPositionUpdateTick = ticksGame;
 						this.updateFoV(false);
 					}
 					else
 					{
-						bool flag6 = (ticksGame - this.lastPositionUpdateTick) % 30 == 0;
-						if (flag6)
+						if ((ticksGame - this.lastPositionUpdateTick) % 30 == 0)
 						{
 							this.updateFoV(false);
 						}
@@ -127,8 +121,8 @@ namespace RimWorldRealFoW
 				}
 				else
 				{
-					bool flag7 = (this.lastPosition != CompFieldOfViewWatcher.iv3Invalid && this.lastPosition != this.parent.Position) || ticksGame % 30 == 0;
-					if (flag7)
+					if (	(this.lastPosition != CompFieldOfViewWatcher.iv3Invalid 
+						  && this.lastPosition != this.parent.Position) || ticksGame % 30 == 0)
 					{
 						this.updateFoV(false);
 					}
@@ -139,16 +133,13 @@ namespace RimWorldRealFoW
 		// Token: 0x0600006A RID: 106 RVA: 0x00006F34 File Offset: 0x00005134
 		private void initMap()
 		{
-			bool flag = this.map != this.parent.Map;
-			if (flag)
+			if (this.map != this.parent.Map)
 			{
-				bool flag2 = this.map != null && this.lastFaction != null;
-				if (flag2)
+				if (this.map != null && this.lastFaction != null)
 				{
 					this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
 				}
-				bool flag3 = !this.disabled && this.mapCompSeenFog != null;
-				if (flag3)
+				if (!this.disabled && this.mapCompSeenFog != null)
 				{
 					this.mapCompSeenFog.fowWatchers.Remove(this);
 				}
@@ -159,8 +150,7 @@ namespace RimWorldRealFoW
 				this.roofGrid = this.map.roofGrid;
 				this.weatherManager = this.map.weatherManager;
 				this.lastFactionShownCells = this.mapCompSeenFog.getFactionShownCells(this.parent.Faction);
-				bool flag4 = !this.disabled;
-				if (flag4)
+				if (!this.disabled)
 				{
 					this.mapCompSeenFog.fowWatchers.Add(this);
 				}
@@ -172,34 +162,36 @@ namespace RimWorldRealFoW
 		// Token: 0x0600006B RID: 107 RVA: 0x0000708C File Offset: 0x0000528C
 		public void updateFoV(bool forceUpdate = false)
 		{
-			bool flag = this.disabled || !this.setupDone || Current.ProgramState == ProgramState.MapInitializing;
-			if (!flag)
+			if (!this.disabled || !this.setupDone || Current.ProgramState == ProgramState.MapInitializing)
 			{
 				ThingWithComps parent = this.parent;
 				IntVec3 position = parent.Position;
-				bool flag2 = parent != null && parent.Spawned && parent.Map != null && position != CompFieldOfViewWatcher.iv3Invalid;
-				if (flag2)
+				if (parent != null && parent.Spawned && parent.Map != null && position != CompFieldOfViewWatcher.iv3Invalid)
 				{
 					this.initMap();
 					Faction faction = parent.Faction;
-					bool flag3 = faction != null && (this.pawn == null || !this.pawn.Dead);
-					if (flag3)
+					if (faction != null && (this.pawn == null || !this.pawn.Dead))
 					{
-						bool flag4 = this.pawn != null;
-						if (flag4)
+						if (this.pawn != null)
 						{
 							IntVec3[] array = null;
-							bool flag5 = this.raceProps != null && this.raceProps.Animal && (this.pawn.playerSettings == null || this.pawn.playerSettings.Master == null || this.pawn.training == null || !this.pawn.training.HasLearned(TrainableDefOf.Release));
 							int num;
-							if (flag5)
+							if (this.raceProps != null
+								&& this.raceProps.Animal
+								&& (this.pawn.playerSettings == null
+								|| this.pawn.playerSettings.Master == null
+								|| this.pawn.training == null
+								|| !this.pawn.training.HasLearned(TrainableDefOf.Release)))
 							{
 								num = -1;
 							}
 							else
 							{
 								num = Mathf.RoundToInt(this.calcPawnSightRange(position, false, false));
-								bool flag6 = (this.pawnPather == null || !this.pawnPather.Moving) && this.pawn.CurJob != null;
-								if (flag6)
+
+								if ((this.pawnPather == null
+									|| !this.pawnPather.Moving)
+									&& this.pawn.CurJob != null)
 								{
 									JobDef jobDef = this.pawn.CurJob.def;
 									bool flag7 = jobDef == JobDefOf.AttackStatic || jobDef == JobDefOf.AttackMelee || jobDef == JobDefOf.Wait_Combat || jobDef == JobDefOf.Hunt;
