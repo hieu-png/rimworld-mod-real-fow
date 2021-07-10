@@ -403,7 +403,7 @@
     <Compile Include="Sources\RimWorldRealFoW\Detours\_ReservationUtility.cs" />
     <Compile Include="Sources\RimWorldRealFoW\RealFoWModDefaultsDef.cs" />
     <Compile Include="Sources\RimWorldRealFoW\RealFoWModSettings.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\CompProvideVisionPowered.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompProvideVisionManned.cs" />
     <Compile Include="Sources\RimWorldRealFoW\CompMainComponent.cs" />
     <Compile Include="Sources\RimWorldRealFoW\CompProperties_ProvideVisionPowered.cs" />
     <Compile Include="Sources\RimWorldRealFoW\CompComponentsPositionTracker.cs" />

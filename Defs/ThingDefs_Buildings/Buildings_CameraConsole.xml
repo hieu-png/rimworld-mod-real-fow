@@ -7,14 +7,12 @@
 		<thingClass>RimWorldRealFoW.Building_CameraConsole</thingClass>
 		<!--RimWorldRealFoW-->
 		<building>
-			<building>
 				<joyKind>Television</joyKind>
 				<watchBuildingStandDistanceRange>
 					<min>3</min>
 					<max>3</max>
 				</watchBuildingStandDistanceRange>
 				<watchBuildingStandRectWidth>3</watchBuildingStandRectWidth>
-			</building>
 		</building>
 		<graphicData>
 			<texPath>Things/Buildings/CameraConsole</texPath>
