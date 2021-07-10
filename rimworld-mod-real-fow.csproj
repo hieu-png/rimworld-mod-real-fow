@@ -302,6 +302,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Sources\RimWorldRealFoW\Building_CameraConsole.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Building_SurveillanceCamera.cs" />
     <Compile Include="Sources\RimWorldRealFoW\FoWDef.cs" />
     <Compile Include="Sources\RimWorldRealFoW\WorkGiver_SurveilCameraConsole.cs" />
     <Compile Include="Sources\RimWorldRealFoW\JobDriver_SurveilCameraConsole.cs" />
@@ -325,9 +326,7 @@
     <Compile Include="Sources\RimWorldRealFoW\Detours\_ReservationUtility.cs" />
     <Compile Include="Sources\RimWorldRealFoW\RealFoWModDefaultsDef.cs" />
     <Compile Include="Sources\RimWorldRealFoW\RealFoWModSettings.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\CompProvideVisionManned.cs" />
     <Compile Include="Sources\RimWorldRealFoW\CompMainComponent.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\CompProperties_ProvideVisionManned.cs" />
     <Compile Include="Sources\RimWorldRealFoW\CompComponentsPositionTracker.cs" />
     <Compile Include="Sources\RimWorldRealFoW\CompProvideVision.cs" />
     <Compile Include="Sources\RimWorldRealFoW\CompAffectVision.cs" />

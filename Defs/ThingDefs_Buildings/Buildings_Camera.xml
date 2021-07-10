@@ -6,7 +6,9 @@
 	</DesignatorDropdownGroupDef>
 	<!-- Surveillance Camera -->
 	<ThingDef Name="BaseCamera" ParentName="BaseVisionStuff" Abstract="True">
+		<tickerType>Normal</tickerType>
 		<designatorDropdown>SurveillanceCamera</designatorDropdown>
+		<thingClass>RimWorldRealFoW.Building_SurveillanceCamera</thingClass>
 		<minifiedDef>MinifiedThing</minifiedDef>
 		<passability>Standable</passability>
 		<fillPercent>0</fillPercent>
@@ -59,7 +61,7 @@
 		<comps>
 			<li Class="CompProperties_Power">
 				<compClass>CompPowerTrader</compClass>
-				<basePowerConsumption>75</basePowerConsumption>
+				<basePowerConsumption>50</basePowerConsumption>
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
 				<viewRadius>20</viewRadius>
@@ -96,7 +98,7 @@
 		<comps>
 			<li Class="CompProperties_Power">
 				<compClass>CompPowerTrader</compClass>
-				<basePowerConsumption>150</basePowerConsumption>
+				<basePowerConsumption>75</basePowerConsumption>
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
 				<viewRadius>30</viewRadius>
@@ -109,7 +111,6 @@
 		<specialDisplayRadius>29.9</specialDisplayRadius>
 	</ThingDef>
 	<ThingDef ParentName="BaseCamera">
-		
 		<defName>SurveillanceCamera_High</defName>
 		<label>surveillance camera post</label>
 		<description>.</description>
@@ -119,12 +120,11 @@
 			<texPath>Things/Buildings/SurveillanceCamera_High</texPath>
 			<drawSize>(2,3.5)</drawSize>
 		</graphicData>
-		<tickerType>Rare</tickerType>
 		<costList>
 			<Steel>70</Steel>
 			<ComponentIndustrial>4</ComponentIndustrial>
 		</costList>
-		<statBases Inherid="False">
+		<statBases Inherit="False">
 			<Mass>20</Mass>
 			<Beauty>0</Beauty>
 			<MaxHitPoints>100</MaxHitPoints>
@@ -135,16 +135,17 @@
 		<comps>
 			<li Class="CompProperties_Power">
 				<compClass>CompPowerTrader</compClass>
-				<basePowerConsumption>250</basePowerConsumption>
+				<basePowerConsumption>100</basePowerConsumption>
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
 				<viewRadius>50</viewRadius>
+				<needManned>true</needManned>
 			</li>
 		</comps>
 		<researchPrerequisites>
 			<li>Electricity</li>
 		</researchPrerequisites>
-		<specialDisplayRadius>49.9</specialDisplayRadius>
+		<specialDisplayRadius>50</specialDisplayRadius>
 		<placeWorkers>
 			<li>PlaceWorker_NotUnderRoof</li>
 		</placeWorkers>

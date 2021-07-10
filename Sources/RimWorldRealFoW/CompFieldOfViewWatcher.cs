@@ -30,7 +30,6 @@ namespace RimWorldRealFoW
             this.compFlickable = this.parent.GetComp<CompFlickable>();
             this.compMannable = this.parent.GetComp<CompMannable>();
             this.compProvideVision = this.parent.GetComp<CompProvideVision>();
-            this.compProvideVisionManned = this.parent.GetComp<CompProvideVisionManned>();
             this.pawn = (this.parent as Pawn);
             this.building = (this.parent as Building);
             this.turret = (this.parent as Building_TurretGun);
@@ -96,6 +95,8 @@ namespace RimWorldRealFoW
         {
             if (!this.disabled)
             {
+                // 
+
                 int ticksGame = Find.TickManager.TicksGame;
                 if (this.pawn != null)
                 {
@@ -110,13 +111,13 @@ namespace RimWorldRealFoW
                     if (this.lastPosition != CompFieldOfViewWatcher.iv3Invalid && this.lastPosition != this.parent.Position)
                     {
                         this.lastPositionUpdateTick = ticksGame;
-                        this.updateFoV(false);
+                        updateFoV(false);
                     }
                     else
                     {
                         if ((ticksGame - this.lastPositionUpdateTick) % 30 == 0)
                         {
-                            this.updateFoV(false);
+                            updateFoV(false);
                         }
                     }
                 }
@@ -129,6 +130,11 @@ namespace RimWorldRealFoW
                     }
                 }
             }
+        }
+
+        public override void CompTickRare()
+        {
+            base.CompTickRare();
         }
 
         // Token: 0x0600006A RID: 106 RVA: 0x00006F34 File Offset: 0x00005134
@@ -175,8 +181,8 @@ namespace RimWorldRealFoW
                     {
                         if (this.pawn != null)
                         {
-                            IntVec3[] array = null;
-                            int num;
+                            IntVec3[] peekDirection = null;
+                            int sightRange;
                             if (this.raceProps != null
                                 && this.raceProps.Animal
                                 && (this.pawn.playerSettings == null
@@ -184,54 +190,58 @@ namespace RimWorldRealFoW
                                 || this.pawn.training == null
                                 || !this.pawn.training.HasLearned(TrainableDefOf.Release)))
                             {
-                                num = -1;
+                                sightRange = -1;
                             }
                             else
                             {
-                                num = Mathf.RoundToInt(this.calcPawnSightRange(position, false, false));
+                                sightRange = Mathf.RoundToInt(this.calcPawnSightRange(position, false, false));
 
                                 if ((this.pawnPather == null
                                     || !this.pawnPather.Moving)
                                     && this.pawn.CurJob != null)
                                 {
                                     JobDef jobDef = this.pawn.CurJob.def;
-                                    bool flag7 = jobDef == JobDefOf.AttackStatic || jobDef == JobDefOf.AttackMelee || jobDef == JobDefOf.Wait_Combat || jobDef == JobDefOf.Hunt;
-                                    if (flag7)
+                                    if (
+                                        jobDef == JobDefOf.AttackStatic
+                                        || jobDef == JobDefOf.AttackMelee
+                                        || jobDef == JobDefOf.Wait_Combat
+                                        || jobDef == JobDefOf.Hunt)
                                     {
-                                        array = GenAdj.CardinalDirections;
+                                        peekDirection = GenAdj.CardinalDirections;
                                     }
-                                    else
+                                    else if (
+                                        jobDef == JobDefOf.Mine
+                                        && this.pawn.CurJob.targetA != null
+                                        && this.pawn.CurJob.targetA.Cell != IntVec3.Invalid)
                                     {
-                                        bool flag8 = jobDef == JobDefOf.Mine && this.pawn.CurJob.targetA != null && this.pawn.CurJob.targetA.Cell != IntVec3.Invalid;
-                                        if (flag8)
-                                        {
-                                            array = FoWThingUtils.getPeekArray(this.pawn.CurJob.targetA.Cell - this.parent.Position);
-                                        }
+                                        peekDirection = FoWThingUtils.getPeekArray(this.pawn.CurJob.targetA.Cell - this.parent.Position);
                                     }
+
                                 }
                             }
-                            bool flag9 = !this.calculated || forceUpdate || faction != this.lastFaction || position != this.lastPosition || num != this.lastSightRange || array != this.lastPeekDirections;
-                            if (flag9)
+                            if (!this.calculated
+                                || forceUpdate
+                                || faction != this.lastFaction
+                                || position != this.lastPosition
+                                || sightRange != this.lastSightRange
+                                || peekDirection != this.lastPeekDirections)
                             {
                                 this.calculated = true;
                                 this.lastPosition = position;
-                                this.lastSightRange = num;
-                                this.lastPeekDirections = array;
-                                bool flag10 = this.lastFaction != faction;
-                                if (flag10)
+                                this.lastSightRange = sightRange;
+                                this.lastPeekDirections = peekDirection;
+                                if (this.lastFaction != faction)
                                 {
-                                    bool flag11 = this.lastFaction != null;
-                                    if (flag11)
+                                    if (this.lastFaction != null)
                                     {
                                         this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
                                     }
                                     this.lastFaction = faction;
                                     this.lastFactionShownCells = this.mapCompSeenFog.getFactionShownCells(faction);
                                 }
-                                bool flag12 = num != -1;
-                                if (flag12)
+                                if (sightRange != -1)
                                 {
-                                    this.calculateFoV(parent, num, array);
+                                    this.calculateFoV(parent, sightRange, peekDirection);
                                 }
                                 else
                                 {
@@ -241,33 +251,40 @@ namespace RimWorldRealFoW
                         }
                         else if (this.turret != null && this.compMannable == null)
                         {
-                            int num2 = Mathf.RoundToInt(this.turret.GunCompEq.PrimaryVerb.verbProps.range);
-                            bool flag14 = Find.Storyteller.difficulty.difficulty >= 4 || (this.compPowerTrader != null && !this.compPowerTrader.PowerOn) || (this.compRefuelable != null && !this.compRefuelable.HasFuel) || (this.compFlickable != null && !this.compFlickable.SwitchIsOn);
-                            if (flag14)
+                            //Turret is more sensor based so reduced vision range, still can feed back some info
+
+                            int sightRange = Mathf.RoundToInt(this.turret.GunCompEq.PrimaryVerb.verbProps.range*0.6f);
+
+                            if ((this.compPowerTrader != null && !this.compPowerTrader.PowerOn)
+                                || (this.compRefuelable != null && !this.compRefuelable.HasFuel)
+                                || (this.compFlickable != null && !this.compFlickable.SwitchIsOn)
+                                || !this.mapCompSeenFog.workingCameraConsole
+                                )
                             {
-                                num2 = 0;
+                                sightRange = 0;
                             }
-                            bool flag15 = !this.calculated || forceUpdate || faction != this.lastFaction || position != this.lastPosition || num2 != this.lastSightRange;
-                            if (flag15)
+                            if (
+                                !this.calculated
+                                || forceUpdate
+                                || faction != this.lastFaction
+                                || position != this.lastPosition
+                                || sightRange != this.lastSightRange)
                             {
                                 this.calculated = true;
                                 this.lastPosition = position;
-                                this.lastSightRange = num2;
-                                bool flag16 = this.lastFaction != faction;
-                                if (flag16)
+                                this.lastSightRange = sightRange;
+                                if (this.lastFaction != faction)
                                 {
-                                    bool flag17 = this.lastFaction != null;
-                                    if (flag17)
+                                    if (this.lastFaction != null)
                                     {
                                         this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
                                     }
                                     this.lastFaction = faction;
                                     this.lastFactionShownCells = this.mapCompSeenFog.getFactionShownCells(faction);
                                 }
-                                bool flag18 = num2 != 0;
-                                if (flag18)
+                                if (sightRange != 0)
                                 {
-                                    this.calculateFoV(parent, num2, null);
+                                    this.calculateFoV(parent, sightRange, null);
                                 }
                                 else
                                 {
@@ -286,6 +303,7 @@ namespace RimWorldRealFoW
                                 || (this.compProvideVision.Props.needManned && !this.mapCompSeenFog.workingCameraConsole)
                                 )
                             {
+
                                 viewRadius = 0;
                             }
 
@@ -318,10 +336,7 @@ namespace RimWorldRealFoW
                                 }
                             }
                         }
-                        else if (this.compProvideVisionManned != null)
-                        {
-
-                        } else  if (this.building != null)
+                        else if (this.building != null)
                         {
                             int num4 = 0;
                             bool flag26 = !this.calculated || forceUpdate || faction != this.lastFaction || position != this.lastPosition || num4 != this.lastSightRange;
@@ -368,12 +383,10 @@ namespace RimWorldRealFoW
             }
         }
 
-        // Token: 0x0600006C RID: 108 RVA: 0x000077F0 File Offset: 0x000059F0
         public float calcPawnSightRange(IntVec3 position, bool forTargeting, bool shouldMove)
         {
-            bool flag = this.pawn == null;
             float result;
-            if (flag)
+            if (this.pawn == null)
             {
                 Log.Error("calcPawnSightRange performed on non pawn thing", false);
                 result = 0f;
@@ -382,29 +395,29 @@ namespace RimWorldRealFoW
             {
                 float num = 0f;
                 this.initMap();
-                bool flag2 = !this.isMechanoid && this.pawn.CurJob != null && this.pawn.jobs.curDriver.asleep;
-                bool flag3 = !shouldMove && !flag2 && (this.pawnPather == null || !this.pawnPather.Moving);
-                if (flag3)
+                bool sleeping = !this.isMechanoid && this.pawn.CurJob != null && this.pawn.jobs.curDriver.asleep;
+                if (!shouldMove && !sleeping && (this.pawnPather == null || !this.pawnPather.Moving))
                 {
-                    Verb verb = null;
-                    bool flag4 = this.pawn.CurJob != null;
-                    if (flag4)
+                    Verb attackVerb = null;
+                    if (this.pawn.CurJob != null)
                     {
                         JobDef jobDef = this.pawn.CurJob.def;
-                        bool flag5 = jobDef == JobDefOf.ManTurret;
-                        if (flag5)
+                        //Get manned turret sight range.
+                        if (jobDef == JobDefOf.ManTurret)
                         {
                             Building_Turret building_Turret = this.pawn.CurJob.targetA.Thing as Building_Turret;
                             bool flag6 = building_Turret != null;
                             if (flag6)
                             {
-                                verb = building_Turret.AttackVerb;
+                                attackVerb = building_Turret.AttackVerb;
                             }
                         }
                         else
                         {
-                            bool flag7 = jobDef == JobDefOf.AttackStatic || jobDef == JobDefOf.AttackMelee || jobDef == JobDefOf.Wait_Combat || jobDef == JobDefOf.Hunt;
-                            if (flag7)
+                            if (jobDef == JobDefOf.AttackStatic
+                                || jobDef == JobDefOf.AttackMelee
+                                || jobDef == JobDefOf.Wait_Combat
+                                || jobDef == JobDefOf.Hunt)
                             {
                                 bool flag8 = this.pawn.equipment != null;
                                 if (flag8)
@@ -413,22 +426,24 @@ namespace RimWorldRealFoW
                                     bool flag9 = primary != null && primary.def.IsRangedWeapon;
                                     if (flag9)
                                     {
-                                        verb = primary.GetComp<CompEquippable>().PrimaryVerb;
+                                        attackVerb = primary.GetComp<CompEquippable>().PrimaryVerb;
                                     }
                                 }
                             }
                         }
                     }
-                    bool flag10 = verb != null && verb.verbProps.range > this.baseViewRange && verb.verbProps.requireLineOfSight && verb.EquipmentSource.def.IsRangedWeapon;
-                    if (flag10)
+                    if (attackVerb != null
+                        && attackVerb.verbProps.range > this.baseViewRange
+                        && attackVerb.verbProps.requireLineOfSight
+                        && attackVerb.EquipmentSource.def.IsRangedWeapon)
                     {
-                        float range = verb.verbProps.range;
-                        bool flag11 = this.baseViewRange < range;
-                        if (flag11)
+                        float range = attackVerb.verbProps.range;
+
+                        if (this.baseViewRange < range)
                         {
                             int num2 = Find.TickManager.TicksGame - this.lastMovementTick;
                             float statValue = this.pawn.GetStatValue(StatDefOf.AimingDelayFactor, true);
-                            int num3 = (verb.verbProps.warmupTime * statValue).SecondsToTicks() * Mathf.RoundToInt((range - this.baseViewRange) / 2f);
+                            int num3 = (attackVerb.verbProps.warmupTime * statValue).SecondsToTicks() * Mathf.RoundToInt((range - this.baseViewRange) / 2f);
                             bool flag12 = num2 >= num3;
                             if (flag12)
                             {
@@ -442,58 +457,56 @@ namespace RimWorldRealFoW
                         }
                     }
                 }
-                bool flag13 = num == 0f;
-                if (flag13)
+                if (num == 0f)
                 {
                     num = this.baseViewRange * this.capacities.GetLevel(PawnCapacityDefOf.Sight);
                 }
-                bool flag14 = !forTargeting && flag2;
-                if (flag14)
+                if (!forTargeting && sleeping)
                 {
                     num *= 0.2f;
                 }
-                List<CompAffectVision> list = this.mapCompSeenFog.compAffectVisionGrid[position.z * this.mapSizeX + position.x];
-                int count = list.Count;
-                for (int i = 0; i < count; i++)
+                List<CompAffectVision> visionAffectingBuilding = this.mapCompSeenFog.compAffectVisionGrid[position.z * this.mapSizeX + position.x];
+                bool ignoreWeather = false;
+                bool ignoreDarkness = false;
+                foreach (CompAffectVision visionAffecter in visionAffectingBuilding)
                 {
-                    num *= list[i].Props.fovMultiplier;
+                    if (visionAffecter.Props.denyDarkness)
+                        ignoreDarkness = true;
+                    if (visionAffecter.Props.denyWeather)
+                        ignoreWeather = true;
+                    num *= visionAffecter.Props.fovMultiplier;
                 }
-                bool flag15 = !this.isMechanoid;
-                if (flag15)
+                if (!this.isMechanoid)
                 {
-                    float num5 = this.glowGrid.GameGlowAt(position, false);
-                    bool flag16 = num5 != 1f;
-                    if (flag16)
+                    float currGlow = this.glowGrid.GameGlowAt(position, false);
+                    if (currGlow != 1f)
                     {
-                        float num6 = 0.6f;
+                        float darknessModifier = 0.6f;
+                        if (ignoreDarkness)
+                            darknessModifier = 1f;
                         int count2 = this.hediffs.Count;
                         for (int j = 0; j < count2; j++)
                         {
-                            bool flag17 = this.hediffs[j].def == HediffDefOf.BionicEye;
-                            if (flag17)
+                            if (this.hediffs[j].def == HediffDefOf.BionicEye)
                             {
-                                num6 += 0.2f;
+                                darknessModifier += 0.2f;
                             }
                         }
-                        bool flag18 = num6 < 1f;
-                        if (flag18)
+                        if (darknessModifier < 1f)
                         {
-                            num *= Mathf.Lerp(num6, 1f, num5);
+                            num *= Mathf.Lerp(darknessModifier, 1f, currGlow);
                         }
                     }
-                    bool flag19 = !this.roofGrid.Roofed(position.x, position.z);
-                    if (flag19)
+                    if (!this.roofGrid.Roofed(position.x, position.z)&&!ignoreWeather)
                     {
                         float curWeatherAccuracyMultiplier = this.weatherManager.CurWeatherAccuracyMultiplier;
-                        bool flag20 = curWeatherAccuracyMultiplier != 1f;
-                        if (flag20)
+                        if (curWeatherAccuracyMultiplier != 1f)
                         {
                             num *= Mathf.Lerp(0.5f, 1f, curWeatherAccuracyMultiplier);
                         }
                     }
                 }
-                bool flag21 = num < 1f;
-                if (flag21)
+                if (num < 1f)
                 {
                     result = 1f;
                 }
@@ -994,7 +1007,6 @@ namespace RimWorldRealFoW
         // Token: 0x04000079 RID: 121
         private CompProvideVision compProvideVision;
 
-        private CompProvideVisionManned compProvideVisionManned;
 
         // Token: 0x0400007A RID: 122
         private bool setupDone = false;

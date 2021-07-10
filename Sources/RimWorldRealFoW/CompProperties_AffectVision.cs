@@ -16,10 +16,10 @@ namespace RimWorldRealFoW
 		public float fovMultiplier;
 
 		// Token: 0x04000033 RID: 51
-		public bool denyDarkness;
+		public bool denyDarkness = false;
 
 		// Token: 0x04000034 RID: 52
-		public bool denyWeather;
+		public bool denyWeather = false;
 
 		// Token: 0x04000035 RID: 53
 		public bool applyImmediately;

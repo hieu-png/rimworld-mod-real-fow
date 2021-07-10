@@ -5,7 +5,6 @@ using RimWorld;
 using RimWorldRealFoW;
 using UnityEngine;
 using Verse;
-
 namespace RimWorldRealFoW
 {
 	// Token: 0x02000004 RID: 4
@@ -56,17 +55,22 @@ namespace RimWorldRealFoW
 				this.init();
 			}
 		}
+		//New addition
 
-		public void RegisterCameraConsole(Building_CameraConsole console)
+		//Camera console
+
+		public List<Building_CameraConsole> cameraConsoles = new List<Building_CameraConsole>();
+
+
+		public void AddCameraConsole(Building_CameraConsole console)
         {
 			cameraConsoles.Add(console);
         }
-		public void DeRegisterCameraConsole(Building_CameraConsole console)
+		public void RemoveCameraConsole(Building_CameraConsole console)
         {
 			cameraConsoles.Remove(console);
         }
 
-		public List<Building_CameraConsole> cameraConsoles = new List<Building_CameraConsole>();
 
 		public bool workingCameraConsole
         {
@@ -75,8 +79,33 @@ namespace RimWorldRealFoW
 				return this.cameraConsoles.Any((Building_CameraConsole c) => c.WorkingNow && c.Manned);
 			}
         }
+		//Camera building
+		public List<Building_SurveillanceCamera> surveillanceCameras = new List<Building_SurveillanceCamera>();
 
-		// Token: 0x0600000A RID: 10 RVA: 0x00002644 File Offset: 0x00000844
+		public void AddSurveillanceCamera(Building_SurveillanceCamera camera)
+		{
+			surveillanceCameras.Add(camera);
+		}
+
+		public void RemoveSurveillanceCamera(Building_SurveillanceCamera camera)
+		{
+			surveillanceCameras.Remove(camera);
+		}
+
+		public int SurveillanceCameraCount()
+        {
+			//Linq is cool but seem to have performance issure, a good old for loop seem beter
+			//return surveillanceCameras.Count((Building_SurveillanceCamera x)=>x.isPowered());
+			int count = 0;
+			foreach(Building_SurveillanceCamera camera in surveillanceCameras)
+            {
+				if (camera.isPowered())
+					count++;
+            }
+			return count;
+		}
+
+
 		public short[] getFactionShownCells(Faction faction)
 		{
 			bool flag = faction == null;
@@ -103,7 +132,6 @@ namespace RimWorldRealFoW
 			return result;
 		}
 
-		// Token: 0x0600000B RID: 11 RVA: 0x000026D4 File Offset: 0x000008D4
 		public bool isShown(Faction faction, IntVec3 cell)
 		{
 			return this.isShown(faction, cell.x, cell.z);

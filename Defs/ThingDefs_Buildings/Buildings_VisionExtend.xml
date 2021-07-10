@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
-
 	<!-- Watch Tower -->
 	<ThingDef ParentName="BaseVisionStuff">
 		<defName>WatchTower</defName>
@@ -15,8 +14,7 @@
 			<li>Woody</li>
 			<li>Stony</li>
 		</stuffCategories>
-		<thingCategories Inherit="False">
-		</thingCategories>
+		<thingCategories Inherit="False"/>
 		<graphicData>
 			<texPath>Things/Buildings/WatchTower</texPath>
 			<graphicClass>Graphic_Single</graphicClass>
@@ -45,6 +43,60 @@
 		<comps>
 			<li Class="RimWorldRealFoW.CompProperties_AffectVision">
 				<fovMultiplier>1.4</fovMultiplier>
+			</li>
+		</comps>
+		<specialDisplayRadius>125.9</specialDisplayRadius>
+	</ThingDef>
+	<ThingDef ParentName="BaseVisionStuff">
+		<defName>WatchTowerWithBeacon</defName>
+		<label>light watch tower</label>
+		<description>Watch Tower that increase vision when colonists stand on it. Work fine in the dark</description>
+		<altitudeLayer>Building</altitudeLayer>
+		<passability>Standable</passability>
+		<leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
+		<rotatable>false</rotatable>
+		<stuffCategories>
+			<li>Metallic</li>
+			<li>Stony</li>
+		</stuffCategories>
+		<thingCategories Inherit="False"/>
+		<graphicData>
+			<texPath>Things/Buildings/WatchTowerWithBeacon</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>(2,2)</drawSize>
+			<damageData>
+				<rect>(0.1,0.1,1.8,1.8)</rect>
+			</damageData>
+		</graphicData>
+		<castEdgeShadows>true</castEdgeShadows>
+		<staticSunShadowHeight>1.0</staticSunShadowHeight>
+		<fillPercent>0.75</fillPercent>
+		<size>(2,2)</size>
+		<pathCost>50</pathCost>
+		<pathCostIgnoreRepeat>true</pathCostIgnoreRepeat>
+		<costStuffCount>150</costStuffCount>
+		<placeWorkers>
+			<li>PlaceWorker_NotUnderRoof</li>
+		</placeWorkers>
+		<statBases>
+			<MaxHitPoints>450</MaxHitPoints>
+			<WorkToBuild>4500</WorkToBuild>
+			<Mass>20</Mass>
+			<Flammability>1.0</Flammability>
+			<Beauty>-10</Beauty>
+		</statBases>
+		<comps>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTrader</compClass>
+				<basePowerConsumption>125</basePowerConsumption>
+			</li>
+			<li Class="CompProperties_Glower">
+				<glowRadius>12</glowRadius>
+				<glowColor>(217,217,208,0)</glowColor>
+			</li>
+			<li Class="RimWorldRealFoW.CompProperties_AffectVision">
+				<fovMultiplier>1.4</fovMultiplier>
+				<denyDarkness>true</denyDarkness>
 			</li>
 		</comps>
 		<specialDisplayRadius>125.9</specialDisplayRadius>
@@ -97,5 +149,4 @@
 		</researchPrerequisites>
 		<specialDisplayRadius>152.9</specialDisplayRadius>
 	</ThingDef>
-
 </Defs>
