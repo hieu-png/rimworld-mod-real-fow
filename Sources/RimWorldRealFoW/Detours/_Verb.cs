@@ -1,7 +1,6 @@
 ﻿using System;
 using RimWorld;
 using RimWorldRealFoW;
-using RimWorldRealFoW;
 using UnityEngine;
 using Verse;
 using RimWorldRealFoW.Utils;

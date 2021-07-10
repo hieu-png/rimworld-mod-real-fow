@@ -14,9 +14,8 @@ namespace RimWorldRealFoW.Detours
 		{
 			Map value = Traverse.Create(__instance).Property("Map", null).GetValue<Map>();
 			MapComponentSeenFog mapComponentSeenFog = value.getMapComponentSeenFog();
-			bool flag = mapComponentSeenFog != null && c.InBounds(value) && !mapComponentSeenFog.knownCells[value.cellIndices.CellToIndex(c)];
 			bool result;
-			if (flag)
+			if (mapComponentSeenFog != null && c.InBounds(value) && !mapComponentSeenFog.knownCells[value.cellIndices.CellToIndex(c)])
 			{
 				__result = false;
 				result = false;
@@ -32,9 +31,8 @@ namespace RimWorldRealFoW.Detours
 		public static bool CanDesignateThing_Prefix(ref Thing t, ref AcceptanceReport __result)
 		{
 			CompHiddenable compHiddenable = t.TryGetCompHiddenable();
-			bool flag = compHiddenable != null && compHiddenable.hidden;
 			bool result;
-			if (flag)
+			if (compHiddenable != null && compHiddenable.hidden)
 			{
 				__result = false;
 				result = false;

@@ -12,16 +12,13 @@ namespace RimWorldRealFoW.Detours
 		// Token: 0x0600007E RID: 126 RVA: 0x00008EA4 File Offset: 0x000070A4
 		public static void CanDesignateCell_Postfix(IntVec3 c, ref Designator __instance, ref AcceptanceReport __result)
 		{
-			bool flag = !__result.Accepted;
-			if (flag)
+			if (!__result.Accepted)
 			{
 				Map value = Traverse.Create(__instance).Property("Map", null).GetValue<Map>();
-				bool flag2 = value.designationManager.DesignationAt(c, DesignationDefOf.Mine) == null;
-				if (flag2)
+				if (value.designationManager.DesignationAt(c, DesignationDefOf.Mine) == null)
 				{
 					MapComponentSeenFog mapComponentSeenFog = value.getMapComponentSeenFog();
-					bool flag3 = mapComponentSeenFog != null && c.InBounds(value) && !mapComponentSeenFog.knownCells[value.cellIndices.CellToIndex(c)];
-					if (flag3)
+					if (mapComponentSeenFog != null && c.InBounds(value) && !mapComponentSeenFog.knownCells[value.cellIndices.CellToIndex(c)])
 					{
 						__result = true;
 					}

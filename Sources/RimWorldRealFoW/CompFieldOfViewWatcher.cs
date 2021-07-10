@@ -24,17 +24,19 @@ namespace RimWorldRealFoW
             this.viewRect = new CellRect(-1, -1, 0, 0);
             this.viewPositions = new IntVec3[5];
             this.compHiddenable = this.mainComponent.compHiddenable;
+
             this.compGlower = this.parent.GetComp<CompGlower>();
             this.compPowerTrader = this.parent.GetComp<CompPowerTrader>();
             this.compRefuelable = this.parent.GetComp<CompRefuelable>();
             this.compFlickable = this.parent.GetComp<CompFlickable>();
             this.compMannable = this.parent.GetComp<CompMannable>();
             this.compProvideVision = this.parent.GetComp<CompProvideVision>();
+
             this.pawn = (this.parent as Pawn);
             this.building = (this.parent as Building);
             this.turret = (this.parent as Building_TurretGun);
-            bool flag = this.pawn != null;
-            if (flag)
+
+            if (this.pawn != null)
             {
                 this.raceProps = this.pawn.RaceProps;
                 this.hediffs = this.pawn.health.hediffSet.hediffs;
@@ -42,8 +44,7 @@ namespace RimWorldRealFoW
                 this.pawnPather = this.pawn.pather;
             }
             this.def = this.parent.def;
-            bool flag2 = this.def.race != null;
-            if (flag2)
+            if (this.def.race != null)
             {
                 this.isMechanoid = this.def.race.IsMechanoid;
             }
@@ -52,8 +53,7 @@ namespace RimWorldRealFoW
                 this.isMechanoid = false;
             }
             RealFoWModDefaultsDef named = DefDatabase<RealFoWModDefaultsDef>.GetNamed(RealFoWModDefaultsDef.DEFAULT_DEF_NAME, true);
-            bool flag3 = !this.isMechanoid;
-            if (flag3)
+            if (!this.isMechanoid)
             {
                 this.baseViewRange = named.baseViewRange;
             }
@@ -61,8 +61,11 @@ namespace RimWorldRealFoW
             {
                 this.baseViewRange = Mathf.Round(named.baseViewRange * 1.25f);
             }
-            bool flag4 = this.pawn == null && (this.turret == null || this.compMannable != null) && this.compProvideVision == null && this.building == null;
-            if (flag4)
+            if (
+            this.pawn == null 
+            && (this.turret == null || this.compMannable != null) 
+            && this.compProvideVision == null 
+            && this.building == null)
             {
                 Log.Message("Removing unneeded FoV watcher from " + this.parent.ThingID, false);
                 this.disabled = true;
@@ -95,8 +98,6 @@ namespace RimWorldRealFoW
         {
             if (!this.disabled)
             {
-                // 
-
                 int ticksGame = Find.TickManager.TicksGame;
                 if (this.pawn != null)
                 {
@@ -338,18 +339,21 @@ namespace RimWorldRealFoW
                         }
                         else if (this.building != null)
                         {
-                            int num4 = 0;
-                            bool flag26 = !this.calculated || forceUpdate || faction != this.lastFaction || position != this.lastPosition || num4 != this.lastSightRange;
-                            if (flag26)
+                            int sightRange = 0;
+                           
+                            if (
+                            !this.calculated 
+                            || forceUpdate 
+                            || faction != this.lastFaction 
+                            || position != this.lastPosition 
+                            || sightRange != this.lastSightRange)
                             {
                                 this.calculated = true;
                                 this.lastPosition = position;
-                                this.lastSightRange = num4;
-                                bool flag27 = this.lastFaction != faction;
-                                if (flag27)
+                                this.lastSightRange = sightRange;
+                                if (this.lastFaction != faction)
                                 {
-                                    bool flag28 = this.lastFaction != null;
-                                    if (flag28)
+                                    if (this.lastFaction != null)
                                     {
                                         this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
                                     }
@@ -367,11 +371,9 @@ namespace RimWorldRealFoW
                     }
                     else
                     {
-                        bool flag29 = faction != this.lastFaction;
-                        if (flag29)
+                        if (faction != this.lastFaction)
                         {
-                            bool flag30 = this.lastFaction != null;
-                            if (flag30)
+                            if (this.lastFaction != null)
                             {
                                 this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
                             }
@@ -451,8 +453,8 @@ namespace RimWorldRealFoW
                             }
                             else
                             {
-                                int num4 = Mathf.RoundToInt((range - this.baseViewRange) * ((float)num2 / (float)num3));
-                                num = (this.baseViewRange + (float)num4) * this.capacities.GetLevel(PawnCapacityDefOf.Sight);
+                                int sightRange = Mathf.RoundToInt((range - this.baseViewRange) * ((float)num2 / (float)num3));
+                                num = (this.baseViewRange + (float)sightRange) * this.capacities.GetLevel(PawnCapacityDefOf.Sight);
                             }
                         }
                     }
@@ -586,7 +588,7 @@ namespace RimWorldRealFoW
                 }
                 int occupiedX;
                 int occupiedZ;
-                int oldViewRectIdx;
+               // int oldViewRectIdx;
                 for (occupiedX = occupiedRect.minX; occupiedX <= occupiedRect.maxX; occupiedX++)
                 {
                     for (occupiedZ = occupiedRect.minZ; occupiedZ <= occupiedRect.maxZ; occupiedZ++)
@@ -730,15 +732,15 @@ namespace RimWorldRealFoW
                     bool[] viewBlockerCells = this.mapCompSeenFog.viewBlockerCells;
                     this.viewPositions[0] = position;
                     bool flag5 = array3 == null;
-                    int num4;
+                    int sightRange;
                     if (flag5)
                     {
-                        num4 = 1;
+                        sightRange = 1;
                     }
                     else
                     {
-                        num4 = 1 + array3.Length;
-                        for (int k = 0; k < num4 - 1; k++)
+                        sightRange = 1 + array3.Length;
+                        for (int k = 0; k < sightRange - 1; k++)
                         {
                             this.viewPositions[1 + k] = position + array3[k];
                         }
@@ -749,7 +751,7 @@ namespace RimWorldRealFoW
                     bool flag7 = false;
                     bool flag8 = false;
                     bool flag9 = false;
-                    for (int l = 0; l < num4; l++)
+                    for (int l = 0; l < sightRange; l++)
                     {
                         ref IntVec3 ptr = ref this.viewPositions[l];
                         bool flag10 = ptr.x >= 0 && ptr.z >= 0 && ptr.x <= num5 && ptr.z <= num6 && (l == 0 || ptr.IsInside(parent) || !viewBlockerCells[ptr.z * num + ptr.x]);
@@ -782,7 +784,7 @@ namespace RimWorldRealFoW
                             }
                         }
                     }
-                    for (int m = 0; m < num4; m++)
+                    for (int m = 0; m < sightRange; m++)
                     {
                         ref IntVec3 ptr2 = ref this.viewPositions[m];
                         bool flag14 = ptr2.x >= 0 && ptr2.z >= 0 && ptr2.x <= num5 && ptr2.z <= num6 && (m == 0 || ptr2.IsInside(parent) || !viewBlockerCells[ptr2.z * num + ptr2.x]);

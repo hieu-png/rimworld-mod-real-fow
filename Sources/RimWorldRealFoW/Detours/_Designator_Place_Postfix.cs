@@ -18,13 +18,11 @@ namespace RimWorldRealFoW.Detours
 				CellRect cellRect = GenAdj.OccupiedRect(c, traverse.Field("placingRot").GetValue<Rot4>(), traverse.Property("PlacingDef", null).GetValue<BuildableDef>().Size);
 				Map value = traverse.Property("Map", null).GetValue<Map>();
 				MapComponentSeenFog mapComponentSeenFog = value.getMapComponentSeenFog();
-				bool flag = mapComponentSeenFog != null;
-				if (flag)
+				if (mapComponentSeenFog != null)
 				{
 					foreach (IntVec3 c2 in cellRect)
 					{
-						bool flag2 = !mapComponentSeenFog.knownCells[value.cellIndices.CellToIndex(c2)];
-						if (flag2)
+						if (!mapComponentSeenFog.knownCells[value.cellIndices.CellToIndex(c2)])
 						{
 							__result = "CannotPlaceInUndiscovered".Translate();
 							break;

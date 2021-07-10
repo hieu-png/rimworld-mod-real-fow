@@ -24,12 +24,10 @@ namespace RimWorldRealFoW.Detours
 		// Token: 0x06000079 RID: 121 RVA: 0x00008C40 File Offset: 0x00006E40
 		public static void Notify_Removing_Postfix(ref Designation __instance)
 		{
-			bool flag = __instance.def == DesignationDefOf.Mine && !__instance.target.HasThing;
-			if (flag)
+			if (__instance.def == DesignationDefOf.Mine && !__instance.target.HasThing)
 			{
 				MapComponentSeenFog mapComponentSeenFog = __instance.designationManager.map.getMapComponentSeenFog();
-				bool flag2 = mapComponentSeenFog != null;
-				if (flag2)
+				if (mapComponentSeenFog != null)
 				{
 					mapComponentSeenFog.deregisterMineDesignation(__instance);
 				}

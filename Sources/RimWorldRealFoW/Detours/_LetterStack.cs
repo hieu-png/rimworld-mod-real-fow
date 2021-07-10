@@ -10,12 +10,10 @@ namespace RimWorldRealFoW.Detours
 		// Token: 0x06000088 RID: 136 RVA: 0x0000919C File Offset: 0x0000739C
 		public static void ReceiveLetter_Prefix(ref LookTargets lookTargets)
 		{
-			bool flag = lookTargets != null && lookTargets.PrimaryTarget.HasThing;
-			if (flag)
+			if (lookTargets != null && lookTargets.PrimaryTarget.HasThing)
 			{
 				Thing thing = lookTargets.PrimaryTarget.Thing;
-				bool flag2 = (thing != null && thing.Faction == null) || !thing.Faction.IsPlayer;
-				if (flag2)
+				if ((thing != null && thing.Faction == null) || !thing.Faction.IsPlayer)
 				{
 					lookTargets = new GlobalTargetInfo(thing.Position, thing.Map, false);
 				}

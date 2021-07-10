@@ -22,8 +22,7 @@ namespace RimWorldRealFoW.Detours
 				if (hasThing)
 				{
 					Thing thing = lookTargets.PrimaryTarget.Thing;
-					bool flag = thing.Faction == null || !thing.Faction.IsPlayer;
-					if (flag)
+					if (thing.Faction == null || !thing.Faction.IsPlayer)
 					{
 						lookTargets = new GlobalTargetInfo(thing.Position, thing.Map, false);
 					}

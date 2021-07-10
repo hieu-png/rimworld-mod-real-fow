@@ -11,8 +11,7 @@ namespace RimWorldRealFoW.Detours
 		// Token: 0x06000085 RID: 133 RVA: 0x000090A8 File Offset: 0x000072A8
 		public static bool DrawGUIOverlay_Prefix(Pawn __instance)
 		{
-			bool flag = __instance.Spawned && !__instance.fowIsVisible(false);
-			return !flag;
+			return !(__instance.Spawned && !__instance.fowIsVisible(false));
 		}
 	}
 }

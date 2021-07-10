@@ -10,12 +10,10 @@ namespace RimWorldRealFoW.Detours
 		// Token: 0x06000074 RID: 116 RVA: 0x00008AA8 File Offset: 0x00006CA8
 		public static void ShouldSpawnMotesAt_Postfix(IntVec3 loc, Map map, ref bool __result)
 		{
-			bool flag = !__result;
-			if (!flag)
+			if (__result)
 			{
 				MapComponentSeenFog mapComponentSeenFog = _GenView.lastUsedMapComponent;
-				bool flag2 = map != _GenView.lastUsedMap;
-				if (flag2)
+				if (map != _GenView.lastUsedMap)
 				{
 					_GenView.lastUsedMap = map;
 					mapComponentSeenFog = (_GenView.lastUsedMapComponent = map.GetComponent<MapComponentSeenFog>());

@@ -14,8 +14,8 @@ namespace RimWorldRealFoW.Detours
 		{
 			__result = Find.CurrentMap.mapPawns.AllPawns.Where(delegate (Pawn p)
 			{
-				bool flag = p.Spawned && (p.Faction == null || p.Faction == Faction.OfInsects) && p.AnimalOrWildMan();
-				return flag && !p.Position.Fogged(p.Map);
+				
+				return p.Spawned && (p.Faction == null || p.Faction == Faction.OfInsects) && p.AnimalOrWildMan() && !p.Position.Fogged(p.Map);
 			});
 			return false;
 		}

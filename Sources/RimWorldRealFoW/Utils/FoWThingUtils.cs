@@ -11,9 +11,9 @@ namespace RimWorldRealFoW.Utils
 		// Token: 0x0600002E RID: 46 RVA: 0x00005228 File Offset: 0x00003428
 		public static IntVec3[] getPeekArray(IntVec3 intVec3)
 		{
-			bool flag = FoWThingUtils.peekArrayCache.ContainsKey(intVec3);
+
 			IntVec3[] result;
-			if (flag)
+			if (FoWThingUtils.peekArrayCache.ContainsKey(intVec3))
 			{
 				result = FoWThingUtils.peekArrayCache[intVec3];
 			}
@@ -36,12 +36,10 @@ namespace RimWorldRealFoW.Utils
 			bool result;
 			if (spawned)
 			{
-				bool flag = _this.def.isSaveable && !_this.def.saveCompressible;
-				if (flag)
+				if (_this.def.isSaveable && !_this.def.saveCompressible)
 				{
 					CompHiddenable compHiddenable = _this.TryGetCompHiddenable();
-					bool flag2 = compHiddenable != null;
-					if (flag2)
+					if (compHiddenable != null)
 					{
 						return !compHiddenable.hidden;
 					}
@@ -59,16 +57,14 @@ namespace RimWorldRealFoW.Utils
 		private static bool fowInKnownCell(this Thing _this)
 		{
 			MapComponentSeenFog mapComponentSeenFog = _this.Map.getMapComponentSeenFog();
-			bool flag = mapComponentSeenFog != null;
 			bool result;
-			if (flag)
+			if (mapComponentSeenFog != null)
 			{
 				bool[] knownCells = mapComponentSeenFog.knownCells;
 				int mapSizeX = mapComponentSeenFog.mapSizeX;
 				IntVec3 position = _this.Position;
 				IntVec2 size = _this.def.size;
-				bool flag2 = size.x == 1 && size.z == 1;
-				if (flag2)
+				if (size.x == 1 && size.z == 1)
 				{
 					result = mapComponentSeenFog.knownCells[position.z * mapSizeX + position.x];
 				}
@@ -79,8 +75,7 @@ namespace RimWorldRealFoW.Utils
 					{
 						for (int j = cellRect.minZ; j <= cellRect.maxZ; j++)
 						{
-							bool flag3 = mapComponentSeenFog.knownCells[j * mapSizeX + i];
-							if (flag3)
+							if (mapComponentSeenFog.knownCells[j * mapSizeX + i])
 							{
 								return true;
 							}
@@ -100,12 +95,16 @@ namespace RimWorldRealFoW.Utils
 		public static ThingComp TryGetComp(this Thing _this, CompProperties def)
 		{
 			ThingCategory category = _this.def.category;
-			bool flag = category == ThingCategory.Pawn || category == ThingCategory.Building || category == ThingCategory.Item || category == ThingCategory.Filth || category == ThingCategory.Gas || _this.def.IsBlueprint;
-			if (flag)
+;
+			if (category == ThingCategory.Pawn
+				|| category == ThingCategory.Building
+				|| category == ThingCategory.Item
+				|| category == ThingCategory.Filth
+				|| category == ThingCategory.Gas
+				|| _this.def.IsBlueprint)
 			{
 				ThingWithComps thingWithComps = _this as ThingWithComps;
-				bool flag2 = thingWithComps != null;
-				if (flag2)
+				if (thingWithComps != null)
 				{
 					return thingWithComps.GetCompByDef(def);
 				}

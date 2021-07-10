@@ -11,32 +11,28 @@ namespace RimWorldRealFoW.Detours
 		// Token: 0x0600008A RID: 138 RVA: 0x00009230 File Offset: 0x00007430
 		public static bool MouseoverReadoutOnGUI_Prefix(MouseoverReadout __instance)
 		{
-			bool flag = Event.current.type != EventType.Repaint;
 			bool result;
-			if (flag)
+			if (Event.current.type != EventType.Repaint)
 			{
 				result = true;
 			}
 			else
 			{
-				bool flag2 = Find.MainTabsRoot.OpenTab != null;
-				if (flag2)
+				if (Find.MainTabsRoot.OpenTab != null)
 				{
 					result = true;
 				}
 				else
 				{
 					IntVec3 c = UI.MouseCell();
-					bool flag3 = !c.InBounds(Find.CurrentMap);
-					if (flag3)
+					if (!c.InBounds(Find.CurrentMap))
 					{
 						result = true;
 					}
 					else
 					{
 						MapComponentSeenFog mapComponentSeenFog = Find.CurrentMap.getMapComponentSeenFog();
-						bool flag4 = !c.Fogged(Find.CurrentMap) && mapComponentSeenFog != null && !mapComponentSeenFog.knownCells[Find.CurrentMap.cellIndices.CellToIndex(c)];
-						if (flag4)
+						if ( !c.Fogged(Find.CurrentMap) && mapComponentSeenFog != null && !mapComponentSeenFog.knownCells[Find.CurrentMap.cellIndices.CellToIndex(c)])
 						{
 							GenUI.DrawTextWinterShadow(new Rect(256f, (float)(UI.screenHeight - 256), -256f, 256f));
 							Text.Font = GameFont.Small;
