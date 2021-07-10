@@ -1,6 +1,7 @@
 ﻿using System;
 using RimWorld;
 using RimWorldRealFoW;
+using RimWorldRealFoW.Utils;
 
 namespace RimWorldRealFoW.Detours
 {

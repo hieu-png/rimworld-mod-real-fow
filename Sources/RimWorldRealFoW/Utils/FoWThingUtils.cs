@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using RimWorldRealFoW;
 using Verse;
 
-namespace RimWorldRealFoW
+namespace RimWorldRealFoW.Utils
 {
 	// Token: 0x02000009 RID: 9
 	public static class FoWThingUtils

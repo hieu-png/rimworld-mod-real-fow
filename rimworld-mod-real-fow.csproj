@@ -334,7 +334,7 @@
     <Compile Include="Sources\RimWorldRealFoW\CompProperties_ProvideVision.cs" />
     <Compile Include="Sources\RimWorldRealFoW\ThingSubComp.cs" />
     <Compile Include="Sources\RimWorldRealFoW\MapUtils.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\FoWThingUtils.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Utils\FoWThingUtils.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_LetterStack.cs" />
     <Compile Include="Sources\RimWorldRealFoW\CompViewBlockerWatcher.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_GenMapUI.cs" />

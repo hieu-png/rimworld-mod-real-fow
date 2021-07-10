@@ -5,6 +5,8 @@ using RimWorld;
 using RimWorldRealFoW;
 using UnityEngine;
 using Verse;
+using RimWorldRealFoW.Utils;
+
 namespace RimWorldRealFoW
 {
 	// Token: 0x02000004 RID: 4

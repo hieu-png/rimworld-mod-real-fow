@@ -1,7 +1,7 @@
 ﻿using System;
 using RimWorldRealFoW;
 using Verse;
-
+using RimWorldRealFoW.Utils;
 namespace RimWorldRealFoW.Detours
 {
 	// Token: 0x02000027 RID: 39

@@ -214,7 +214,7 @@ namespace RimWorldRealFoW
                                         && this.pawn.CurJob.targetA != null
                                         && this.pawn.CurJob.targetA.Cell != IntVec3.Invalid)
                                     {
-                                        peekDirection = FoWThingUtils.getPeekArray(this.pawn.CurJob.targetA.Cell - this.parent.Position);
+                                        peekDirection = Utils.FoWThingUtils.getPeekArray(this.pawn.CurJob.targetA.Cell - this.parent.Position);
                                     }
 
                                 }

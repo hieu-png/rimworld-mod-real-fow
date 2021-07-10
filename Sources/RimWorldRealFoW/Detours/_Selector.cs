@@ -2,6 +2,7 @@
 using RimWorld.Planet;
 using RimWorldRealFoW;
 using Verse;
+using RimWorldRealFoW.Utils;
 
 namespace RimWorldRealFoW.Detours
 {
