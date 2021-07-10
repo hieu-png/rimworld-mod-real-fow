@@ -63,6 +63,8 @@
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
 				<viewRadius>20</viewRadius>
+				<needManned>true</needManned>
+
 			</li>
 		</comps>
 		<researchPrerequisites>
@@ -98,6 +100,7 @@
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
 				<viewRadius>30</viewRadius>
+				<needManned>True</needManned>
 			</li>
 		</comps>
 		<researchPrerequisites>

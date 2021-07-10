@@ -11,5 +11,7 @@ namespace RimWorldRealFoW
 
 		// Token: 0x04000002 RID: 2
 		public float baseViewRange = 32f;
+
+
 	}
 }

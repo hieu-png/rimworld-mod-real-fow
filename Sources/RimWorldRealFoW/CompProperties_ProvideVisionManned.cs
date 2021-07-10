@@ -4,10 +4,10 @@ using Verse;
 namespace RimWorldRealFoW
 {
 	// Token: 0x0200000E RID: 14
-	public class CompProperties_ProvideVisionPowered : CompProperties
+	public class CompProperties_ProvideVisionManned : CompProperties
 	{
 		// Token: 0x06000043 RID: 67 RVA: 0x00005A20 File Offset: 0x00003C20
-		public CompProperties_ProvideVisionPowered()
+		public CompProperties_ProvideVisionManned()
 		{
 			this.compClass = typeof(CompProvideVision);
 		}

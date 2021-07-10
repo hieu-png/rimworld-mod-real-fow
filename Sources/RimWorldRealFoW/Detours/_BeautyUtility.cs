@@ -12,7 +12,8 @@ namespace RimWorldRealFoW.Detours
 		public static void FillBeautyRelevantCells_Postfix(Map map)
 		{
 			MapComponentSeenFog mapCmq = map.getMapComponentSeenFog();
-			if (mapCmq != null)
+			bool flag = mapCmq != null;
+			if (flag)
 			{
 				BeautyUtility.beautyRelevantCells.RemoveAll((IntVec3 c) => !mapCmq.knownCells[map.cellIndices.CellToIndex(c)]);
 			}

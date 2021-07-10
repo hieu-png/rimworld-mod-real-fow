@@ -57,6 +57,25 @@ namespace RimWorldRealFoW
 			}
 		}
 
+		public void RegisterCameraConsole(Building_CameraConsole console)
+        {
+			cameraConsoles.Add(console);
+        }
+		public void DeRegisterCameraConsole(Building_CameraConsole console)
+        {
+			cameraConsoles.Remove(console);
+        }
+
+		public List<Building_CameraConsole> cameraConsoles = new List<Building_CameraConsole>();
+
+		public bool workingCameraConsole
+        {
+            get
+            {
+				return this.cameraConsoles.Any((Building_CameraConsole c) => c.WorkingNow && c.Manned);
+			}
+        }
+
 		// Token: 0x0600000A RID: 10 RVA: 0x00002644 File Offset: 0x00000844
 		public short[] getFactionShownCells(Faction faction)
 		{

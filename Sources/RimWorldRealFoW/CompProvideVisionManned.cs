@@ -9,11 +9,11 @@ namespace RimWorldRealFoW
 	{
 		// Token: 0x17000002 RID: 2
 		// (get) Token: 0x0600003D RID: 61 RVA: 0x000059B0 File Offset: 0x00003BB0
-		public CompProperties_ProvideVisionPowered Props
+		public CompProperties_ProvideVisionManned Props
 		{
 			get
 			{
-				return (CompProperties_ProvideVisionPowered)this.props;
+				return (CompProperties_ProvideVisionManned)this.props;
 			}
 		}
 	}

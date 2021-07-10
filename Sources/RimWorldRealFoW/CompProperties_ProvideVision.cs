@@ -14,5 +14,7 @@ namespace RimWorldRealFoW
 
 		// Token: 0x04000036 RID: 54
 		public float viewRadius;
+
+		public bool needManned = false;
 	}
 }
