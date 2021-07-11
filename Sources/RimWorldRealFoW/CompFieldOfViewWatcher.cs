@@ -11,7 +11,6 @@ namespace RimWorldRealFoW
     // Token: 0x02000014 RID: 20
     public class CompFieldOfViewWatcher : ThingSubComp
     {
-        // Token: 0x06000066 RID: 102 RVA: 0x00006B54 File Offset: 0x00004D54
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
             this.setupDone = true;
@@ -176,12 +175,15 @@ namespace RimWorldRealFoW
                 IntVec3 position = parent.Position;
                 if (parent != null && parent.Spawned && parent.Map != null && position != CompFieldOfViewWatcher.iv3Invalid)
                 {
+
                     this.initMap();
                     Faction faction = parent.Faction;
                     if (faction != null && (this.pawn == null || !this.pawn.Dead))
                     {
+
                         if (this.pawn != null)
                         {
+
                             IntVec3[] peekDirection = null;
                             int sightRange;
                             if (this.raceProps != null
@@ -296,13 +298,14 @@ namespace RimWorldRealFoW
                         }
                         else if (this.compProvideVision != null)
                         {
-                            int viewRadius = Mathf.RoundToInt(this.compProvideVision.Props.viewRadius);
 
+                            int viewRadius = Mathf.RoundToInt(this.compProvideVision.Props.viewRadius);
                             if ((this.compPowerTrader != null && !this.compPowerTrader.PowerOn)
                                 || (this.compRefuelable != null && !this.compRefuelable.HasFuel)
                                 || (this.compFlickable != null && !this.compFlickable.SwitchIsOn)
                                 || (this.compProvideVision.Props.needManned && !this.mapCompSeenFog.workingCameraConsole)
                                 )
+
                             {
 
                                 viewRadius = 0;
@@ -339,6 +342,7 @@ namespace RimWorldRealFoW
                         }
                         else if (this.building != null)
                         {
+
                             int sightRange = 0;
                            
                             if (
@@ -524,13 +528,11 @@ namespace RimWorldRealFoW
         public override void PostDeSpawn(Map map)
         {
             base.PostDeSpawn(map);
-            bool flag = !this.disabled && this.mapCompSeenFog != null;
-            if (flag)
+            if (!this.disabled && this.mapCompSeenFog != null)
             {
                 this.mapCompSeenFog.fowWatchers.Remove(this);
             }
-            bool flag2 = this.lastFaction != null;
-            if (flag2)
+            if (this.lastFaction != null)
             {
                 this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
             }
@@ -539,8 +541,7 @@ namespace RimWorldRealFoW
         // Token: 0x0600006E RID: 110 RVA: 0x00007CB8 File Offset: 0x00005EB8
         public void calculateFoV(Thing thing, int intRadius, IntVec3[] peekDirections)
         {
-            bool flag = !this.setupDone;
-            if (!flag)
+            if (this.setupDone)
             {
                 int mapSizeX = this.mapSizeX;
                 int mapSizeY = this.mapSizeZ;
@@ -607,8 +608,7 @@ namespace RimWorldRealFoW
                         {
                             int num10 = (occupiedZ - oldViewRecMinZ) * oldViewWidth + (occupiedX - oldViewRecMinX);
                             ref bool ptr = ref oldMapView[num10];
-                            bool flag5 = !ptr;
-                            if (flag5)
+                            if (!ptr)
                             {
                                 this.mapCompSeenFog.incrementSeen(faction, factionShownCells, occupiedZ * mapSizeX + occupiedX);
                             }
@@ -648,8 +648,7 @@ namespace RimWorldRealFoW
                         }
                     }
                 }
-                bool flag9 = oldMapView != null;
-                if (flag9)
+                if (oldMapView != null)
                 {
                     for (int m = 0; m < oldViewArea; m++)
                     {

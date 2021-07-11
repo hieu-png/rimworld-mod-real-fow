@@ -1,11 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Defs>
-    <ThingCategoryDef>
-      <defName>FlyingCamera</defName>
-      <label>Fly cam</label>
-      <parent>Items</parent>
-    </ThingCategoryDef>
-
+	<ThingCategoryDef>
+		<defName>FlyingCamera</defName>
+		<label>Fly cam</label>
+		<parent>Items</parent>
+	</ThingCategoryDef>
 	<ThingDef Name="BaseFlyingCamera" ParentName="ResourceBase" Abstract="True">
 		<soundInteract>Metal_Drop</soundInteract>
 		<soundDrop>Standard_Drop</soundDrop>
@@ -37,9 +36,6 @@
 			</skillRequirements>
 		</recipeMaker>
 	</ThingDef>
-	
-
-
 	<ThingDef ParentName="BaseFlyingCamera">
 		<defName>FlyingCamera_Mini</defName>
 		<label>Flying cam small</label>
@@ -57,6 +53,9 @@
 			<researchPrerequisite>Mortars</researchPrerequisite>
 		</recipeMaker>
 	</ThingDef>
+	
+	
+	
 	<ThingDef ParentName="BaseBullet">
 		<defName>Projectile_FlyingCamMini</defName>
 		<label>Flying cam small</label>
@@ -65,15 +64,17 @@
 			<graphicClass>Graphic_Single</graphicClass>
 			<shaderType>TransparentPostLight</shaderType>
 		</graphicData>
+		
+		<thingClass>Bullet</thingClass>
 		<comps>
-			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
-				<viewRadius>10</viewRadius>
-			</li>
+
+		<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
+			<viewRadius>30</viewRadius>
+		</li>
 		</comps>
-		<thingClass>Projectile_Explosive</thingClass>
 		<projectile>
 			<damageDef>Bomb</damageDef>
-			<speed>45</speed>
+			<speed>12</speed>
 			<explosionRadius>1</explosionRadius>
 			<flyOverhead>true</flyOverhead>
 			<soundHitThickRoof>Artillery_HitThickRoof</soundHitThickRoof>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+<MustBeUnderRoof>Must be placed under a roof.</MustBeUnderRoof>
+  <fogAlphaSetting_title>Fog level</fogAlphaSetting_title>
+  <fogAlphaSetting_desc>Fog covering level for discovered but not currently seen places</fogAlphaSetting_desc>
+  <fogAlphaSetting_Black>Black</fogAlphaSetting_Black>
+  <fogAlphaSetting_NearlyBlack>Nearly black</fogAlphaSetting_NearlyBlack>
+
+  <fogAlphaSetting_VeryVeryVeryDark>Very very very dark</fogAlphaSetting_VeryVeryVeryDark>
+  <fogAlphaSetting_VeryVeryDark>Very very dark</fogAlphaSetting_VeryVeryDark>
+  <fogAlphaSetting_VeryDark>Very dark</fogAlphaSetting_VeryDark>
+  <fogAlphaSetting_Dark>Dark</fogAlphaSetting_Dark>
+  <fogAlphaSetting_Medium>Medium</fogAlphaSetting_Medium>
+  <fogAlphaSetting_Light>Light</fogAlphaSetting_Light>
+
+  <fogFadeSpeedSetting_title>Fog fade speed</fogFadeSpeedSetting_title>
+  <fogFadeSpeedSetting_desc>Speed of the fog fade effect. Disable it could improve performances.</fogFadeSpeedSetting_desc>
+  <fogFadeSpeedSetting_Slow>Slow</fogFadeSpeedSetting_Slow>
+  <fogFadeSpeedSetting_Medium>Medium</fogFadeSpeedSetting_Medium>
+  <fogFadeSpeedSetting_Fast>Fast</fogFadeSpeedSetting_Fast>
+  <fogFadeSpeedSetting_Disabled>Disabled</fogFadeSpeedSetting_Disabled>
+</LanguageData>

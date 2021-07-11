@@ -16,5 +16,6 @@ namespace RimWorldRealFoW
 		public float viewRadius;
 
 		public bool needManned = false;
+
 	}
 }

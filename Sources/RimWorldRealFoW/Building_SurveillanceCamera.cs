@@ -31,14 +31,14 @@ namespace RimWorldRealFoW
 			base.SpawnSetup(map, respawningAfterLoad);
 			this.powerComp = base.GetComp<CompPowerTrader>();
 			this.mapComp = MapUtils.getMapComponentSeenFog(map);
-			this.mapComp.AddSurveillanceCamera(this);
+			this.mapComp.RegisterSurveillanceCamera(this);
 		}
 
 		// Token: 0x06000021 RID: 33 RVA: 0x00002DAC File Offset: 0x00000FAC
 		public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
 		{
 			base.DeSpawn(mode);
-			this.mapComp.RemoveSurveillanceCamera(this);
+			this.mapComp.DeregisterSurveillanceCamera(this);
 		}
 
 		CompPowerTrader powerComp;

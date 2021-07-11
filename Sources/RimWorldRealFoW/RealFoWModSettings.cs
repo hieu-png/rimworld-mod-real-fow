@@ -6,17 +6,14 @@ using Verse;
 
 namespace RimWorldRealFoW
 {
-	// Token: 0x02000003 RID: 3
 	public class RealFoWModSettings : ModSettings
 	{
-		// Token: 0x06000003 RID: 3 RVA: 0x00002070 File Offset: 0x00000270
 		public static void DoSettingsWindowContents(Rect rect)
 		{
 			Listing_Standard listing_Standard = new Listing_Standard(GameFont.Small);
 			listing_Standard.ColumnWidth = rect.width;
 			listing_Standard.Begin(rect);
-			bool flag = listing_Standard.ButtonTextLabeled("fogAlphaSetting_title".Translate(), ("fogAlphaSetting_" + RealFoWModSettings.fogAlpha).Translate());
-			if (flag)
+			if (listing_Standard.ButtonTextLabeled("fogAlphaSetting_title".Translate(), ("fogAlphaSetting_" + RealFoWModSettings.fogAlpha).Translate()))
 			{
 				List<FloatMenuOption> list = new List<FloatMenuOption>();
 				foreach (object obj in Enum.GetValues(typeof(RealFoWModSettings.FogAlpha)))
@@ -34,10 +31,8 @@ namespace RimWorldRealFoW
 			Text.Font = GameFont.Tiny;
 			listing_Standard.Label("fogAlphaSetting_desc".Translate(), -1f, null);
 			Text.Font = GameFont.Small;
-			listing_Standard.Gap(12f);
-			listing_Standard.GapLine(12f);
-			bool flag2 = listing_Standard.ButtonTextLabeled("fogFadeSpeedSetting_title".Translate(), ("fogFadeSpeedSetting_" + RealFoWModSettings.fogFadeSpeed).Translate());
-			if (flag2)
+			addGap(listing_Standard);
+			if (listing_Standard.ButtonTextLabeled("fogFadeSpeedSetting_title".Translate(), ("fogFadeSpeedSetting_" + RealFoWModSettings.fogFadeSpeed).Translate()))
 			{
 				List<FloatMenuOption> list2 = new List<FloatMenuOption>();
 				foreach (object obj2 in Enum.GetValues(typeof(RealFoWModSettings.FogFadeSpeedEnum)))
@@ -55,22 +50,26 @@ namespace RimWorldRealFoW
 			Text.Font = GameFont.Tiny;
 			listing_Standard.Label("fogFadeSpeedSetting_desc".Translate(), -1f, null);
 			Text.Font = GameFont.Small;
+			listing_Standard.Gap(12f);
+			listing_Standard.GapLine(12f);
+
+
 			listing_Standard.End();
 		}
-
-		// Token: 0x06000004 RID: 4 RVA: 0x00002304 File Offset: 0x00000504
+		public static void addGap(Listing_Standard listing_Standard, float value = 12f) {
+			listing_Standard.Gap(value);
+			listing_Standard.GapLine(value);
+		}
 		public static void applySettings()
 		{
 			SectionLayer_FoVLayer.prefFadeSpeedMult = (int)RealFoWModSettings.fogFadeSpeed;
 			SectionLayer_FoVLayer.prefEnableFade = (RealFoWModSettings.fogFadeSpeed != RealFoWModSettings.FogFadeSpeedEnum.Disabled);
 			SectionLayer_FoVLayer.prefFogAlpha = (byte)RealFoWModSettings.fogAlpha;
-			bool flag = Current.ProgramState == ProgramState.Playing;
-			if (flag)
+			if (Current.ProgramState == ProgramState.Playing)
 			{
 				foreach (Map map in Find.Maps)
 				{
-					bool flag2 = map.mapDrawer != null;
-					if (flag2)
+					if (map.mapDrawer != null)
 					{
 						map.mapDrawer.RegenerateEverythingNow();
 					}
@@ -78,7 +77,6 @@ namespace RimWorldRealFoW
 			}
 		}
 
-		// Token: 0x06000005 RID: 5 RVA: 0x000023A4 File Offset: 0x000005A4
 		public override void ExposeData()
 		{
 			base.ExposeData();
@@ -87,34 +85,29 @@ namespace RimWorldRealFoW
 			RealFoWModSettings.applySettings();
 		}
 
-		// Token: 0x04000003 RID: 3
 		public static RealFoWModSettings.FogFadeSpeedEnum fogFadeSpeed = RealFoWModSettings.FogFadeSpeedEnum.Medium;
 
-		// Token: 0x04000004 RID: 4
 		public static RealFoWModSettings.FogAlpha fogAlpha = RealFoWModSettings.FogAlpha.Medium;
 
-		// Token: 0x0200002C RID: 44
 		public enum FogFadeSpeedEnum
 		{
-			// Token: 0x0400008B RID: 139
 			Slow = 5,
-			// Token: 0x0400008C RID: 140
 			Medium = 20,
-			// Token: 0x0400008D RID: 141
 			Fast = 40,
-			// Token: 0x0400008E RID: 142
 			Disabled = 100
 		}
 
 		// Token: 0x0200002D RID: 45
 		public enum FogAlpha
 		{
-			// Token: 0x04000090 RID: 144
-			Dark = 127,
-			// Token: 0x04000091 RID: 145
-			Medium = 86,
-			// Token: 0x04000092 RID: 146
-			Light = 64
+			Black = 255,
+			NearlyBlack = 210,
+			VeryVeryVeryDark = 180,	
+			VeryVeryDark = 150,
+			VeryDark = 120,
+			Dark = 100,
+			Medium = 80,
+			Light = 60
 		}
 	}
 }

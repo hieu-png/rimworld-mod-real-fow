@@ -15,7 +15,7 @@ namespace RimWorldRealFoW
 		{
 			base.ExposeData();
 
-		}
+		} 
 
 
 		public bool Manned
@@ -68,7 +68,7 @@ namespace RimWorldRealFoW
 			this.powerComp = base.GetComp<CompPowerTrader>();
 			this.breakdownableComp = base.GetComp<CompBreakdownable>();
 			this.mapComp = MapUtils.getMapComponentSeenFog(map);
-			this.mapComp.AddCameraConsole(this);
+			this.mapComp.RegisterCameraConsole(this);
 			//12 Possible graphic so
 			for (int i = 0; i <= 12; i++)
 			{
@@ -86,7 +86,7 @@ namespace RimWorldRealFoW
 		public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
 		{
 			base.DeSpawn(mode);
-			this.mapComp.RemoveCameraConsole(this);
+			this.mapComp.DeregisterCameraConsole(this);
 		}
 
 

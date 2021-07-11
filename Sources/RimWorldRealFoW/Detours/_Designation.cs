@@ -16,7 +16,7 @@ namespace RimWorldRealFoW.Detours
 				MapComponentSeenFog mapComponentSeenFog = __instance.designationManager.map.getMapComponentSeenFog();
 				if (mapComponentSeenFog != null)
 				{
-					mapComponentSeenFog.registerMineDesignation(__instance);
+					mapComponentSeenFog.RegisterMineDesignation(__instance);
 				}
 			}
 		}
@@ -29,7 +29,7 @@ namespace RimWorldRealFoW.Detours
 				MapComponentSeenFog mapComponentSeenFog = __instance.designationManager.map.getMapComponentSeenFog();
 				if (mapComponentSeenFog != null)
 				{
-					mapComponentSeenFog.deregisterMineDesignation(__instance);
+					mapComponentSeenFog.DeregisterMineDesignation(__instance);
 				}
 			}
 		}

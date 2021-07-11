@@ -18,15 +18,21 @@ namespace RimWorldRealFoW
 			this.mapCellLength = map.cellIndices.NumGridCells;
 			this.mapSizeX = map.Size.x;
 			this.mapSizeZ = map.Size.z;
+
 			this.fogGrid = map.fogGrid;
+
 			this.thingGrid = map.thingGrid;
 			this.mapDrawer = map.mapDrawer;
+
 			this.fowWatchers = new List<CompFieldOfViewWatcher>(1000);
+
 			this.maxFactionLoadId = 0;
+
 			foreach (Faction faction in Find.World.factionManager.AllFactionsListForReading)
 			{
 				this.maxFactionLoadId = Math.Max(this.maxFactionLoadId, faction.loadID);
 			}
+
 			this.factionsShownCells = new short[this.maxFactionLoadId + 1][];
 			this.knownCells = new bool[this.mapCellLength];
 			this.viewBlockerCells = new bool[this.mapCellLength];
@@ -39,9 +45,11 @@ namespace RimWorldRealFoW
 			for (int i = 0; i < this.mapCellLength; i++)
 			{
 				this.idxToCellCache[i] = CellIndicesUtility.IndexToCell(i, this.mapSizeX);
+
 				this.compHideFromPlayerGrid[i] = new List<CompHideFromPlayer>(16);
 				this.compHideFromPlayerGridCount[i] = 0;
 				this.compAffectVisionGrid[i] = new List<CompAffectVision>(16);
+
 				this.playerVisibilityChangeTick[i] = 0;
 			}
 		}
@@ -63,12 +71,11 @@ namespace RimWorldRealFoW
 
 		public List<Building_CameraConsole> cameraConsoles = new List<Building_CameraConsole>();
 
-
-		public void AddCameraConsole(Building_CameraConsole console)
+		public void RegisterCameraConsole(Building_CameraConsole console)
         {
 			cameraConsoles.Add(console);
         }
-		public void RemoveCameraConsole(Building_CameraConsole console)
+		public void DeregisterCameraConsole(Building_CameraConsole console)
         {
 			cameraConsoles.Remove(console);
         }
@@ -84,12 +91,12 @@ namespace RimWorldRealFoW
 		//Camera building
 		public List<Building_SurveillanceCamera> surveillanceCameras = new List<Building_SurveillanceCamera>();
 
-		public void AddSurveillanceCamera(Building_SurveillanceCamera camera)
+		public void RegisterSurveillanceCamera(Building_SurveillanceCamera camera)
 		{
 			surveillanceCameras.Add(camera);
 		}
 
-		public void RemoveSurveillanceCamera(Building_SurveillanceCamera camera)
+		public void DeregisterSurveillanceCamera(Building_SurveillanceCamera camera)
 		{
 			surveillanceCameras.Remove(camera);
 		}
@@ -110,22 +117,19 @@ namespace RimWorldRealFoW
 
 		public short[] getFactionShownCells(Faction faction)
 		{
-			bool flag = faction == null;
 			short[] result;
-			if (flag)
+			if (faction == null)
 			{
 				result = null;
 			}
 			else
 			{
-				bool flag2 = this.maxFactionLoadId < faction.loadID;
-				if (flag2)
+				if (this.maxFactionLoadId < faction.loadID)
 				{
 					this.maxFactionLoadId = faction.loadID + 1;
 					Array.Resize<short[]>(ref this.factionsShownCells, this.maxFactionLoadId + 1);
 				}
-				bool flag3 = this.factionsShownCells[faction.loadID] == null;
-				if (flag3)
+				if (this.factionsShownCells[faction.loadID] == null)
 				{
 					this.factionsShownCells[faction.loadID] = new short[this.mapCellLength];
 				}
@@ -146,68 +150,55 @@ namespace RimWorldRealFoW
 		}
 
 		// Token: 0x0600000D RID: 13 RVA: 0x00002724 File Offset: 0x00000924
-		public void registerCompHideFromPlayerPosition(CompHideFromPlayer comp, int x, int z)
+		public void RegisterCompHideFromPlayerPosition(CompHideFromPlayer comp, int x, int z)
 		{
-			bool flag = x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ;
-			if (flag)
+			if (x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ)
 			{
-				int num = z * this.mapSizeX + x;
-				this.compHideFromPlayerGrid[num].Add(comp);
-				byte[] array = this.compHideFromPlayerGridCount;
-				int num2 = num;
-				array[num2] += 1;
+				int idx = z * this.mapSizeX + x;
+				compHideFromPlayerGrid[idx].Add(comp);
+				compHideFromPlayerGridCount[idx]++;
 			}
 		}
 
 		// Token: 0x0600000E RID: 14 RVA: 0x00002784 File Offset: 0x00000984
-		public void deregisterCompHideFromPlayerPosition(CompHideFromPlayer comp, int x, int z)
+		public void DeregisterCompHideFromPlayerPosition(CompHideFromPlayer comp, int x, int z)
 		{
-			bool flag = x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ;
-			if (flag)
+			if (x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ)
 			{
-				int num = z * this.mapSizeX + x;
-				this.compHideFromPlayerGrid[num].Remove(comp);
-				byte[] array = this.compHideFromPlayerGridCount;
-				int num2 = num;
-				array[num2] -= 1;
+				int idx = z * this.mapSizeX + x;
+				compHideFromPlayerGrid[idx].Remove(comp);
+				compHideFromPlayerGridCount[idx]--;
 			}
 		}
 
-		// Token: 0x0600000F RID: 15 RVA: 0x000027E4 File Offset: 0x000009E4
-		public void registerCompAffectVisionPosition(CompAffectVision comp, int x, int z)
+		public void RegisterCompAffectVisionPosition(CompAffectVision comp, int x, int z)
 		{
-			bool flag = x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ;
-			if (flag)
+			if (x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ)
 			{
 				this.compAffectVisionGrid[z * this.mapSizeX + x].Add(comp);
 			}
 		}
 
-		// Token: 0x06000010 RID: 16 RVA: 0x00002830 File Offset: 0x00000A30
-		public void deregisterCompAffectVisionPosition(CompAffectVision comp, int x, int z)
+		public void DeregisterCompAffectVisionPosition(CompAffectVision comp, int x, int z)
 		{
-			bool flag = x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ;
-			if (flag)
+			if (x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ)
 			{
 				this.compAffectVisionGrid[z * this.mapSizeX + x].Remove(comp);
 			}
 		}
 
-		// Token: 0x06000011 RID: 17 RVA: 0x0000287C File Offset: 0x00000A7C
-		public void registerMineDesignation(Designation des)
+		public void RegisterMineDesignation(Designation des)
 		{
 			IntVec3 cell = des.target.Cell;
 			this.mineDesignationGrid[cell.z * this.mapSizeX + cell.x] = des;
 		}
 
-		// Token: 0x06000012 RID: 18 RVA: 0x000028B4 File Offset: 0x00000AB4
-		public void deregisterMineDesignation(Designation des)
+		public void DeregisterMineDesignation(Designation des)
 		{
 			IntVec3 cell = des.target.Cell;
 			this.mineDesignationGrid[cell.z * this.mapSizeX + cell.x] = null;
 		}
 
-		// Token: 0x06000013 RID: 19 RVA: 0x000028EC File Offset: 0x00000AEC
 		private void init()
 		{
 			Section[,] array = (Section[,])Traverse.Create(this.mapDrawer).Field("sections").GetValue();
@@ -225,14 +216,12 @@ namespace RimWorldRealFoW
 			for (int k = 0; k < allDesignations.Count; k++)
 			{
 				Designation designation = allDesignations[k];
-				bool flag = designation.def == DesignationDefOf.Mine && !designation.target.HasThing;
-				if (flag)
+				if (designation.def == DesignationDefOf.Mine && !designation.target.HasThing)
 				{
-					this.registerMineDesignation(designation);
+					this.RegisterMineDesignation(designation);
 				}
 			}
-			bool flag2 = this.map.IsPlayerHome && this.map.mapPawns.ColonistsSpawnedCount == 0;
-			if (flag2)
+			if (this.map.IsPlayerHome && this.map.mapPawns.ColonistsSpawnedCount == 0)
 			{
 				IntVec3 playerStartSpot = MapGenerator.PlayerStartSpot;
 				int radius = Mathf.RoundToInt(DefDatabase<RealFoWModDefaultsDef>.GetNamed(RealFoWModDefaultsDef.DEFAULT_DEF_NAME, true).baseViewRange);
@@ -257,25 +246,20 @@ namespace RimWorldRealFoW
 			}
 			foreach (Thing thing in this.map.listerThings.AllThings)
 			{
-				bool spawned = thing.Spawned;
-				if (spawned)
+				if (thing.Spawned)
 				{
 					CompMainComponent compMainComponent2 = (CompMainComponent)thing.TryGetComp(CompMainComponent.COMP_DEF);
-					bool flag5 = compMainComponent2 != null;
-					if (flag5)
+					if (compMainComponent2 != null)
 					{
-						bool flag6 = compMainComponent2.compComponentsPositionTracker != null;
-						if (flag6)
+						if (compMainComponent2.compComponentsPositionTracker != null)
 						{
 							compMainComponent2.compComponentsPositionTracker.updatePosition();
 						}
-						bool flag7 = compMainComponent2.compFieldOfViewWatcher != null;
-						if (flag7)
+						if (compMainComponent2.compFieldOfViewWatcher != null)
 						{
 							compMainComponent2.compFieldOfViewWatcher.updateFoV(false);
 						}
-						bool flag8 = compMainComponent2.compHideFromPlayer != null;
-						if (flag8)
+						if (compMainComponent2.compHideFromPlayer != null)
 						{
 							compMainComponent2.compHideFromPlayer.updateVisibility(true, false);
 						}
@@ -285,37 +269,31 @@ namespace RimWorldRealFoW
 			this.mapDrawer.RegenerateEverythingNow();
 		}
 
-		// Token: 0x06000014 RID: 20 RVA: 0x00002C68 File Offset: 0x00000E68
 		public override void ExposeData()
 		{
 			base.ExposeData();
 			DataExposeUtility.BoolArray(ref this.knownCells, this.map.Size.x * this.map.Size.z, "revealedCells");
 		}
 
-		// Token: 0x06000015 RID: 21 RVA: 0x00002CA4 File Offset: 0x00000EA4
 		public void revealCell(int idx)
 		{
-			bool flag = !this.knownCells[idx];
-			if (flag)
+			if (!this.knownCells[idx])
 			{
 				ref IntVec3 ptr = ref this.idxToCellCache[idx];
 				this.knownCells[idx] = true;
 				Designation designation = this.mineDesignationGrid[idx];
-				bool flag2 = designation != null && ptr.GetFirstMineable(this.map) == null;
-				if (flag2)
+				if (designation != null && ptr.GetFirstMineable(this.map) == null)
 				{
 					designation.Delete();
 				}
-				bool flag3 = this.initialized;
-				if (flag3)
+				if (this.initialized)
 				{
 					this.setMapMeshDirtyFlag(idx);
 					this.map.fertilityGrid.Drawer.SetDirty();
 					this.map.roofGrid.Drawer.SetDirty();
 					this.map.terrainGrid.Drawer.SetDirty();
 				}
-				bool flag4 = this.compHideFromPlayerGridCount[idx] > 0;
-				if (flag4)
+				if (this.compHideFromPlayerGridCount[idx] > 0)
 				{
 					List<CompHideFromPlayer> list = this.compHideFromPlayerGrid[idx];
 					int count = list.Count;
@@ -506,70 +484,27 @@ namespace RimWorldRealFoW
 			}
 		}
 
-		// Token: 0x04000005 RID: 5
 		public short[][] factionsShownCells = null;
-
-		// Token: 0x04000006 RID: 6
 		public bool[] knownCells = null;
-
-		// Token: 0x04000007 RID: 7
 		public int[] playerVisibilityChangeTick = null;
-
-		// Token: 0x04000008 RID: 8
 		public bool[] viewBlockerCells = null;
-
-		// Token: 0x04000009 RID: 9
 		private IntVec3[] idxToCellCache;
-
-		// Token: 0x0400000A RID: 10
 		private List<CompHideFromPlayer>[] compHideFromPlayerGrid;
-
-		// Token: 0x0400000B RID: 11
 		private byte[] compHideFromPlayerGridCount;
-
-		// Token: 0x0400000C RID: 12
 		public List<CompAffectVision>[] compAffectVisionGrid;
-
-		// Token: 0x0400000D RID: 13
 		private Designation[] mineDesignationGrid;
-
-		// Token: 0x0400000E RID: 14
 		private int maxFactionLoadId;
-
-		// Token: 0x0400000F RID: 15
 		private int mapCellLength;
-
-		// Token: 0x04000010 RID: 16
 		public int mapSizeX;
-
-		// Token: 0x04000011 RID: 17
 		public int mapSizeZ;
-
-		// Token: 0x04000012 RID: 18
 		private FogGrid fogGrid;
-
-		// Token: 0x04000013 RID: 19
 		private MapDrawer mapDrawer;
-
-		// Token: 0x04000014 RID: 20
 		private ThingGrid thingGrid;
-
-		// Token: 0x04000015 RID: 21
 		public bool initialized = false;
-
-		// Token: 0x04000016 RID: 22
 		public List<CompFieldOfViewWatcher> fowWatchers;
-
-		// Token: 0x04000017 RID: 23
 		private Section[] sections = null;
-
-		// Token: 0x04000018 RID: 24
 		private int sectionsSizeX;
-
-		// Token: 0x04000019 RID: 25
 		private int sectionsSizeY;
-
-		// Token: 0x0400001A RID: 26
 		private int currentGameTick = 0;
 	}
 }

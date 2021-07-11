@@ -10,13 +10,20 @@ namespace RimWorldRealFoW
 		public static MapComponentSeenFog getMapComponentSeenFog(this Map map)
 		{
 			MapComponentSeenFog mapComponentSeenFog = map.GetComponent<MapComponentSeenFog>();
-			bool flag = mapComponentSeenFog == null;
-			if (flag)
+			if (mapComponentSeenFog == null)
 			{
 				mapComponentSeenFog = new MapComponentSeenFog(map);
 				map.components.Add(mapComponentSeenFog);
 			}
 			return mapComponentSeenFog;
+		}
+
+		public static void RevealMap(Map map) {
+		MapComponentSeenFog mapComponentSeenFog = map.GetComponent<MapComponentSeenFog>();
+			if (mapComponentSeenFog != null)
+			{
+				
+			}		
 		}
 	}
 }

@@ -79,14 +79,14 @@ namespace RimWorldRealFoW
 								bool flag8 = this.compHideFromPlayer != null;
 								if (flag8)
 								{
-									this.mapCompSeenFog.deregisterCompHideFromPlayerPosition(this.compHideFromPlayer, this.lastPosition.x, this.lastPosition.z);
-									this.mapCompSeenFog.registerCompHideFromPlayerPosition(this.compHideFromPlayer, position.x, position.z);
+									this.mapCompSeenFog.DeregisterCompHideFromPlayerPosition(this.compHideFromPlayer, this.lastPosition.x, this.lastPosition.z);
+									this.mapCompSeenFog.RegisterCompHideFromPlayerPosition(this.compHideFromPlayer, position.x, position.z);
 								}
 								bool flag9 = this.compAffectVision != null;
 								if (flag9)
 								{
-									this.mapCompSeenFog.deregisterCompAffectVisionPosition(this.compAffectVision, this.lastPosition.x, this.lastPosition.z);
-									this.mapCompSeenFog.registerCompAffectVisionPosition(this.compAffectVision, position.x, position.z);
+									this.mapCompSeenFog.DeregisterCompAffectVisionPosition(this.compAffectVision, this.lastPosition.x, this.lastPosition.z);
+									this.mapCompSeenFog.RegisterCompAffectVisionPosition(this.compAffectVision, position.x, position.z);
 								}
 							}
 							else
@@ -102,12 +102,12 @@ namespace RimWorldRealFoW
 											bool flag11 = this.compHideFromPlayer != null;
 											if (flag11)
 											{
-												this.mapCompSeenFog.deregisterCompHideFromPlayerPosition(this.compHideFromPlayer, j, i);
+												this.mapCompSeenFog.DeregisterCompHideFromPlayerPosition(this.compHideFromPlayer, j, i);
 											}
 											bool flag12 = this.compAffectVision != null;
 											if (flag12)
 											{
-												this.mapCompSeenFog.deregisterCompAffectVisionPosition(this.compAffectVision, j, i);
+												this.mapCompSeenFog.DeregisterCompAffectVisionPosition(this.compAffectVision, j, i);
 											}
 										}
 									}
@@ -123,12 +123,12 @@ namespace RimWorldRealFoW
 											bool flag14 = this.compHideFromPlayer != null;
 											if (flag14)
 											{
-												this.mapCompSeenFog.registerCompHideFromPlayerPosition(this.compHideFromPlayer, j, i);
+												this.mapCompSeenFog.RegisterCompHideFromPlayerPosition(this.compHideFromPlayer, j, i);
 											}
 											bool flag15 = this.compAffectVision != null;
 											if (flag15)
 											{
-												this.mapCompSeenFog.registerCompAffectVisionPosition(this.compAffectVision, j, i);
+												this.mapCompSeenFog.RegisterCompAffectVisionPosition(this.compAffectVision, j, i);
 											}
 										}
 									}
@@ -156,8 +156,8 @@ namespace RimWorldRealFoW
 				bool flag2 = this.isOneCell;
 				if (flag2)
 				{
-					this.mapCompSeenFog.deregisterCompHideFromPlayerPosition(this.compHideFromPlayer, this.lastPosition.x, this.lastPosition.z);
-					this.mapCompSeenFog.deregisterCompAffectVisionPosition(this.compAffectVision, this.lastPosition.x, this.lastPosition.z);
+					this.mapCompSeenFog.DeregisterCompHideFromPlayerPosition(this.compHideFromPlayer, this.lastPosition.x, this.lastPosition.z);
+					this.mapCompSeenFog.DeregisterCompAffectVisionPosition(this.compAffectVision, this.lastPosition.x, this.lastPosition.z);
 				}
 				else
 				{
@@ -172,12 +172,12 @@ namespace RimWorldRealFoW
 								bool flag4 = this.compHideFromPlayer != null;
 								if (flag4)
 								{
-									this.mapCompSeenFog.deregisterCompHideFromPlayerPosition(this.compHideFromPlayer, j, i);
+									this.mapCompSeenFog.DeregisterCompHideFromPlayerPosition(this.compHideFromPlayer, j, i);
 								}
 								bool flag5 = this.compAffectVision != null;
 								if (flag5)
 								{
-									this.mapCompSeenFog.deregisterCompAffectVisionPosition(this.compAffectVision, j, i);
+									this.mapCompSeenFog.DeregisterCompAffectVisionPosition(this.compAffectVision, j, i);
 								}
 							}
 						}
