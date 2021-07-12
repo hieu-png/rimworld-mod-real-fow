@@ -37,7 +37,7 @@ namespace RimWorldRealFoW
 				if (
 				category == ThingCategory.Pawn 
 				||category == ThingCategory.Building
-				||category == ThingCategory.Projectile
+				//||category == ThingCategory.Projectile
 				)
 				{
 					this.compFieldOfViewWatcher = new CompFieldOfViewWatcher();

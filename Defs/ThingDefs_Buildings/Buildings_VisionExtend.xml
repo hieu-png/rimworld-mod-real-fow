@@ -42,7 +42,7 @@
 		</statBases>
 		<comps>
 			<li Class="RimWorldRealFoW.CompProperties_AffectVision">
-				<fovMultiplier>1.4</fovMultiplier>
+				<fovMultiplier>1.5</fovMultiplier>
 			</li>
 		</comps>
 		<specialDisplayRadius>125.9</specialDisplayRadius>
@@ -95,11 +95,10 @@
 				<glowColor>(217,217,208,0)</glowColor>
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_AffectVision">
-				<fovMultiplier>1.4</fovMultiplier>
+				<fovMultiplier>1.5</fovMultiplier>
 				<denyDarkness>true</denyDarkness>
 			</li>
 		</comps>
-		<specialDisplayRadius>125.9</specialDisplayRadius>
 	</ThingDef>
 	<!-- Watch Scope -->
 	<ThingDef ParentName="BaseVisionStuff">
@@ -140,13 +139,12 @@
 		</statBases>
 		<comps>
 			<li Class="RimWorldRealFoW.CompProperties_AffectVision">
-				<fovMultiplier>1.7</fovMultiplier>
+				<fovMultiplier>2</fovMultiplier>
 			</li>
 		</comps>
 		<constructionSkillPrerequisite>4</constructionSkillPrerequisite>
 		<researchPrerequisites>
 			<li>WatchTelescope</li>
 		</researchPrerequisites>
-		<specialDisplayRadius>152.9</specialDisplayRadius>
 	</ThingDef>
 </Defs>

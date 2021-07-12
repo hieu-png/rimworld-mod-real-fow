@@ -19,7 +19,7 @@
 		<statBases>
 			<Mass>4</Mass>
 			<Beauty>-1</Beauty>
-			<MaxHitPoints>50</MaxHitPoints>
+			<MaxHitPoints>60</MaxHitPoints>
 			<WorkToBuild>2000</WorkToBuild>
 			<Flammability>0.1</Flammability>
 		</statBases>
@@ -36,7 +36,7 @@
 	<ThingDef ParentName="BaseCamera">
 		<defName>SurveillanceCamera_UnderRoof</defName>
 		<label>ceiling surveillance camera</label>
-		<description>Surveillance camera that provide vision for an area. Cheaper for indoor build.</description>
+		<description>Surveillance camera that provide vision for an area. Cheaper for indoor build. 18 Camera view range radius.</description>
 		<altitudeLayer>Skyfaller</altitudeLayer>
 		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
 		<clearBuildingArea>false</clearBuildingArea>
@@ -64,20 +64,19 @@
 				<basePowerConsumption>50</basePowerConsumption>
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
-				<viewRadius>20</viewRadius>
+				<viewRadius>18</viewRadius>
 				<needManned>true</needManned>
-
 			</li>
 		</comps>
 		<researchPrerequisites>
 			<li>Electricity</li>
 		</researchPrerequisites>
-		<specialDisplayRadius>19.9</specialDisplayRadius>
+		<specialDisplayRadius>17.9</specialDisplayRadius>
 	</ThingDef>
 	<ThingDef ParentName="BaseCamera">
 		<defName>SurveillanceCamera_Ground</defName>
 		<label>Ground surveillance camera</label>
-		<description>Surveillance camera that provide vision for an area.</description>
+		<description>Surveillance camera that provide vision for an area. 30 Camera view range radius.</description>
 		<altitudeLayer>Building</altitudeLayer>
 		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
 		<graphicData>
@@ -111,9 +110,92 @@
 		<specialDisplayRadius>29.9</specialDisplayRadius>
 	</ThingDef>
 	<ThingDef ParentName="BaseCamera">
+		<defName>SurveillanceCamera_Solar</defName>
+		<label>Self sustained surveillance camera</label>
+		<description>Surveillance camera that provide vision for an area. 28 Camera view range radius. Automatically sustain itself power</description>
+		<altitudeLayer>Building</altitudeLayer>
+		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
+		<fillPercent>0.2</fillPercent>
+		<graphicData>
+			<texPath>Things/Buildings/SurveillanceCamera_Solar</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<shadowData>
+				<volume>(0.3, 0.6, 0.3)</volume>
+				<offset>(0,0,-0.1)</offset>
+			</shadowData>
+			<damageData>
+				<rect>(0.2,0.2,0.6,0.6)</rect>
+			</damageData>
+		</graphicData>
+		<costList>
+			<Steel>40</Steel>
+			<ComponentIndustrial>4</ComponentIndustrial>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTrader</compClass>
+				<basePowerConsumption>-5</basePowerConsumption>
+				<transmitsPower>true</transmitsPower>
+			</li>
+			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
+				<viewRadius>28</viewRadius>
+				<needManned>True</needManned>
+			</li>
+		</comps>
+		<researchPrerequisites>
+			<li>SolarPanels</li>
+			<li>Batteries</li>
+			<li>Electricity</li>
+		</researchPrerequisites>
+		<specialDisplayRadius>27.9</specialDisplayRadius>
+	</ThingDef>
+	<ThingDef ParentName="BaseCamera">
+		<defName>SurveillanceCamera_Wall</defName>
+		<label>wall mounted surveillance camera</label>
+		<description>Surveillance camera that provide vision for an area. 28 Camera view range radius. Automatically sustain itself power</description>
+		<altitudeLayer>Building</altitudeLayer>
+		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
+		<fillPercent>0.2</fillPercent>
+		<graphicData>
+			<texPath>Things/Buildings/SurveillanceCamera_Solar</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<shadowData>
+				<volume>(0.3, 0.6, 0.3)</volume>
+				<offset>(0,0,-0.1)</offset>
+			</shadowData>
+			<damageData>
+				<rect>(0.2,0.2,0.6,0.6)</rect>
+			</damageData>
+		</graphicData>
+		<placeWorkers>
+			<li>RimWorldRealFoW.PlaceWorker_NextToWall</li>
+		</placeWorkers>
+		<costList>
+			<Steel>40</Steel>
+			<ComponentIndustrial>4</ComponentIndustrial>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTrader</compClass>
+				<basePowerConsumption>-5</basePowerConsumption>
+				<transmitsPower>true</transmitsPower>
+			</li>
+			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
+				<viewRadius>28</viewRadius>
+				<needManned>True</needManned>
+			</li>
+		</comps>
+		<researchPrerequisites>
+			<li>SolarPanels</li>
+			<li>Batteries</li>
+			<li>Electricity</li>
+		</researchPrerequisites>
+		<specialDisplayRadius>27.9</specialDisplayRadius>
+	</ThingDef>
+	<ThingDef ParentName="BaseCamera">
 		<defName>SurveillanceCamera_High</defName>
 		<label>surveillance camera post</label>
-		<description>.</description>
+		<description>Surveillance camera that provide vision for an area. 50 Camera view range radius. Can't be placed indoor</description>
 		<fillPercent>0.2</fillPercent>
 		<graphicData>
 			<graphicClass>Graphic_Single</graphicClass>
@@ -135,7 +217,7 @@
 		<comps>
 			<li Class="CompProperties_Power">
 				<compClass>CompPowerTrader</compClass>
-				<basePowerConsumption>100</basePowerConsumption>
+				<basePowerConsumption>125</basePowerConsumption>
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
 				<viewRadius>50</viewRadius>
@@ -145,11 +227,108 @@
 		<researchPrerequisites>
 			<li>Electricity</li>
 		</researchPrerequisites>
-		<specialDisplayRadius>50</specialDisplayRadius>
+		<specialDisplayRadius>49.9</specialDisplayRadius>
 		<placeWorkers>
 			<li>PlaceWorker_NotUnderRoof</li>
 		</placeWorkers>
 		<uiIconOffset>(0, 0.2)</uiIconOffset>
+	</ThingDef>
+	<ThingDef ParentName="BaseCamera">
+		<defName>SurveillanceCamera_Bush</defName>
+		<label>surveillance camera in a bush</label>
+		<description>Surveillance camera that provide vision for an area. 25 camera range radius. Camouflaged so it won't be attacked by enemy</description>
+		<altitudeLayer>Building</altitudeLayer>
+		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
+		<fillPercent>0.2</fillPercent>
+		<building>
+			<isTrap>true</isTrap>
+		</building>
+		<graphicData>
+			<texPath>Things/Buildings/SurveillanceCamera_Bush</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<shadowData>
+				<volume>(0.3, 0.6, 0.3)</volume>
+				<offset>(0,0,-0.1)</offset>
+			</shadowData>
+			<damageData>
+				<rect>(0.2,0.2,0.6,0.6)</rect>
+			</damageData>
+		</graphicData>
+		<statBases Inherit="False">
+			<Mass>10</Mass>
+			<Beauty>1</Beauty>
+			<MaxHitPoints>50</MaxHitPoints>
+			<WorkToBuild>3000</WorkToBuild>
+			<Flammability>0.8</Flammability>
+		</statBases>
+		<costList>
+			<Steel>30</Steel>
+			<ComponentIndustrial>4</ComponentIndustrial>
+			<WoodLog>40</WoodLog>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTrader</compClass>
+				<basePowerConsumption>70</basePowerConsumption>
+			</li>
+			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
+				<viewRadius>25</viewRadius>
+				<needManned>True</needManned>
+			</li>
+		</comps>
+		<researchPrerequisites>
+			<li>Electricity</li>
+		</researchPrerequisites>
+		<specialDisplayRadius>24.9</specialDisplayRadius>
+	</ThingDef>
+	<ThingDef ParentName="BaseCamera">
+		<defName>SurveillanceCamera_DeadBush</defName>
+		<label>surveillance camera in a dead bush</label>
+		<description>Surveillance camera that provide vision for an area. 25 camera range radius. Camouflaged so it won't be attacked by enemy</description>
+		<altitudeLayer>Building</altitudeLayer>
+		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
+		<fillPercent>0.2</fillPercent>
+		<graphicData>
+			<texPath>Things/Buildings/SurveillanceCamera_DeadBush</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<shadowData>
+				<volume>(0.3, 0.6, 0.3)</volume>
+				<offset>(0,0,-0.1)</offset>
+			</shadowData>
+			<damageData>
+				<rect>(0.2,0.2,0.6,0.6)</rect>
+			</damageData>
+		</graphicData>
+		<building>
+			<isTrap>true</isTrap>
+		</building>
+		<statBases Inherit="False">
+			<Mass>10</Mass>
+			<Beauty>1</Beauty>
+			<MaxHitPoints>50</MaxHitPoints>
+			<WorkToBuild>3000</WorkToBuild>
+			<Flammability>0.8</Flammability>
+		</statBases>
+		<costList>
+			<Steel>30</Steel>
+			<ComponentIndustrial>4</ComponentIndustrial>
+			<WoodLog>40</WoodLog>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Power">
+				<compClass>CompPowerTrader</compClass>
+				<basePowerConsumption>70</basePowerConsumption>
+			</li>
+			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
+				<viewRadius>25</viewRadius>
+				<needManned>True</needManned>
+			</li>
+		</comps>
+		<researchPrerequisites>
+			<li>Electricity</li>
+		</researchPrerequisites>
+		<specialDisplayRadius>24.9</specialDisplayRadius>
+		<isAutoAttackableMapObject>false</isAutoAttackableMapObject>
 	</ThingDef>
 	<ThingDef ParentName="BaseVisionStuff">
 		<defName>SecurityBell</defName>

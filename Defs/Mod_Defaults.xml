@@ -3,6 +3,6 @@
 	<RimWorldRealFoW.RealFoWModDefaultsDef>
 		<defName>RealFoWModDefaults</defName>
 		
-		<baseViewRange>90</baseViewRange>
+		<baseViewRange>80</baseViewRange>
 	</RimWorldRealFoW.RealFoWModDefaultsDef>
 </Defs>
