@@ -54,7 +54,6 @@ namespace RimWorldRealFoW
 			}
 		}
 
-		// Token: 0x06000009 RID: 9 RVA: 0x00002608 File Offset: 0x00000808
 		public override void MapComponentTick()
 		{
 			this.currentGameTick = Find.TickManager.TicksGame;
@@ -68,6 +67,7 @@ namespace RimWorldRealFoW
 		//New addition
 
 		//Camera console
+		int memoryStorage = 0;
 
 		public List<Building_CameraConsole> cameraConsoles = new List<Building_CameraConsole>();
 
@@ -85,7 +85,9 @@ namespace RimWorldRealFoW
         {
             get
             {
-				return this.cameraConsoles.Any((Building_CameraConsole c) => c.WorkingNow && c.Manned);
+				return 
+				(!RFOWSettings.needWatcher)||
+				(this.cameraConsoles.Any((Building_CameraConsole c) => c.WorkingNow && c.Manned));
 			}
         }
 		//Camera building
@@ -224,7 +226,9 @@ namespace RimWorldRealFoW
 			if (this.map.IsPlayerHome && this.map.mapPawns.ColonistsSpawnedCount == 0)
 			{
 				IntVec3 playerStartSpot = MapGenerator.PlayerStartSpot;
-				int radius = Mathf.RoundToInt(DefDatabase<RealFoWModDefaultsDef>.GetNamed(RealFoWModDefaultsDef.DEFAULT_DEF_NAME, true).baseViewRange);
+
+				//int radius = Mathf.RoundToInt(DefDatabase<RealFoWModDefaultsDef>.GetNamed(RealFoWModDefaultsDef.DEFAULT_DEF_NAME, true).baseViewRange);
+				int radius = RFOWSettings.baseViewRange;
 				ShadowCaster.computeFieldOfViewWithShadowCasting(playerStartSpot.x, playerStartSpot.z, radius, this.viewBlockerCells, this.map.Size.x, this.map.Size.z, false, null, null, null, this.knownCells, 0, 0, this.mapSizeX, null, 0, 0, 0, 0, 0, byte.MaxValue, -1, -1);
 				for (int l = 0; l < this.mapCellLength; l++)
 				{

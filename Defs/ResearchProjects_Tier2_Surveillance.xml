@@ -5,12 +5,28 @@
   <ResearchProjectDef>
     <defName>CameraSecurity</defName>
     <label>Security camera</label>
-    <description>Allows the usage of security camera to watch.</description>
+    <description>Allows the construction of security camera, providing your colony vision when some one is watching them.</description>
     <baseCost>800</baseCost>
+	   <prerequisites>
+      <li>Electricity</li>
+    </prerequisites>
     <techLevel>Industrial</techLevel>
-    <researchViewX>1</researchViewX>
-    <researchViewY>6</researchViewY>
+    <researchViewX>2</researchViewX>
+    <researchViewY>7</researchViewY>
   </ResearchProjectDef>
+    <ResearchProjectDef>
+    <defName>CameraSecurityAdvanced</defName>
+    <label>Advanced camera lens</label>
+    <description>Allows the construction of advanced security camera. Their vision range is better than the previous one and more flexible, and some niche one too.</description>
+    <baseCost>800</baseCost>
+	  <prerequisites>
+      <li>CameraSecurity</li>
+    </prerequisites>
+    <techLevel>Industrial</techLevel>
+    <researchViewX>2</researchViewX>
+    <researchViewY>8</researchViewY>
+  </ResearchProjectDef>
+  
   <ResearchProjectDef>
     <defName>WatchTelescope</defName>
     <label>watch telescope</label>

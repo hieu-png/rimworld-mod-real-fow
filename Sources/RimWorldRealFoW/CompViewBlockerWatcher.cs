@@ -25,8 +25,7 @@ namespace RimWorldRealFoW
 		public override void ReceiveCompSignal(string signal)
 		{
 			base.ReceiveCompSignal(signal);
-			bool flag = this.blockLight && this.b != null;
-			if (flag)
+			if (this.blockLight && this.b != null)
 			{
 				this.updateIsViewBlocker();
 			}
@@ -64,12 +63,10 @@ namespace RimWorldRealFoW
 		private void updateIsViewBlocker()
 		{
 			bool flag = this.blockLight && !this.b.CanBeSeenOver();
-			bool flag2 = this.lastIsViewBlocker != flag;
-			if (flag2)
+			if (this.lastIsViewBlocker != flag)
 			{
 				this.lastIsViewBlocker = flag;
-				bool flag3 = this.map != this.parent.Map;
-				if (flag3)
+				if (this.map != this.parent.Map)
 				{
 					this.map = this.parent.Map;
 					this.mapCompSeenFog = this.map.getMapComponentSeenFog();
@@ -97,8 +94,7 @@ namespace RimWorldRealFoW
 				}
 			}
 			IntVec3 position = this.parent.Position;
-			bool flag2 = Current.ProgramState == ProgramState.Playing;
-			if (flag2)
+			if (Current.ProgramState == ProgramState.Playing)
 			{
 				bool flag3 = this.map != null;
 				if (flag3)

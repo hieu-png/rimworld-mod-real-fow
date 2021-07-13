@@ -25,7 +25,7 @@ namespace RimWorldRealFoW
 		public RealFoWModStarter(ModContentPack content) : base(content)
 		{
 			LongEventHandler.QueueLongEvent(new Action(RealFoWModStarter.InjectComponents), "Real Fog of War - Init.", false, null, true);
-			base.GetSettings<RealFoWModSettings>();
+			base.GetSettings<RFOWSettings>();
 		}
 		public override string SettingsCategory()
 		{
@@ -34,7 +34,7 @@ namespace RimWorldRealFoW
 
 		public override void DoSettingsWindowContents(Rect rect)
 		{
-			RealFoWModSettings.DoSettingsWindowContents(rect);
+			RFOWSettings.DoSettingsWindowContents(rect);
 		}
 
 		public static void InjectComponents()

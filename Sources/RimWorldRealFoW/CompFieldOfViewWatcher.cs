@@ -51,14 +51,15 @@ namespace RimWorldRealFoW
             {
                 this.isMechanoid = false;
             }
-            RealFoWModDefaultsDef named = DefDatabase<RealFoWModDefaultsDef>.GetNamed(RealFoWModDefaultsDef.DEFAULT_DEF_NAME, true);
+           // RealFoWModDefaultsDef named = DefDatabase<RealFoWModDefaultsDef>.GetNamed(RealFoWModDefaultsDef.DEFAULT_DEF_NAME, true);
+
             if (!this.isMechanoid)
             {
-                this.baseViewRange = named.baseViewRange;
+                this.baseViewRange = RFOWSettings.baseViewRange;
             }
             else
             {
-                this.baseViewRange = Mathf.Round(named.baseViewRange * 1.25f);
+                this.baseViewRange = Mathf.Round(RFOWSettings.baseViewRange * 1.25f);
             }
             if (
             this.pawn == null 
@@ -193,12 +194,15 @@ namespace RimWorldRealFoW
                                 || this.pawn.training == null
                                 || !this.pawn.training.HasLearned(TrainableDefOf.Release)))
                             {
+
                                 sightRange = -1;
                             }
                             else
                             {
                                 sightRange = Mathf.RoundToInt(this.calcPawnSightRange(position, false, false));
-
+                                if(this.raceProps.Animal) {
+                                    sightRange = (int)(sightRange*RFOWSettings.animalVisionModifier*raceProps.baseBodySize*0.8f);
+                                }
                                 if ((this.pawnPather == null
                                     || !this.pawnPather.Moving)
                                     && this.pawn.CurJob != null)
@@ -256,7 +260,7 @@ namespace RimWorldRealFoW
                         {
                             //Turret is more sensor based so reduced vision range, still can feed back some info
 
-                            int sightRange = Mathf.RoundToInt(this.turret.GunCompEq.PrimaryVerb.verbProps.range*0.6f);
+                            int sightRange = Mathf.RoundToInt(this.turret.GunCompEq.PrimaryVerb.verbProps.range*RFOWSettings.turretVisionModifier);
 
                             if ((this.compPowerTrader != null && !this.compPowerTrader.PowerOn)
                                 || (this.compRefuelable != null && !this.compRefuelable.HasFuel)
@@ -299,7 +303,7 @@ namespace RimWorldRealFoW
                         else if (this.compProvideVision != null)
                         {
 
-                            int viewRadius = Mathf.RoundToInt(this.compProvideVision.Props.viewRadius);
+                            int viewRadius = Mathf.RoundToInt(this.compProvideVision.Props.viewRadius*RFOWSettings.buildingVisionModifier);
                             if ((this.compPowerTrader != null && !this.compPowerTrader.PowerOn)
                                 || (this.compRefuelable != null && !this.compRefuelable.HasFuel)
                                 || (this.compFlickable != null && !this.compFlickable.SwitchIsOn)

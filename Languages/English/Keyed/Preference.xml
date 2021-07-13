@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
-<MustBeUnderRoof>Must be placed under a roof.</MustBeUnderRoof>
+	<MustBeUnderRoof>Must be placed under a roof.</MustBeUnderRoof>
+	<MustBeNextToWall>Must be placed against a wall.</MustBeNextToWall>
+	<NotVisible>Not visible area</NotVisible>
+	<CannotPlaceInUndiscovered>Can't place in undiscovered area.</CannotPlaceInUndiscovered>
+	<baseViewRangeDesc>Base pawn vision range</baseViewRangeDesc>
+	<buildingVisionModDesc>How far can vision providing building can see multiplier</buildingVisionModDesc>
+	<animalVisionModDesc>How far can trained animal can see multiplier</animalVisionModDesc>
+	<turretVisionModDesc>How far can turret can see multiplier</turretVisionModDesc>
+	<NeedWatcher>Camera need to be monitored</NeedWatcher>
+	<NeedWatcherDesc></NeedWatcherDesc>
+	
+	<NeedStorage>Camera need enough memory storage</NeedStorage>
+	<NeedStorageDesc></NeedStorageDesc>
   <fogAlphaSetting_title>Fog level</fogAlphaSetting_title>
   <fogAlphaSetting_desc>Fog covering level for discovered but not currently seen places</fogAlphaSetting_desc>
   <fogAlphaSetting_Black>Black</fogAlphaSetting_Black>

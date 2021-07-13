@@ -306,6 +306,7 @@
     <Compile Include="Sources\RimWorldRealFoW\Building_CameraConsole.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Building_SurveillanceCamera.cs" />
     <Compile Include="Sources\RimWorldRealFoW\FoWDef.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\PlaceWorker_NextToWall.cs" />
     <Compile Include="Sources\RimWorldRealFoW\WorkGiver_SurveilCameraConsole.cs" />
     <Compile Include="Sources\RimWorldRealFoW\JobDriver_SurveilCameraConsole.cs" />
     <Compile Include="Sources\RimWorldRealFoW\PlaceWorker_UnderRoof.cs" />
@@ -327,7 +328,6 @@
     <Compile Include="Sources\RimWorldRealFoW\Detours\_Pawn.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_ReservationUtility.cs" />
     <Compile Include="Sources\RimWorldRealFoW\RealFoWModDefaultsDef.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\RealFoWModSettings.cs" />
     <Compile Include="Sources\RimWorldRealFoW\CompMainComponent.cs" />
     <Compile Include="Sources\RimWorldRealFoW\CompComponentsPositionTracker.cs" />
     <Compile Include="Sources\RimWorldRealFoW\CompProvideVision.cs" />
@@ -349,6 +349,8 @@
     <Compile Include="Sources\RimWorldRealFoW\SectionLayer_FoVLayer.cs" />
     <Compile Include="Sources\RimWorldRealFoW\ShadowCaster.cs" />
     <Compile Include="Sources\RimWorldRealFoW\RealFoWModStarter.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\RFOWSettings.cs" />
+
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_Verb.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_Messages.cs" />
