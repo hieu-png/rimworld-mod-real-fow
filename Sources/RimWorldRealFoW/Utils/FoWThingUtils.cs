@@ -32,9 +32,8 @@ namespace RimWorldRealFoW.Utils
 		// Token: 0x0600002F RID: 47 RVA: 0x00005278 File Offset: 0x00003478
 		public static bool fowIsVisible(this Thing _this, bool forRender = false)
 		{
-			bool spawned = _this.Spawned;
 			bool result;
-			if (spawned)
+			if (_this.Spawned)
 			{
 				if (_this.def.isSaveable && !_this.def.saveCompressible)
 				{

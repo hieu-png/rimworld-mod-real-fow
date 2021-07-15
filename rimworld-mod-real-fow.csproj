@@ -350,6 +350,7 @@
     <Compile Include="Sources\RimWorldRealFoW\ShadowCaster.cs" />
     <Compile Include="Sources\RimWorldRealFoW\RealFoWModStarter.cs" />
     <Compile Include="Sources\RimWorldRealFoW\RFOWSettings.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\AttackTargetFinder_CanSee.cs" />
 
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_Verb.cs" />

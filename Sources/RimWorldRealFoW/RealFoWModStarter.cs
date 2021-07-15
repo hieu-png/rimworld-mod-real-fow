@@ -37,6 +37,8 @@ namespace RimWorldRealFoW
 			RFOWSettings.DoSettingsWindowContents(rect);
 		}
 
+
+
 		public static void InjectComponents()
 		{
 			foreach (ThingDef thingDef in DefDatabase<ThingDef>.AllDefs)
@@ -155,7 +157,11 @@ namespace RimWorldRealFoW
 
 			//Designation
 			RealFoWModStarter.patchMethod(typeof(Designation), typeof(_Designation), "Notify_Added");
+			
 			RealFoWModStarter.patchMethod(typeof(Designation), typeof(_Designation), "Notify_Removing");
+
+			var prefix = typeof(AttackTargetFinder_CanSee).GetMethod("CanSeePreFix");
+			harmony.Patch(typeof(Verse.AI.AttackTargetFinder).GetMethod("CanSee"),prefix: new HarmonyMethod(prefix));
 		}
 
 		// Token: 0x06000020 RID: 32 RVA: 0x00003AA2 File Offset: 0x00001CA2

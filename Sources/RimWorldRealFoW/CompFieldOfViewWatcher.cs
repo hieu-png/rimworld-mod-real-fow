@@ -410,7 +410,6 @@ namespace RimWorldRealFoW
                 }
             }
 
-            viewRange *= rangeModifier;
 
             bool sleeping = !this.isMechanoid && this.pawn.CurJob != null && this.pawn.jobs.curDriver.asleep;
 
@@ -484,15 +483,16 @@ namespace RimWorldRealFoW
                   //  attackVerb.verbProps.range = attackVerbRange[attackVerb];
                // }
             }
+            viewRange *= rangeModifier;
 
 
             if (!forTargeting && sleeping)
             {
-                viewRange = 8f;
+                viewRange = 8f*capacities.GetLevel(PawnCapacityDefOf.Hearing);
             }
             if (viewRange < 1f)
             {
-                return 1f;
+                return 8f*capacities.GetLevel(PawnCapacityDefOf.Hearing);
             }
             else
             {
