@@ -83,7 +83,7 @@
 	<ThingDef ParentName="BaseCamera">
 		<defName>SurveillanceCamera_Mounted</defName>
 		<label>wall mounted surveillance camera</label>
-		<description>Surveillance camera that provide vision for an area. 20 Camera view range radius. Automatically sustain itself power</description>
+		<description>Surveillance camera that provide vision for an area. 24 Camera view range radius. Automatically sustain itself power</description>
 		<altitudeLayer>Skyfaller</altitudeLayer>
 		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
 		<fillPercent>0</fillPercent>
@@ -114,19 +114,19 @@
 				<basePowerConsumption>50</basePowerConsumption>
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
-				<viewRadius>20</viewRadius>
+				<viewRadius>24</viewRadius>
 				<needManned>true</needManned>
 			</li>
 		</comps>
 		<researchPrerequisites>
 			<li>CameraSecurity</li>
 		</researchPrerequisites>
-		<specialDisplayRadius>19.9</specialDisplayRadius>
+		<specialDisplayRadius>23.9</specialDisplayRadius>
 	</ThingDef>
 	<ThingDef ParentName="BaseCamera">
 		<defName>SurveillanceCamera_Bush</defName>
 		<label>surveillance camera in a bush</label>
-		<description>Surveillance camera that provide vision for an area. 20 camera range radius. Camouflaged so it won't be attacked by enemy</description>
+		<description>Surveillance camera that provide vision for an area. 24 camera range radius. Camouflaged so it won't be attacked by enemy</description>
 		<altitudeLayer>Building</altitudeLayer>
 		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
 		<pathCost>30</pathCost>
@@ -163,19 +163,19 @@
 				<basePowerConsumption>70</basePowerConsumption>
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
-				<viewRadius>20</viewRadius>
+				<viewRadius>24</viewRadius>
 				<needManned>True</needManned>
 			</li>
 		</comps>
 		<researchPrerequisites>
 			<li>CameraSecurity</li>
 		</researchPrerequisites>
-		<specialDisplayRadius>19.9</specialDisplayRadius>
+		<specialDisplayRadius>23.9</specialDisplayRadius>
 	</ThingDef>
 	<ThingDef ParentName="BaseCamera">
 		<defName>SurveillanceCamera_DeadBush</defName>
 		<label>surveillance camera in a dead bush</label>
-		<description>Surveillance camera that provide vision for an area. 20 camera range radius. Camouflaged so it won't be attacked by enemy</description>
+		<description>Surveillance camera that provide vision for an area. 24 camera range radius. Camouflaged so it won't be attacked by enemy</description>
 		<altitudeLayer>Building</altitudeLayer>
 		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
 		<pathCost>30</pathCost>
@@ -212,21 +212,21 @@
 				<basePowerConsumption>70</basePowerConsumption>
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
-				<viewRadius>20</viewRadius>
+				<viewRadius>24</viewRadius>
 				<needManned>True</needManned>
 			</li>
 		</comps>
 		<researchPrerequisites>
 			<li>CameraSecurity</li>
 		</researchPrerequisites>
-		<specialDisplayRadius>19.9</specialDisplayRadius>
+		<specialDisplayRadius>23.9</specialDisplayRadius>
 		<isAutoAttackableMapObject>false</isAutoAttackableMapObject>
 	</ThingDef>
 	<!-- Tier 2, flexible, curved and provide more vision range -->
 	<ThingDef ParentName="BaseCamera">
 		<defName>SurveillanceCamera_UnderRoof</defName>
 		<label>ceiling surveillance camera</label>
-		<description>Surveillance camera that provide vision for an area. Cheaper for indoor build. 22 Camera view range radius.</description>
+		<description>Surveillance camera that provide vision for an area. Cheaper for indoor build. 25 Camera view range radius.</description>
 		<altitudeLayer>Skyfaller</altitudeLayer>
 		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
 		<clearBuildingArea>false</clearBuildingArea>
@@ -257,19 +257,19 @@
 				<basePowerConsumption>50</basePowerConsumption>
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
-				<viewRadius>22</viewRadius>
+				<viewRadius>25</viewRadius>
 				<needManned>true</needManned>
 			</li>
 		</comps>
 		<researchPrerequisites>
 			<li>CameraSecurityAdvanced</li>
 		</researchPrerequisites>
-		<specialDisplayRadius>21.9</specialDisplayRadius>
+		<specialDisplayRadius>24.9</specialDisplayRadius>
 	</ThingDef>
 	<ThingDef ParentName="BaseCamera">
 		<defName>SurveillanceCamera_Ground</defName>
 		<label>Ground surveillance camera</label>
-		<description>Surveillance camera that provide vision for an area. 30 Camera view range radius.</description>
+		<description>Surveillance camera that provide vision for an area. 35 Camera view range radius.</description>
 		<altitudeLayer>Building</altitudeLayer>
 		<pathCost>10</pathCost>
 		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
@@ -294,19 +294,19 @@
 				<basePowerConsumption>75</basePowerConsumption>
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
-				<viewRadius>30</viewRadius>
+				<viewRadius>35</viewRadius>
 				<needManned>True</needManned>
 			</li>
 		</comps>
 		<researchPrerequisites>
 			<li>CameraSecurityAdvanced</li>
 		</researchPrerequisites>
-		<specialDisplayRadius>29.9</specialDisplayRadius>
+		<specialDisplayRadius>34.9</specialDisplayRadius>
 	</ThingDef>
 	<ThingDef ParentName="BaseCamera">
 		<defName>SurveillanceCamera_Solar</defName>
 		<label>Self sustained surveillance camera</label>
-		<description>Surveillance camera that provide vision for an area. 35 Camera view range radius. Automatically sustain itself power</description>
+		<description>Surveillance camera that provide vision for an area. 40 Camera view range radius. Automatically sustain itself power</description>
 		<altitudeLayer>Building</altitudeLayer>
 		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
 		<pathCost>10</pathCost>
@@ -336,7 +336,7 @@
 				<transmitsPower>true</transmitsPower>
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
-				<viewRadius>35</viewRadius>
+				<viewRadius>40</viewRadius>
 				<needManned>True</needManned>
 			</li>
 		</comps>
@@ -345,12 +345,12 @@
 			<li>Batteries</li>
 			<li>CameraSecurityAdvanced</li>
 		</researchPrerequisites>
-		<specialDisplayRadius>34.9</specialDisplayRadius>
+		<specialDisplayRadius>39.9</specialDisplayRadius>
 	</ThingDef>
 	<ThingDef ParentName="BaseCamera">
 		<defName>SurveillanceCamera_High</defName>
 		<label>surveillance camera post</label>
-		<description>Surveillance camera that provide vision for an area. 60 Camera view range radius. Can't be placed indoor</description>
+		<description>Surveillance camera that provide vision for an area. 65 Camera view range radius. Can't be placed indoor</description>
 		<fillPercent>0.2</fillPercent>
 		<pathCost>40</pathCost>
 		<graphicData>
@@ -376,14 +376,14 @@
 				<basePowerConsumption>125</basePowerConsumption>
 			</li>
 			<li Class="RimWorldRealFoW.CompProperties_ProvideVision">
-				<viewRadius>60</viewRadius>
+				<viewRadius>65</viewRadius>
 				<needManned>true</needManned>
 			</li>
 		</comps>
 		<researchPrerequisites>
 			<li>CameraSecurityAdvanced</li>
 		</researchPrerequisites>
-		<specialDisplayRadius>59.9</specialDisplayRadius>
+		<specialDisplayRadius>64.9</specialDisplayRadius>
 		<placeWorkers>
 			<li>PlaceWorker_NotUnderRoof</li>
 		</placeWorkers>

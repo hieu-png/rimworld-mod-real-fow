@@ -11,8 +11,19 @@ namespace RimWorldRealFoW
     // Token: 0x02000014 RID: 20
     public class CompFieldOfViewWatcher : ThingSubComp
     {
+        enum ThingType
+        {
+            turret,
+            building,
+            visionProvider,
+            pawn,
+            animal
+        }
+
+        ThingType thingType;
         public override void PostSpawnSetup(bool respawningAfterLoad)
         {
+
             this.setupDone = true;
             this.calculated = false;
             this.lastPosition = CompFieldOfViewWatcher.iv3Invalid;
@@ -34,6 +45,7 @@ namespace RimWorldRealFoW
             this.pawn = (this.parent as Pawn);
             this.building = (this.parent as Building);
             this.turret = (this.parent as Building_TurretGun);
+            this.disabled = false;
 
             if (this.pawn != null)
             {
@@ -41,44 +53,57 @@ namespace RimWorldRealFoW
                 this.hediffs = this.pawn.health.hediffSet.hediffs;
                 this.capacities = this.pawn.health.capacities;
                 this.pawnPather = this.pawn.pather;
-            }
-            this.def = this.parent.def;
-            if (this.def.race != null)
-            {
-                this.isMechanoid = this.def.race.IsMechanoid;
-            }
-            else
-            {
-                this.isMechanoid = false;
-            }
-           // RealFoWModDefaultsDef named = DefDatabase<RealFoWModDefaultsDef>.GetNamed(RealFoWModDefaultsDef.DEFAULT_DEF_NAME, true);
 
-            if (!this.isMechanoid)
+                if (this.raceProps.Animal)
+                {
+                    thingType = ThingType.animal;
+                }
+                else
+                {
+                    thingType = ThingType.pawn;
+                }
+
+                this.def = this.parent.def;
+                if (this.def.race != null)
+                {
+                    this.isMechanoid = this.def.race.IsMechanoid;
+                }
+                else
+                {
+                    this.isMechanoid = false;
+                }
+                if (!this.isMechanoid)
+                {
+                    this.baseViewRange = RFOWSettings.baseViewRange;
+                }
+                else
+                {
+                    this.baseViewRange = Mathf.Round(RFOWSettings.baseViewRange * 1.25f);
+                }
+            }
+            else if (this.turret != null && this.compMannable == null)
             {
-                this.baseViewRange = RFOWSettings.baseViewRange;
+                thingType = ThingType.turret;
+            }
+            else if (this.compProvideVision != null)
+            {
+                thingType = ThingType.visionProvider;
+            }
+            else if (this.building != null)
+            {
+                thingType = ThingType.building;
             }
             else
-            {
-                this.baseViewRange = Mathf.Round(RFOWSettings.baseViewRange * 1.25f);
-            }
-            if (
-            this.pawn == null 
-            && (this.turret == null || this.compMannable != null) 
-            && this.compProvideVision == null 
-            && this.building == null)
             {
                 Log.Message("Removing unneeded FoV watcher from " + this.parent.ThingID, false);
                 this.disabled = true;
                 this.mainComponent.compFieldOfViewWatcher = null;
             }
-            else
-            {
-                this.disabled = false;
-            }
+
             this.initMap();
             this.lastMovementTick = Find.TickManager.TicksGame;
             this.lastPositionUpdateTick = this.lastMovementTick;
-            this.updateFoV(false);
+            this.updateFoV();
         }
 
         // Token: 0x06000067 RID: 103 RVA: 0x00006DDF File Offset: 0x00004FDF
@@ -90,7 +115,7 @@ namespace RimWorldRealFoW
         // Token: 0x06000068 RID: 104 RVA: 0x00006DFE File Offset: 0x00004FFE
         public override void ReceiveCompSignal(string signal)
         {
-            this.updateFoV(false);
+            this.updateFoV();
         }
 
         // Token: 0x06000069 RID: 105 RVA: 0x00006E0C File Offset: 0x0000500C
@@ -124,11 +149,13 @@ namespace RimWorldRealFoW
                 }
                 else
                 {
-                    if ((this.lastPosition != CompFieldOfViewWatcher.iv3Invalid
-                          && this.lastPosition != this.parent.Position) || ticksGame % 30 == 0)
+
+                    if (this.lastPosition != CompFieldOfViewWatcher.iv3Invalid
+                        && this.lastPosition != this.parent.Position || ticksGame % 30 == 0)
                     {
-                        this.updateFoV(false);
+                        this.updateFoV();
                     }
+
                 }
             }
         }
@@ -181,86 +208,36 @@ namespace RimWorldRealFoW
                     Faction faction = parent.Faction;
                     if (faction != null && (this.pawn == null || !this.pawn.Dead))
                     {
-
-                        if (this.pawn != null)
+                        if (thingType == ThingType.pawn)
                         {
-
-                            IntVec3[] peekDirection = null;
-                            int sightRange;
-                            if (this.raceProps != null
-                                && this.raceProps.Animal
-                                && (this.pawn.playerSettings == null
+                            livePawnCalculateFov(position, 1, forceUpdate, faction);
+                        }
+                        else if (thingType == ThingType.animal)
+                        {
+                            if ((this.pawn.playerSettings == null
                                 || this.pawn.playerSettings.Master == null
                                 || this.pawn.training == null
                                 || !this.pawn.training.HasLearned(TrainableDefOf.Release)))
                             {
-
-                                sightRange = -1;
+                                livePawnCalculateFov(position,
+                                0,
+                                forceUpdate,
+                                faction);
                             }
                             else
                             {
-                                sightRange = Mathf.RoundToInt(this.calcPawnSightRange(position, false, false));
-                                if(this.raceProps.Animal) {
-                                    sightRange = (int)(sightRange*RFOWSettings.animalVisionModifier*raceProps.baseBodySize*0.8f);
-                                }
-                                if ((this.pawnPather == null
-                                    || !this.pawnPather.Moving)
-                                    && this.pawn.CurJob != null)
-                                {
-                                    JobDef jobDef = this.pawn.CurJob.def;
-                                    if (
-                                        jobDef == JobDefOf.AttackStatic
-                                        || jobDef == JobDefOf.AttackMelee
-                                        || jobDef == JobDefOf.Wait_Combat
-                                        || jobDef == JobDefOf.Hunt)
-                                    {
-                                        peekDirection = GenAdj.CardinalDirections;
-                                    }
-                                    else if (
-                                        jobDef == JobDefOf.Mine
-                                        && this.pawn.CurJob.targetA != null
-                                        && this.pawn.CurJob.targetA.Cell != IntVec3.Invalid)
-                                    {
-                                        peekDirection = Utils.FoWThingUtils.getPeekArray(this.pawn.CurJob.targetA.Cell - this.parent.Position);
-                                    }
-
-                                }
-                            }
-                            if (!this.calculated
-                                || forceUpdate
-                                || faction != this.lastFaction
-                                || position != this.lastPosition
-                                || sightRange != this.lastSightRange
-                                || peekDirection != this.lastPeekDirections)
-                            {
-                                this.calculated = true;
-                                this.lastPosition = position;
-                                this.lastSightRange = sightRange;
-                                this.lastPeekDirections = peekDirection;
-                                if (this.lastFaction != faction)
-                                {
-                                    if (this.lastFaction != null)
-                                    {
-                                        this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
-                                    }
-                                    this.lastFaction = faction;
-                                    this.lastFactionShownCells = this.mapCompSeenFog.getFactionShownCells(faction);
-                                }
-                                if (sightRange != -1)
-                                {
-                                    this.calculateFoV(parent, sightRange, peekDirection);
-                                }
-                                else
-                                {
-                                    this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
-                                }
+                                livePawnCalculateFov(
+                                    position,
+                                    RFOWSettings.animalVisionModifier * Math.Max(raceProps.baseBodySize * 0.7f, 0.4f),
+                                    forceUpdate,
+                                    faction);
                             }
                         }
-                        else if (this.turret != null && this.compMannable == null)
+                        else if (thingType == ThingType.turret)
                         {
                             //Turret is more sensor based so reduced vision range, still can feed back some info
 
-                            int sightRange = Mathf.RoundToInt(this.turret.GunCompEq.PrimaryVerb.verbProps.range*RFOWSettings.turretVisionModifier);
+                            int sightRange = Mathf.RoundToInt(this.turret.GunCompEq.PrimaryVerb.verbProps.range * RFOWSettings.turretVisionModifier);
 
                             if ((this.compPowerTrader != null && !this.compPowerTrader.PowerOn)
                                 || (this.compRefuelable != null && !this.compRefuelable.HasFuel)
@@ -300,18 +277,16 @@ namespace RimWorldRealFoW
                                 }
                             }
                         }
-                        else if (this.compProvideVision != null)
+                        else if (thingType == ThingType.visionProvider)
                         {
-
-                            int viewRadius = Mathf.RoundToInt(this.compProvideVision.Props.viewRadius*RFOWSettings.buildingVisionModifier);
+                            Log.Message("Checking...");
+                            int viewRadius = Mathf.RoundToInt(this.compProvideVision.Props.viewRadius * RFOWSettings.buildingVisionModifier);
                             if ((this.compPowerTrader != null && !this.compPowerTrader.PowerOn)
                                 || (this.compRefuelable != null && !this.compRefuelable.HasFuel)
                                 || (this.compFlickable != null && !this.compFlickable.SwitchIsOn)
                                 || (this.compProvideVision.Props.needManned && !this.mapCompSeenFog.workingCameraConsole)
                                 )
-
                             {
-
                                 viewRadius = 0;
                             }
 
@@ -344,16 +319,14 @@ namespace RimWorldRealFoW
                                 }
                             }
                         }
-                        else if (this.building != null)
+                        else if (thingType == ThingType.building)
                         {
-
                             int sightRange = 0;
-                           
                             if (
-                            !this.calculated 
-                            || forceUpdate 
-                            || faction != this.lastFaction 
-                            || position != this.lastPosition 
+                            !this.calculated
+                            || forceUpdate
+                            || faction != this.lastFaction
+                            || position != this.lastPosition
                             || sightRange != this.lastSightRange)
                             {
                                 this.calculated = true;
@@ -375,6 +348,7 @@ namespace RimWorldRealFoW
                         else
                         {
                             Log.Warning("Non disabled thing... " + this.parent.ThingID, false);
+                            disabled = true;
                         }
                     }
                     else
@@ -403,7 +377,8 @@ namespace RimWorldRealFoW
             }
             else
             {
-                float num = 0f;
+                float viewRange = 0f;
+                float sightCapacity = this.capacities.GetLevel(PawnCapacityDefOf.Sight);
                 this.initMap();
                 bool sleeping = !this.isMechanoid && this.pawn.CurJob != null && this.pawn.jobs.curDriver.asleep;
                 if (!shouldMove && !sleeping && (this.pawnPather == null || !this.pawnPather.Moving))
@@ -412,29 +387,28 @@ namespace RimWorldRealFoW
                     if (this.pawn.CurJob != null)
                     {
                         JobDef jobDef = this.pawn.CurJob.def;
+
                         //Get manned turret sight range.
                         if (jobDef == JobDefOf.ManTurret)
                         {
                             Building_Turret building_Turret = this.pawn.CurJob.targetA.Thing as Building_Turret;
-                            bool flag6 = building_Turret != null;
-                            if (flag6)
+                            if (building_Turret != null)
                             {
                                 attackVerb = building_Turret.AttackVerb;
                             }
                         }
                         else
                         {
+                            //Standing still increase view range
                             if (jobDef == JobDefOf.AttackStatic
                                 || jobDef == JobDefOf.AttackMelee
                                 || jobDef == JobDefOf.Wait_Combat
                                 || jobDef == JobDefOf.Hunt)
                             {
-                                bool flag8 = this.pawn.equipment != null;
-                                if (flag8)
+                                if (this.pawn.equipment != null)
                                 {
                                     ThingWithComps primary = this.pawn.equipment.Primary;
-                                    bool flag9 = primary != null && primary.def.IsRangedWeapon;
-                                    if (flag9)
+                                    if (primary != null && primary.def.IsRangedWeapon)
                                     {
                                         attackVerb = primary.GetComp<CompEquippable>().PrimaryVerb;
                                     }
@@ -454,26 +428,25 @@ namespace RimWorldRealFoW
                             int num2 = Find.TickManager.TicksGame - this.lastMovementTick;
                             float statValue = this.pawn.GetStatValue(StatDefOf.AimingDelayFactor, true);
                             int num3 = (attackVerb.verbProps.warmupTime * statValue).SecondsToTicks() * Mathf.RoundToInt((range - this.baseViewRange) / 2f);
-                            bool flag12 = num2 >= num3;
-                            if (flag12)
+                            if (num2 >= num3)
                             {
-                                num = range * this.capacities.GetLevel(PawnCapacityDefOf.Sight);
+                                viewRange = range * sightCapacity;
                             }
                             else
                             {
                                 int sightRange = Mathf.RoundToInt((range - this.baseViewRange) * ((float)num2 / (float)num3));
-                                num = (this.baseViewRange + (float)sightRange) * this.capacities.GetLevel(PawnCapacityDefOf.Sight);
+                                viewRange = (this.baseViewRange + (float)sightRange) * sightCapacity;
                             }
                         }
                     }
                 }
-                if (num == 0f)
+                if (viewRange == 0f)
                 {
-                    num = this.baseViewRange * this.capacities.GetLevel(PawnCapacityDefOf.Sight);
+                    viewRange = this.baseViewRange * sightCapacity;
                 }
                 if (!forTargeting && sleeping)
                 {
-                    num *= 0.2f;
+                    viewRange *= 0.2f;
                 }
                 List<CompAffectVision> visionAffectingBuilding = this.mapCompSeenFog.compAffectVisionGrid[position.z * this.mapSizeX + position.x];
                 bool ignoreWeather = false;
@@ -484,45 +457,34 @@ namespace RimWorldRealFoW
                         ignoreDarkness = true;
                     if (visionAffecter.Props.denyWeather)
                         ignoreWeather = true;
-                    num *= visionAffecter.Props.fovMultiplier;
+                    viewRange *= visionAffecter.Props.fovMultiplier;
                 }
                 if (!this.isMechanoid)
                 {
                     float currGlow = this.glowGrid.GameGlowAt(position, false);
-                    if (currGlow != 1f)
+
+                    if (currGlow != 1f && !ignoreDarkness/*&&!(sightCapacity>1.15)*/)
                     {
-                        float darknessModifier = 0.6f;
-                        if (ignoreDarkness)
-                            darknessModifier = 1f;
-                        int count2 = this.hediffs.Count;
-                        for (int j = 0; j < count2; j++)
-                        {
-                            if (this.hediffs[j].def == HediffDefOf.BionicEye)
-                            {
-                                darknessModifier += 0.2f;
-                            }
-                        }
-                        if (darknessModifier < 1f)
-                        {
-                            num *= Mathf.Lerp(darknessModifier, 1f, currGlow);
-                        }
+                        //float darknessModifier = 0.6f;                        
+                        viewRange *= Mathf.Lerp(0.65f, 1f, currGlow);
+
                     }
-                    if (!this.roofGrid.Roofed(position.x, position.z)&&!ignoreWeather)
+                    if (!this.roofGrid.Roofed(position.x, position.z) && !ignoreWeather)
                     {
                         float curWeatherAccuracyMultiplier = this.weatherManager.CurWeatherAccuracyMultiplier;
                         if (curWeatherAccuracyMultiplier != 1f)
                         {
-                            num *= Mathf.Lerp(0.5f, 1f, curWeatherAccuracyMultiplier);
+                            viewRange *= Mathf.Lerp(0.5f, 1f, curWeatherAccuracyMultiplier);
                         }
                     }
                 }
-                if (num < 1f)
+                if (viewRange < 1f)
                 {
                     result = 1f;
                 }
                 else
                 {
-                    result = num;
+                    result = viewRange;
                 }
             }
             return result;
@@ -593,7 +555,7 @@ namespace RimWorldRealFoW
                 }
                 int occupiedX;
                 int occupiedZ;
-               // int oldViewRectIdx;
+                // int oldViewRectIdx;
                 for (occupiedX = occupiedRect.minX; occupiedX <= occupiedRect.maxX; occupiedX++)
                 {
                     for (occupiedZ = occupiedRect.minZ; occupiedZ <= occupiedRect.maxZ; occupiedZ++)
@@ -610,15 +572,15 @@ namespace RimWorldRealFoW
                         }
                         else
                         {
-                            int num10 = (occupiedZ - oldViewRecMinZ) * oldViewWidth + (occupiedX - oldViewRecMinX);
-                            ref bool ptr = ref oldMapView[num10];
-                            if (!ptr)
+                            int oldViewRecInx = (occupiedZ - oldViewRecMinZ) * oldViewWidth + (occupiedX - oldViewRecMinX);
+                            ref bool oldViewMapValue = ref oldMapView[oldViewRecInx];
+                            if (!oldViewMapValue)
                             {
                                 this.mapCompSeenFog.incrementSeen(faction, factionShownCells, occupiedZ * mapSizeX + occupiedX);
                             }
                             else
                             {
-                                ptr = false;
+                                oldViewMapValue = false;
                             }
                         }
                     }
@@ -640,13 +602,17 @@ namespace RimWorldRealFoW
                             this.viewPositions[1 + k] = position + peekDirections[k];
                         }
                     }
-                    int num12 = this.map.Size.x - 1;
-                    int num13 = this.map.Size.z - 1;
+                    int mapWidth = this.map.Size.x - 1;
+                    int mapHeight = this.map.Size.z - 1;
                     for (int l = 0; l < viewPositionCount; l++)
                     {
                         ref IntVec3 ptr2 = ref this.viewPositions[l];
-                        bool flag8 = ptr2.x >= 0 && ptr2.z >= 0 && ptr2.x <= num12 && ptr2.z <= num13 && (l == 0 || ptr2.IsInside(thing) || !viewBlockerCells[ptr2.z * mapSizeX + ptr2.x]);
-                        if (flag8)
+                        if (
+                        ptr2.x >= 0
+                        && ptr2.z >= 0
+                        && ptr2.x <= mapWidth
+                        && ptr2.z <= mapHeight
+                        && (l == 0 || ptr2.IsInside(thing) || !viewBlockerCells[ptr2.z * mapSizeX + ptr2.x]))
                         {
                             ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, intRadius, viewBlockerCells, mapSizeX, mapSizeY, true, this.mapCompSeenFog, faction, factionShownCells, newMapView, newViewRecMinX, newViewRecMinZ, newViewWidth, oldMapView, oldViewRecMinX, oldViewRecMaxX, oldViewRecMinZ, oldViewRecMaxZ, oldViewWidth, byte.MaxValue, -1, -1);
                         }
@@ -672,6 +638,7 @@ namespace RimWorldRealFoW
                     }
                 }
                 this.viewMapSwitch = !this.viewMapSwitch;
+
                 this.viewRect.maxX = newViewRecMaxX;
                 this.viewRect.minX = newViewRecMinX;
                 this.viewRect.maxZ = newViewRecMaxZ;
@@ -682,196 +649,197 @@ namespace RimWorldRealFoW
         // Token: 0x0600006F RID: 111 RVA: 0x00008180 File Offset: 0x00006380
         public void refreshFovTarget(ref IntVec3 targetPos)
         {
-            bool flag = !this.setupDone;
-            if (!flag)
+            if (!setupDone)
             {
-                Thing parent = this.parent;
-                bool[] array = this.viewMapSwitch ? this.viewMap1 : this.viewMap2;
-                bool[] array2 = this.viewMapSwitch ? this.viewMap2 : this.viewMap1;
-                bool flag2 = array == null || this.lastPosition != this.parent.Position;
-                if (flag2)
+                return;
+            }
+
+            Thing parent = this.parent;
+
+            bool[] oldViewMap = this.viewMapSwitch ? this.viewMap1 : this.viewMap2;
+            bool[] newViewMap = this.viewMapSwitch ? this.viewMap2 : this.viewMap1;
+            if (oldViewMap == null || this.lastPosition != this.parent.Position)
+            {
+                this.updateFoV(true);
+            }
+            else
+            {
+                int radius = this.lastSightRange;
+                IntVec3[] peekDirection = this.lastPeekDirections;
+
+                int num = this.mapSizeX;
+                int num2 = this.mapSizeZ;
+
+                IntVec3 position = parent.Position;
+                Faction faction = this.lastFaction;
+                short[] factionShownCells = this.lastFactionShownCells;
+
+                CellRect cellRect = parent.OccupiedRect();
+
+                int minZ = this.viewRect.minZ;
+                int maxZ = this.viewRect.maxZ;
+                int minX = this.viewRect.minX;
+                int maxX = this.viewRect.maxX;
+
+                int width = this.viewRect.Width;
+                int area = this.viewRect.Area;
+
+                if (newViewMap == null || newViewMap.Length < area)
                 {
-                    this.updateFoV(true);
-                }
-                else
-                {
-                    int radius = this.lastSightRange;
-                    IntVec3[] array3 = this.lastPeekDirections;
-                    int num = this.mapSizeX;
-                    int num2 = this.mapSizeZ;
-                    IntVec3 position = parent.Position;
-                    Faction faction = this.lastFaction;
-                    short[] factionShownCells = this.lastFactionShownCells;
-                    CellRect cellRect = parent.OccupiedRect();
-                    int minZ = this.viewRect.minZ;
-                    int maxZ = this.viewRect.maxZ;
-                    int minX = this.viewRect.minX;
-                    int maxX = this.viewRect.maxX;
-                    int width = this.viewRect.Width;
-                    int area = this.viewRect.Area;
-                    bool flag3 = array2 == null || array2.Length < area;
-                    if (flag3)
+                    newViewMap = new bool[(int)((float)area * 1.2f)];
+                    if (this.viewMapSwitch)
                     {
-                        array2 = new bool[(int)((float)area * 1.2f)];
-                        bool flag4 = this.viewMapSwitch;
-                        if (flag4)
-                        {
-                            this.viewMap2 = array2;
-                        }
-                        else
-                        {
-                            this.viewMap1 = array2;
-                        }
-                    }
-                    for (int i = cellRect.minX; i <= cellRect.maxX; i++)
-                    {
-                        for (int j = cellRect.minZ; j <= cellRect.maxZ; j++)
-                        {
-                            int num3 = (j - minZ) * width + (i - minX);
-                            array2[num3] = true;
-                            array[num3] = false;
-                        }
-                    }
-                    bool[] viewBlockerCells = this.mapCompSeenFog.viewBlockerCells;
-                    this.viewPositions[0] = position;
-                    bool flag5 = array3 == null;
-                    int sightRange;
-                    if (flag5)
-                    {
-                        sightRange = 1;
+                        this.viewMap2 = newViewMap;
                     }
                     else
                     {
-                        sightRange = 1 + array3.Length;
-                        for (int k = 0; k < sightRange - 1; k++)
-                        {
-                            this.viewPositions[1 + k] = position + array3[k];
-                        }
+                        this.viewMap1 = newViewMap;
                     }
-                    int num5 = this.map.Size.x - 1;
-                    int num6 = this.map.Size.z - 1;
-                    bool flag6 = false;
-                    bool flag7 = false;
-                    bool flag8 = false;
-                    bool flag9 = false;
-                    for (int l = 0; l < sightRange; l++)
-                    {
-                        ref IntVec3 ptr = ref this.viewPositions[l];
-                        bool flag10 = ptr.x >= 0 && ptr.z >= 0 && ptr.x <= num5 && ptr.z <= num6 && (l == 0 || ptr.IsInside(parent) || !viewBlockerCells[ptr.z * num + ptr.x]);
-                        if (flag10)
-                        {
-                            bool flag11 = ptr.x <= targetPos.x;
-                            if (flag11)
-                            {
-                                bool flag12 = ptr.z <= targetPos.z;
-                                if (flag12)
-                                {
-                                    flag6 = true;
-                                }
-                                else
-                                {
-                                    flag9 = true;
-                                }
-                            }
-                            else
-                            {
-                                bool flag13 = ptr.z <= targetPos.z;
-                                if (flag13)
-                                {
-                                    flag7 = true;
-                                }
-                                else
-                                {
-                                    flag8 = true;
-                                }
-                            }
-                        }
-                    }
-                    for (int m = 0; m < sightRange; m++)
-                    {
-                        ref IntVec3 ptr2 = ref this.viewPositions[m];
-                        bool flag14 = ptr2.x >= 0 && ptr2.z >= 0 && ptr2.x <= num5 && ptr2.z <= num6 && (m == 0 || ptr2.IsInside(parent) || !viewBlockerCells[ptr2.z * num + ptr2.x]);
-                        if (flag14)
-                        {
-                            bool flag15 = flag6;
-                            if (flag15)
-                            {
-                                ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, array2, minX, minZ, width, array, minX, maxX, minZ, maxZ, width, 0, -1, -1);
-                                ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, array2, minX, minZ, width, array, minX, maxX, minZ, maxZ, width, 1, -1, -1);
-                            }
-                            bool flag16 = flag7;
-                            if (flag16)
-                            {
-                                ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, array2, minX, minZ, width, array, minX, maxX, minZ, maxZ, width, 2, -1, -1);
-                                ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, array2, minX, minZ, width, array, minX, maxX, minZ, maxZ, width, 3, -1, -1);
-                            }
-                            bool flag17 = flag8;
-                            if (flag17)
-                            {
-                                ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, array2, minX, minZ, width, array, minX, maxX, minZ, maxZ, width, 4, -1, -1);
-                                ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, array2, minX, minZ, width, array, minX, maxX, minZ, maxZ, width, 5, -1, -1);
-                            }
-                            bool flag18 = flag9;
-                            if (flag18)
-                            {
-                                ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, array2, minX, minZ, width, array, minX, maxX, minZ, maxZ, width, 6, -1, -1);
-                                ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, array2, minX, minZ, width, array, minX, maxX, minZ, maxZ, width, 7, -1, -1);
-                            }
-                        }
-                    }
-                    for (int n = 0; n < area; n++)
-                    {
-                        ref bool ptr3 = ref array[n];
-                        bool flag19 = ptr3;
-                        if (flag19)
-                        {
-                            ptr3 = false;
-                            int num7 = minX + n % width;
-                            int num8 = minZ + n / width;
-                            bool flag20 = position.x <= num7;
-                            byte b;
-                            if (flag20)
-                            {
-                                bool flag21 = position.z <= num8;
-                                if (flag21)
-                                {
-                                    b = 1;
-                                }
-                                else
-                                {
-                                    b = 4;
-                                }
-                            }
-                            else
-                            {
-                                bool flag22 = position.z <= num8;
-                                if (flag22)
-                                {
-                                    b = 2;
-                                }
-                                else
-                                {
-                                    b = 3;
-                                }
-                            }
-                            bool flag23 = (!flag6 && b == 1) || (!flag7 && b == 2) || (!flag8 && b == 3) || (!flag9 && b == 4);
-                            if (flag23)
-                            {
-                                array2[n] = true;
-                            }
-                            else
-                            {
-                                bool flag24 = num8 >= 0 && num8 <= num2 && num7 >= 0 && num7 <= num;
-                                if (flag24)
-                                {
-                                    this.mapCompSeenFog.decrementSeen(faction, factionShownCells, num8 * num + num7);
-                                }
-                            }
-                        }
-                    }
-                    this.viewMapSwitch = !this.viewMapSwitch;
                 }
+
+                for (int i = cellRect.minX; i <= cellRect.maxX; i++)
+                {
+                    for (int j = cellRect.minZ; j <= cellRect.maxZ; j++)
+                    {
+                        int num3 = (j - minZ) * width + (i - minX);
+                        newViewMap[num3] = true;
+                        oldViewMap[num3] = false;
+                    }
+                }
+                bool[] viewBlockerCells = this.mapCompSeenFog.viewBlockerCells;
+                this.viewPositions[0] = position;
+                int sightRange;
+                if (peekDirection == null)
+                {
+                    sightRange = 1;
+                }
+                else
+                {
+                    sightRange = 1 + peekDirection.Length;
+                    for (int k = 0; k < sightRange - 1; k++)
+                    {
+                        this.viewPositions[1 + k] = position + peekDirection[k];
+                    }
+                }
+                int num5 = this.map.Size.x - 1;
+                int num6 = this.map.Size.z - 1;
+                bool q1Updated = false;
+                bool q2Updated = false;
+                bool q3Updated = false;
+                bool q4Updated = false;
+                for (int l = 0; l < sightRange; l++)
+                {
+                    ref IntVec3 ptr = ref this.viewPositions[l];
+                    if (
+                    ptr.x >= 0 && ptr.z >= 0
+                    && ptr.x <= num5 && ptr.z <= num6
+                    && (l == 0 || ptr.IsInside(parent) || !viewBlockerCells[ptr.z * num + ptr.x]))
+                    {
+                        if (ptr.x <= targetPos.x)
+                        {
+                            if (ptr.z <= targetPos.z)
+                                q1Updated = true;
+                            else
+                                q4Updated = true;
+                        }
+                        else
+                        {
+                            if (ptr.z <= targetPos.z)
+                            {
+                                q2Updated = true;
+                            }
+                            else
+                            {
+                                q3Updated = true;
+                            }
+                        }
+                    }
+                }
+                for (int m = 0; m < sightRange; m++)
+                {
+                    ref IntVec3 ptr2 = ref this.viewPositions[m];
+                    bool flag14 = ptr2.x >= 0 && ptr2.z >= 0 && ptr2.x <= num5 && ptr2.z <= num6 && (m == 0 || ptr2.IsInside(parent) || !viewBlockerCells[ptr2.z * num + ptr2.x]);
+                    if (flag14)
+                    {
+                        bool flag15 = q1Updated;
+                        if (flag15)
+                        {
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 0, -1, -1);
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 1, -1, -1);
+                        }
+                        bool flag16 = q2Updated;
+                        if (flag16)
+                        {
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 2, -1, -1);
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 3, -1, -1);
+                        }
+                        bool flag17 = q3Updated;
+                        if (flag17)
+                        {
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 4, -1, -1);
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 5, -1, -1);
+                        }
+                        bool flag18 = q4Updated;
+                        if (flag18)
+                        {
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 6, -1, -1);
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 7, -1, -1);
+                        }
+                    }
+                }
+                for (int n = 0; n < area; n++)
+                {
+                    ref bool ptr3 = ref oldViewMap[n];
+                    bool flag19 = ptr3;
+                    if (flag19)
+                    {
+                        ptr3 = false;
+                        int num7 = minX + n % width;
+                        int num8 = minZ + n / width;
+                        bool flag20 = position.x <= num7;
+                        byte b;
+                        if (flag20)
+                        {
+                            bool flag21 = position.z <= num8;
+                            if (flag21)
+                            {
+                                b = 1;
+                            }
+                            else
+                            {
+                                b = 4;
+                            }
+                        }
+                        else
+                        {
+                            bool flag22 = position.z <= num8;
+                            if (flag22)
+                            {
+                                b = 2;
+                            }
+                            else
+                            {
+                                b = 3;
+                            }
+                        }
+                        bool flag23 = (!q1Updated && b == 1) || (!q2Updated && b == 2) || (!q3Updated && b == 3) || (!q4Updated && b == 4);
+                        if (flag23)
+                        {
+                            newViewMap[n] = true;
+                        }
+                        else
+                        {
+                            bool flag24 = num8 >= 0 && num8 <= num2 && num7 >= 0 && num7 <= num;
+                            if (flag24)
+                            {
+                                this.mapCompSeenFog.decrementSeen(faction, factionShownCells, num8 * num + num7);
+                            }
+                        }
+                    }
+                }
+                this.viewMapSwitch = !this.viewMapSwitch;
             }
+
         }
 
         // Token: 0x06000070 RID: 112 RVA: 0x000088AC File Offset: 0x00006AAC
@@ -929,51 +897,104 @@ namespace RimWorldRealFoW
         }
 
         // Token: 0x0400005E RID: 94
+
+        private void livePawnCalculateFov(
+            IntVec3 position,
+            float sightRangeMod,
+            bool forceUpdate,
+            Faction faction
+            )
+
+        {
+            IntVec3[] peekDirection = null;
+            int sightRange = -1;
+
+
+            if (sightRangeMod != 0)
+                sightRange = Mathf.RoundToInt(sightRangeMod * this.calcPawnSightRange(position, false, false));
+            if (sightRange != -1)
+            {
+                if ((this.pawnPather == null
+                    || !this.pawnPather.Moving)
+                    && this.pawn.CurJob != null)
+                {
+                    JobDef jobDef = this.pawn.CurJob.def;
+                    if (
+                        jobDef == JobDefOf.AttackStatic
+                        || jobDef == JobDefOf.AttackMelee
+                        || jobDef == JobDefOf.Wait_Combat
+                        || jobDef == JobDefOf.Hunt)
+                    {
+                        peekDirection = GenAdj.CardinalDirections;
+                    }
+                    else if (
+                        jobDef == JobDefOf.Mine
+                        && this.pawn.CurJob.targetA != null
+                        && this.pawn.CurJob.targetA.Cell != IntVec3.Invalid)
+                    {
+                        peekDirection = Utils.FoWThingUtils.getPeekArray(this.pawn.CurJob.targetA.Cell - this.parent.Position);
+                    }
+
+                }
+
+                if (!this.calculated
+                    || forceUpdate
+                    || faction != this.lastFaction
+                    || position != this.lastPosition
+                    || sightRange != this.lastSightRange
+                    || peekDirection != this.lastPeekDirections)
+                {
+                    this.calculated = true;
+                    this.lastPosition = position;
+                    this.lastSightRange = sightRange;
+                    this.lastPeekDirections = peekDirection;
+                    if (this.lastFaction != faction)
+                    {
+                        if (this.lastFaction != null)
+                        {
+                            this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
+                        }
+                        this.lastFaction = faction;
+                        this.lastFactionShownCells = this.mapCompSeenFog.getFactionShownCells(faction);
+                    }
+                    this.calculateFoV(parent, sightRange, peekDirection);
+                }
+            }
+            else
+            {
+                this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
+            }
+        }
         private static readonly IntVec3 iv3Invalid = IntVec3.Invalid;
 
-        // Token: 0x0400005F RID: 95
         private bool calculated;
 
-        // Token: 0x04000060 RID: 96
         private IntVec3 lastPosition;
 
-        // Token: 0x04000061 RID: 97
         public int lastSightRange;
 
-        // Token: 0x04000062 RID: 98
         private IntVec3[] lastPeekDirections;
 
-        // Token: 0x04000063 RID: 99
         private Faction lastFaction;
 
-        // Token: 0x04000064 RID: 100
         private short[] lastFactionShownCells;
 
-        // Token: 0x04000065 RID: 101
         private float baseViewRange;
 
-        // Token: 0x04000066 RID: 102
         private bool[] viewMap1;
 
-        // Token: 0x04000067 RID: 103
         private bool[] viewMap2;
 
-        // Token: 0x04000068 RID: 104
         private CellRect viewRect;
 
-        // Token: 0x04000069 RID: 105
         private bool viewMapSwitch = false;
 
-        // Token: 0x0400006A RID: 106
         private IntVec3[] viewPositions;
 
-        // Token: 0x0400006B RID: 107
         private Map map;
 
-        // Token: 0x0400006C RID: 108
         private MapComponentSeenFog mapCompSeenFog;
 
-        // Token: 0x0400006D RID: 109
         private ThingGrid thingGrid;
 
         // Token: 0x0400006E RID: 110

@@ -116,9 +116,8 @@ namespace RimWorldRealFoW.Utils
 		public static CompHiddenable TryGetCompHiddenable(this Thing _this)
 		{
 			CompMainComponent compMainComponent = (CompMainComponent)_this.TryGetComp(CompMainComponent.COMP_DEF);
-			bool flag = compMainComponent != null;
 			CompHiddenable result;
-			if (flag)
+			if (compMainComponent != null)
 			{
 				result = compMainComponent.compHiddenable;
 			}
