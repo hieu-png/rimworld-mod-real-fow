@@ -34,6 +34,7 @@ namespace RimWorldRealFoW
             this.viewRect = new CellRect(-1, -1, 0, 0);
             this.viewPositions = new IntVec3[5];
             this.compHiddenable = this.mainComponent.compHiddenable;
+           // this.attackVerbRange = new Dictionary<Verb, float>();
 
             this.compGlower = this.parent.GetComp<CompGlower>();
             this.compPowerTrader = this.parent.GetComp<CompPowerTrader>();
@@ -88,6 +89,8 @@ namespace RimWorldRealFoW
             else if (this.compProvideVision != null)
             {
                 thingType = ThingType.visionProvider;
+                this.building.def.specialDisplayRadius = compProvideVision.Props.viewRadius * RFOWSettings.buildingVisionModifier - 0.1f;
+
             }
             else if (this.building != null)
             {
@@ -106,19 +109,16 @@ namespace RimWorldRealFoW
             this.updateFoV();
         }
 
-        // Token: 0x06000067 RID: 103 RVA: 0x00006DDF File Offset: 0x00004FDF
         public override void PostExposeData()
         {
             Scribe_Values.Look<int>(ref this.lastMovementTick, "fovLastMovementTick", Find.TickManager.TicksGame, false);
         }
 
-        // Token: 0x06000068 RID: 104 RVA: 0x00006DFE File Offset: 0x00004FFE
         public override void ReceiveCompSignal(string signal)
         {
             this.updateFoV();
         }
 
-        // Token: 0x06000069 RID: 105 RVA: 0x00006E0C File Offset: 0x0000500C
         public override void CompTick()
         {
             if (!this.disabled)
@@ -165,7 +165,6 @@ namespace RimWorldRealFoW
             base.CompTickRare();
         }
 
-        // Token: 0x0600006A RID: 106 RVA: 0x00006F34 File Offset: 0x00005134
         private void initMap()
         {
             if (this.map != this.parent.Map)
@@ -194,7 +193,6 @@ namespace RimWorldRealFoW
             }
         }
 
-        // Token: 0x0600006B RID: 107 RVA: 0x0000708C File Offset: 0x0000528C
         public void updateFoV(bool forceUpdate = false)
         {
             if (!this.disabled || !this.setupDone || Current.ProgramState == ProgramState.MapInitializing)
@@ -279,7 +277,6 @@ namespace RimWorldRealFoW
                         }
                         else if (thingType == ThingType.visionProvider)
                         {
-                            Log.Message("Checking...");
                             int viewRadius = Mathf.RoundToInt(this.compProvideVision.Props.viewRadius * RFOWSettings.buildingVisionModifier);
                             if ((this.compPowerTrader != null && !this.compPowerTrader.PowerOn)
                                 || (this.compRefuelable != null && !this.compRefuelable.HasFuel)
@@ -369,125 +366,139 @@ namespace RimWorldRealFoW
 
         public float calcPawnSightRange(IntVec3 position, bool forTargeting, bool shouldMove)
         {
-            float result;
             if (this.pawn == null)
             {
                 Log.Error("calcPawnSightRange performed on non pawn thing", false);
-                result = 0f;
+                return 0f;
             }
-            else
-            {
-                float viewRange = 0f;
-                float sightCapacity = this.capacities.GetLevel(PawnCapacityDefOf.Sight);
-                this.initMap();
-                bool sleeping = !this.isMechanoid && this.pawn.CurJob != null && this.pawn.jobs.curDriver.asleep;
-                if (!shouldMove && !sleeping && (this.pawnPather == null || !this.pawnPather.Moving))
-                {
-                    Verb attackVerb = null;
-                    if (this.pawn.CurJob != null)
-                    {
-                        JobDef jobDef = this.pawn.CurJob.def;
 
-                        //Get manned turret sight range.
-                        if (jobDef == JobDefOf.ManTurret)
+            float viewRange = baseViewRange;
+            //float sightCapacity = ;
+            this.initMap();
+
+
+            List<CompAffectVision> visionAffectingBuilding = this.mapCompSeenFog.compAffectVisionGrid[position.z * this.mapSizeX + position.x];
+            bool ignoreWeather = false;
+            bool ignoreDarkness = false;
+            float rangeModifier = this.capacities.GetLevel(PawnCapacityDefOf.Sight);
+            foreach (CompAffectVision visionAffecter in visionAffectingBuilding)
+            {
+                if (visionAffecter.Props.denyDarkness)
+                    ignoreDarkness = true;
+                if (visionAffecter.Props.denyWeather)
+                    ignoreWeather = true;
+
+                rangeModifier *= visionAffecter.Props.fovMultiplier;
+            }
+            if (!this.isMechanoid)
+            {
+                float currGlow = this.glowGrid.GameGlowAt(position, false);
+
+                if (currGlow != 1f && !ignoreDarkness/*&&!(sightCapacity>1.15)*/)
+                {
+                    //float darknessModifier = 0.6f;                        
+                    rangeModifier *= Mathf.Lerp(0.65f, 1f, currGlow);
+
+                }
+                if (!this.roofGrid.Roofed(position.x, position.z) && !ignoreWeather)
+                {
+                    float curWeatherAccuracyMultiplier = this.weatherManager.CurWeatherAccuracyMultiplier;
+                    if (curWeatherAccuracyMultiplier != 1f)
+                    {
+                        rangeModifier *= Mathf.Lerp(0.5f, 1f, curWeatherAccuracyMultiplier);
+                    }
+                }
+            }
+
+            viewRange *= rangeModifier;
+
+            bool sleeping = !this.isMechanoid && this.pawn.CurJob != null && this.pawn.jobs.curDriver.asleep;
+
+            if (!shouldMove && !sleeping && (this.pawnPather == null || !this.pawnPather.Moving))
+            {
+                Verb attackVerb = null;
+                if (this.pawn.CurJob != null)
+                {
+                    JobDef jobDef = this.pawn.CurJob.def;
+
+                    //Get manned turret sight range.
+                    if (jobDef == JobDefOf.ManTurret)
+                    {
+                        Building_Turret building_Turret = this.pawn.CurJob.targetA.Thing as Building_Turret;
+                        if (building_Turret != null)
                         {
-                            Building_Turret building_Turret = this.pawn.CurJob.targetA.Thing as Building_Turret;
-                            if (building_Turret != null)
-                            {
-                                attackVerb = building_Turret.AttackVerb;
-                            }
+                            attackVerb = building_Turret.AttackVerb;
                         }
-                        else
+                    }
+                    else
+                    {
+                        //Standing still increase view range
+                        if (jobDef == JobDefOf.AttackStatic
+                            || jobDef == JobDefOf.AttackMelee
+                            || jobDef == JobDefOf.Wait_Combat
+                            || jobDef == JobDefOf.Hunt)
                         {
-                            //Standing still increase view range
-                            if (jobDef == JobDefOf.AttackStatic
-                                || jobDef == JobDefOf.AttackMelee
-                                || jobDef == JobDefOf.Wait_Combat
-                                || jobDef == JobDefOf.Hunt)
+                            if (this.pawn.equipment != null)
                             {
-                                if (this.pawn.equipment != null)
+                                ThingWithComps primary = this.pawn.equipment.Primary;
+                                if (primary != null && primary.def.IsRangedWeapon)
                                 {
-                                    ThingWithComps primary = this.pawn.equipment.Primary;
-                                    if (primary != null && primary.def.IsRangedWeapon)
-                                    {
-                                        attackVerb = primary.GetComp<CompEquippable>().PrimaryVerb;
-                                    }
+                                    attackVerb = primary.GetComp<CompEquippable>().PrimaryVerb;
+                                   // if(!attackVerbRange.ContainsKey(attackVerb))
+                                   //     attackVerbRange.Add(attackVerb, attackVerb.verbProps.range);
                                 }
                             }
                         }
                     }
-                    if (attackVerb != null
-                        && attackVerb.verbProps.range > this.baseViewRange
-                        && attackVerb.verbProps.requireLineOfSight
-                        && attackVerb.EquipmentSource.def.IsRangedWeapon)
-                    {
-                        float range = attackVerb.verbProps.range;
+                }
+                if (attackVerb != null)
 
-                        if (this.baseViewRange < range)
+                if(attackVerb.verbProps.range > viewRange
+                && attackVerb.verbProps.requireLineOfSight
+                && attackVerb.EquipmentSource.def.IsRangedWeapon)
+                {
+                    viewRange = attackVerb.verbProps.range;
+                    //attackVerb.verbProps.range = baseViewRange;
+                    /*
+                    float range = attackVerb.verbProps.range;
+
+                    if (this.baseViewRange < range)
+                    {
+                        int num2 = Find.TickManager.TicksGame - this.lastMovementTick;
+                        float statValue = 
+                        this.pawn.GetStatValue(StatDefOf.AimingDelayFactor, true);
+
+                        int num3 = 
+                        (attackVerb.verbProps.warmupTime * statValue).SecondsToTicks() * Mathf.RoundToInt((range - this.baseViewRange) / 2f);
+                        if (num2 >= num3)
                         {
-                            int num2 = Find.TickManager.TicksGame - this.lastMovementTick;
-                            float statValue = this.pawn.GetStatValue(StatDefOf.AimingDelayFactor, true);
-                            int num3 = (attackVerb.verbProps.warmupTime * statValue).SecondsToTicks() * Mathf.RoundToInt((range - this.baseViewRange) / 2f);
-                            if (num2 >= num3)
-                            {
-                                viewRange = range * sightCapacity;
-                            }
-                            else
-                            {
-                                int sightRange = Mathf.RoundToInt((range - this.baseViewRange) * ((float)num2 / (float)num3));
-                                viewRange = (this.baseViewRange + (float)sightRange) * sightCapacity;
-                            }
+                            viewRange = range * sightCapacity;
                         }
-                    }
-                }
-                if (viewRange == 0f)
-                {
-                    viewRange = this.baseViewRange * sightCapacity;
-                }
-                if (!forTargeting && sleeping)
-                {
-                    viewRange *= 0.2f;
-                }
-                List<CompAffectVision> visionAffectingBuilding = this.mapCompSeenFog.compAffectVisionGrid[position.z * this.mapSizeX + position.x];
-                bool ignoreWeather = false;
-                bool ignoreDarkness = false;
-                foreach (CompAffectVision visionAffecter in visionAffectingBuilding)
-                {
-                    if (visionAffecter.Props.denyDarkness)
-                        ignoreDarkness = true;
-                    if (visionAffecter.Props.denyWeather)
-                        ignoreWeather = true;
-                    viewRange *= visionAffecter.Props.fovMultiplier;
-                }
-                if (!this.isMechanoid)
-                {
-                    float currGlow = this.glowGrid.GameGlowAt(position, false);
-
-                    if (currGlow != 1f && !ignoreDarkness/*&&!(sightCapacity>1.15)*/)
-                    {
-                        //float darknessModifier = 0.6f;                        
-                        viewRange *= Mathf.Lerp(0.65f, 1f, currGlow);
-
-                    }
-                    if (!this.roofGrid.Roofed(position.x, position.z) && !ignoreWeather)
-                    {
-                        float curWeatherAccuracyMultiplier = this.weatherManager.CurWeatherAccuracyMultiplier;
-                        if (curWeatherAccuracyMultiplier != 1f)
+                        else
                         {
-                            viewRange *= Mathf.Lerp(0.5f, 1f, curWeatherAccuracyMultiplier);
+                            int sightRange = Mathf.RoundToInt((range - this.baseViewRange) * ((float)num2 / (float)num3));
+                            viewRange = (this.baseViewRange + (float)sightRange) * sightCapacity;
                         }
-                    }
-                }
-                if (viewRange < 1f)
-                {
-                    result = 1f;
-                }
-                else
-                {
-                    result = viewRange;
-                }
+                    }*/
+                }// else {
+                  //  attackVerb.verbProps.range = attackVerbRange[attackVerb];
+               // }
             }
-            return result;
+
+
+            if (!forTargeting && sleeping)
+            {
+                viewRange = 8f;
+            }
+            if (viewRange < 1f)
+            {
+                return 1f;
+            }
+            else
+            {
+                return viewRange;
+            }
+
         }
 
         // Token: 0x0600006D RID: 109 RVA: 0x00007C54 File Offset: 0x00005E54
@@ -969,6 +980,7 @@ namespace RimWorldRealFoW
 
         private bool calculated;
 
+       // private Dictionary<Verb,float> attackVerbRange;
         private IntVec3 lastPosition;
 
         public int lastSightRange;
@@ -1027,23 +1039,17 @@ namespace RimWorldRealFoW
         // Token: 0x04000077 RID: 119
         private CompFlickable compFlickable;
 
-        // Token: 0x04000078 RID: 120
         private CompMannable compMannable;
 
-        // Token: 0x04000079 RID: 121
         private CompProvideVision compProvideVision;
 
 
-        // Token: 0x0400007A RID: 122
         private bool setupDone = false;
 
-        // Token: 0x0400007B RID: 123
         private Pawn pawn;
 
-        // Token: 0x0400007C RID: 124
         private ThingDef def;
 
-        // Token: 0x0400007D RID: 125
         private bool isMechanoid;
 
         // Token: 0x0400007E RID: 126
