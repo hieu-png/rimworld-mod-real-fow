@@ -53,7 +53,17 @@ namespace RimWorldRealFoW
 			if (this.Manned)
 			{
 				int cameraCount = Mathf.Min(mapComp.SurveillanceCameraCount(), 12);
-				this.workingGraphics[cameraCount].Draw(this.DrawPos + new Vector3(0f, 1f, 0f), base.Rotation, this, 0f);
+				if(workingGraphics[cameraCount] == null) {
+					workingGraphics[cameraCount] = GraphicDatabase.Get(
+					this.def.graphicData.graphicClass,
+					this.def.graphicData.texPath + "_FX" + (cameraCount).ToString(), ShaderDatabase.MoteGlow,
+					this.def.graphicData.drawSize,
+					this.DrawColor,
+					this.DrawColorTwo
+					);
+				}
+				workingGraphics[cameraCount].Draw(this.DrawPos + new Vector3(0f, 1f, 0f), base.Rotation, this, 0f);
+				//this.workingGraphics[cameraCount].Draw(this.DrawPos + new Vector3(0f, 1f, 0f), base.Rotation, this, 0f);
 			}
 		}
 
@@ -70,6 +80,7 @@ namespace RimWorldRealFoW
 			this.mapComp = MapUtils.getMapComponentSeenFog(map);
 			this.mapComp.RegisterCameraConsole(this);
 			//12 Possible graphic so
+			/*
 			for (int i = 0; i <= 12; i++)
 			{
 				workingGraphics.Add(GraphicDatabase.Get(
@@ -79,7 +90,7 @@ namespace RimWorldRealFoW
 					this.DrawColor,
 					this.DrawColorTwo
 					));
-			}
+			}*/
 		}
 
 		// Token: 0x06000021 RID: 33 RVA: 0x00002DAC File Offset: 0x00000FAC
@@ -104,7 +115,8 @@ namespace RimWorldRealFoW
 
 		public int lastTick;
 
-		private List<Graphic> workingGraphics = new List<Graphic>();
-		
+		//private List<Graphic> workingGraphics = new List<Graphic>();
+		private Graphic[] workingGraphics = new Graphic[13];
+
 	}
 }

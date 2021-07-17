@@ -14,16 +14,9 @@ namespace RimWorldRealFoW
 		{
 			LocalTargetInfo targetA = this.job.targetA;
 			return this.pawn.Reserve(targetA, this.job, 1, -1, null, errorOnFailed);
-			/*
-			if (!this.pawn.Reserve(this.job.GetTarget(TargetIndex.A), this.job, 1, -1, null, errorOnFailed))
-			{
-				return false;
-			}
-			this.pawn.ReserveAsManyAsPossible(this.job.GetTargetQueue(TargetIndex.B), this.job, 1, -1, null);
-			return true;*/
+
 		}
 
-		// Token: 0x06000068 RID: 104 RVA: 0x00004783 File Offset: 0x00002983
 		protected override IEnumerable<Toil> MakeNewToils()
 		{
 			this.FailOnDespawnedNullOrForbidden(TargetIndex.A);
