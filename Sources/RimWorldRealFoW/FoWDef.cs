@@ -16,5 +16,10 @@ namespace RimWorldRealFoW
 
         public static ThingDef CameraConsole;
 
+        public static StatDef DayVisionEffectiveness;
+
+        public static StatDef NightVisionEffectiveness;
+
+
     }
 }

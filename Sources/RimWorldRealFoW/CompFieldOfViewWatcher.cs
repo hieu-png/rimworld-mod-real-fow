@@ -34,7 +34,7 @@ namespace RimWorldRealFoW
             this.viewRect = new CellRect(-1, -1, 0, 0);
             this.viewPositions = new IntVec3[5];
             this.compHiddenable = this.mainComponent.compHiddenable;
-           // this.attackVerbRange = new Dictionary<Verb, float>();
+            // this.attackVerbRange = new Dictionary<Verb, float>();
 
             this.compGlower = this.parent.GetComp<CompGlower>();
             this.compPowerTrader = this.parent.GetComp<CompPowerTrader>();
@@ -65,22 +65,12 @@ namespace RimWorldRealFoW
                 }
 
                 this.def = this.parent.def;
-                if (this.def.race != null)
-                {
-                    this.isMechanoid = this.def.race.IsMechanoid;
-                }
-                else
-                {
-                    this.isMechanoid = false;
-                }
-                if (!this.isMechanoid)
-                {
-                    this.baseViewRange = RFOWSettings.baseViewRange;
-                }
-                else
-                {
-                    this.baseViewRange = Mathf.Round(RFOWSettings.baseViewRange * 1.25f);
-                }
+
+                this.dayVisionEffectiveness = pawn.GetStatValue(FoWDef.DayVisionEffectiveness, false);
+                this.nightVisionEffectiveness = pawn.GetStatValue(FoWDef.NightVisionEffectiveness, true);
+                this.baseViewRange = RFOWSettings.baseViewRange * dayVisionEffectiveness;
+
+
             }
             else if (this.turret != null && this.compMannable == null)
             {
@@ -136,7 +126,9 @@ namespace RimWorldRealFoW
                     }
                     if (this.lastPosition != CompFieldOfViewWatcher.iv3Invalid && this.lastPosition != this.parent.Position)
                     {
+
                         this.lastPositionUpdateTick = ticksGame;
+
                         updateFoV(false);
                     }
                     else
@@ -204,6 +196,11 @@ namespace RimWorldRealFoW
 
                     this.initMap();
                     Faction faction = parent.Faction;
+                    if (faction != null && faction.Name == "Zombie")
+                    {
+                        this.disabled = true;
+                        return;
+                    }
                     if (faction != null && (this.pawn == null || !this.pawn.Dead))
                     {
                         if (thingType == ThingType.pawn)
@@ -375,31 +372,96 @@ namespace RimWorldRealFoW
             float viewRange = baseViewRange;
             //float sightCapacity = ;
             this.initMap();
-
+            float gameTick = Find.TickManager.TicksGame;
 
             List<CompAffectVision> visionAffectingBuilding = this.mapCompSeenFog.compAffectVisionGrid[position.z * this.mapSizeX + position.x];
             bool ignoreWeather = false;
             bool ignoreDarkness = false;
-            float rangeModifier = this.capacities.GetLevel(PawnCapacityDefOf.Sight);
-            foreach (CompAffectVision visionAffecter in visionAffectingBuilding)
-            {
-                if (visionAffecter.Props.denyDarkness)
-                    ignoreDarkness = true;
-                if (visionAffecter.Props.denyWeather)
-                    ignoreWeather = true;
+            bool sleeping = this.pawn.CurJob != null && this.pawn.jobs.curDriver.asleep;
 
-                rangeModifier *= visionAffecter.Props.fovMultiplier;
+            if (!forTargeting && sleeping)
+            {
+                viewRange = 8f * capacities.GetLevel(PawnCapacityDefOf.Hearing);
             }
-            if (!this.isMechanoid)
+            else
             {
-                float currGlow = this.glowGrid.GameGlowAt(position, false);
-
-                if (currGlow != 1f && !ignoreDarkness/*&&!(sightCapacity>1.15)*/)
+                if (!shouldMove && (this.pawnPather == null || !this.pawnPather.Moving))
                 {
-                    //float darknessModifier = 0.6f;                        
-                    rangeModifier *= Mathf.Lerp(0.65f, 1f, currGlow);
+                    Verb attackVerb = null;
+                    if (this.pawn.CurJob != null)
+                    {
+                        JobDef jobDef = this.pawn.CurJob.def;
 
+                        //Get manned turret sight range.
+                        if (jobDef == JobDefOf.ManTurret)
+                        {
+                            Building_Turret building_Turret = this.pawn.CurJob.targetA.Thing as Building_Turret;
+                            if (building_Turret != null)
+                            {
+                                attackVerb = building_Turret.AttackVerb;
+                            }
+                        }
+                        else
+                        {
+                            //Standing still increase view range
+                            if (jobDef == JobDefOf.AttackStatic
+                                || jobDef == JobDefOf.AttackMelee
+                                || jobDef == JobDefOf.Wait_Combat
+                                || jobDef == JobDefOf.Hunt)
+                            {
+                                if (this.pawn.equipment != null)
+                                {
+                                    ThingWithComps primary = this.pawn.equipment.Primary;
+                                    if (primary != null && primary.def.IsRangedWeapon)
+                                    {
+                                        attackVerb = primary.GetComp<CompEquippable>().PrimaryVerb;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (attackVerb != null)
+
+                        if (attackVerb.verbProps.range > viewRange
+                        && attackVerb.verbProps.requireLineOfSight
+                        && attackVerb.EquipmentSource.def.IsRangedWeapon)
+                        {
+                            viewRange = attackVerb.verbProps.range;
+
+                        }
                 }
+
+                float rangeModifier = this.capacities.GetLevel(PawnCapacityDefOf.Sight);
+                foreach (CompAffectVision visionAffecter in visionAffectingBuilding)
+                {
+                    if (visionAffecter.Props.denyDarkness)
+                        ignoreDarkness = true;
+                    if (visionAffecter.Props.denyWeather)
+                        ignoreWeather = true;
+                    rangeModifier *= visionAffecter.Props.fovMultiplier;
+                }
+
+                float currGlow = this.glowGrid.GameGlowAt(position, false);
+                if (gameTick % 40 == 0)
+                {
+                    this.nightVisionEffectiveness = pawn.GetStatValue(FoWDef.NightVisionEffectiveness, true);
+                }
+                if (currGlow < 1)
+                {
+
+                    if (nightVisionEffectiveness < 1)
+                    {
+                        if (!ignoreDarkness)
+                        {
+                            rangeModifier *= Mathf.Lerp(nightVisionEffectiveness, 1f, currGlow);
+                        }
+                    }
+                    else
+                    {
+                        rangeModifier *= nightVisionEffectiveness;
+                    }
+                }
+
                 if (!this.roofGrid.Roofed(position.x, position.z) && !ignoreWeather)
                 {
                     float curWeatherAccuracyMultiplier = this.weatherManager.CurWeatherAccuracyMultiplier;
@@ -408,91 +470,14 @@ namespace RimWorldRealFoW
                         rangeModifier *= Mathf.Lerp(0.5f, 1f, curWeatherAccuracyMultiplier);
                     }
                 }
+
+                viewRange *= rangeModifier;
             }
 
 
-            bool sleeping = !this.isMechanoid && this.pawn.CurJob != null && this.pawn.jobs.curDriver.asleep;
-
-            if (!shouldMove && !sleeping && (this.pawnPather == null || !this.pawnPather.Moving))
-            {
-                Verb attackVerb = null;
-                if (this.pawn.CurJob != null)
-                {
-                    JobDef jobDef = this.pawn.CurJob.def;
-
-                    //Get manned turret sight range.
-                    if (jobDef == JobDefOf.ManTurret)
-                    {
-                        Building_Turret building_Turret = this.pawn.CurJob.targetA.Thing as Building_Turret;
-                        if (building_Turret != null)
-                        {
-                            attackVerb = building_Turret.AttackVerb;
-                        }
-                    }
-                    else
-                    {
-                        //Standing still increase view range
-                        if (jobDef == JobDefOf.AttackStatic
-                            || jobDef == JobDefOf.AttackMelee
-                            || jobDef == JobDefOf.Wait_Combat
-                            || jobDef == JobDefOf.Hunt)
-                        {
-                            if (this.pawn.equipment != null)
-                            {
-                                ThingWithComps primary = this.pawn.equipment.Primary;
-                                if (primary != null && primary.def.IsRangedWeapon)
-                                {
-                                    attackVerb = primary.GetComp<CompEquippable>().PrimaryVerb;
-                                   // if(!attackVerbRange.ContainsKey(attackVerb))
-                                   //     attackVerbRange.Add(attackVerb, attackVerb.verbProps.range);
-                                }
-                            }
-                        }
-                    }
-                }
-                if (attackVerb != null)
-
-                if(attackVerb.verbProps.range > viewRange
-                && attackVerb.verbProps.requireLineOfSight
-                && attackVerb.EquipmentSource.def.IsRangedWeapon)
-                {
-                    viewRange = attackVerb.verbProps.range;
-                    //attackVerb.verbProps.range = baseViewRange;
-                    /*
-                    float range = attackVerb.verbProps.range;
-
-                    if (this.baseViewRange < range)
-                    {
-                        int num2 = Find.TickManager.TicksGame - this.lastMovementTick;
-                        float statValue = 
-                        this.pawn.GetStatValue(StatDefOf.AimingDelayFactor, true);
-
-                        int num3 = 
-                        (attackVerb.verbProps.warmupTime * statValue).SecondsToTicks() * Mathf.RoundToInt((range - this.baseViewRange) / 2f);
-                        if (num2 >= num3)
-                        {
-                            viewRange = range * sightCapacity;
-                        }
-                        else
-                        {
-                            int sightRange = Mathf.RoundToInt((range - this.baseViewRange) * ((float)num2 / (float)num3));
-                            viewRange = (this.baseViewRange + (float)sightRange) * sightCapacity;
-                        }
-                    }*/
-                }// else {
-                  //  attackVerb.verbProps.range = attackVerbRange[attackVerb];
-               // }
-            }
-            viewRange *= rangeModifier;
-
-
-            if (!forTargeting && sleeping)
-            {
-                viewRange = 8f*capacities.GetLevel(PawnCapacityDefOf.Hearing);
-            }
             if (viewRange < 1f)
             {
-                return 8f*capacities.GetLevel(PawnCapacityDefOf.Hearing);
+                return 8f * capacities.GetLevel(PawnCapacityDefOf.Hearing);
             }
             else
             {
@@ -980,7 +965,7 @@ namespace RimWorldRealFoW
 
         private bool calculated;
 
-       // private Dictionary<Verb,float> attackVerbRange;
+        // private Dictionary<Verb,float> attackVerbRange;
         private IntVec3 lastPosition;
 
         public int lastSightRange;
@@ -1048,9 +1033,11 @@ namespace RimWorldRealFoW
 
         private Pawn pawn;
 
+        private float dayVisionEffectiveness;
+
+        private float nightVisionEffectiveness;
         private ThingDef def;
 
-        private bool isMechanoid;
 
         // Token: 0x0400007E RID: 126
         private PawnCapacitiesHandler capacities;

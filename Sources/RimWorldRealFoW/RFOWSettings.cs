@@ -66,8 +66,8 @@ namespace RimWorldRealFoW
             turretVisionModifier = row.Slider(turretVisionModifier, 0.2f, 2);
             addGap(row);
             row.CheckboxLabeled("NeedWatcher".Translate(), ref RFOWSettings.needWatcher, "NeedWatcherDesc".Translate());
-            if (needWatcher)
-                row.CheckboxLabeled("NeedStorage".Translate(), ref RFOWSettings.needMemoryStorage, "NeedStorageDesc".Translate());
+            //if (needWatcher)
+            //    row.CheckboxLabeled("NeedStorage".Translate(), ref RFOWSettings.needMemoryStorage, "NeedStorageDesc".Translate());
 
 
             row.End();
