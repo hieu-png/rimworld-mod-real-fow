@@ -10,7 +10,8 @@
 	<turretVisionModDesc>How far can turret can see multiplier</turretVisionModDesc>
 	<NeedWatcher>Camera need to be monitored</NeedWatcher>
 	<NeedWatcherDesc></NeedWatcherDesc>
-	
+	<wildLifeTabVisible>Wild animals in fog is still shown in wildlife tab</wildLifeTabVisible>
+	<wildLifeTabVisibleDesc></wildLifeTabVisibleDesc>
 	<NeedStorage>Camera need enough memory storage</NeedStorage>
 	<NeedStorageDesc></NeedStorageDesc>
   <fogAlphaSetting_title>Fog level</fogAlphaSetting_title>

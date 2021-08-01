@@ -45,7 +45,6 @@
 				<fovMultiplier>1.5</fovMultiplier>
 			</li>
 		</comps>
-		<specialDisplayRadius>125.9</specialDisplayRadius>
 	</ThingDef>
 	<!--	<ThingDef ParentName="BaseVisionStuff">
 		<defName>WatchTowerWithBeacon</defName>
@@ -158,6 +157,10 @@
 		<leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
 		<rotatable>false</rotatable>
 		<thingCategories Inherit="False"/>
+		<costList>
+			<Steel>50</Steel>
+			<ComponentIndustrial>2</ComponentIndustrial>
+		</costList>
 		<graphicData>
 			<texPath>Things/Buildings/TowerLightBeacon</texPath>
 			<graphicClass>Graphic_Single</graphicClass>

@@ -28,7 +28,7 @@ namespace RimWorldRealFoW
 				}
 				SectionLayer_FoVLayer.mapMeshFlag = (MapMeshFlag) ((int)(mapMeshFlag) << 1);
 				allFlags.Add(SectionLayer_FoVLayer.mapMeshFlag);
-				Log.Message("Injected new mapMeshFlag: " + SectionLayer_FoVLayer.mapMeshFlag, false);
+				Log.Message("Injected new mapMeshFlag: " + SectionLayer_FoVLayer.mapMeshFlag);
 			}
 		}
 

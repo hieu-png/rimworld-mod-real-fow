@@ -91,22 +91,85 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\0Harmony.dll</HintPath>
+    <Compile Include="Sources\RimWorldRealFoW\Building_CameraConsole.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Building_SurveillanceCamera.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\FoWDef.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\PlaceWorker_NextToWall.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\WorkGiver_SurveilCameraConsole.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\JobDriver_SurveilCameraConsole.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\PlaceWorker_UnderRoof.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_GenView.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_RoofGrid.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_TerrainGrid.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_FertilityGrid.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_Designation.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_MainTabWindow_Wildlife.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_BeautyUtility.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_MoteBubble.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_Designator_Place_Postfix.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_Designator_Mine.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_Designator_Prefix.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_EnvironmentInspectDrawer.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_HaulAIUtility.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_SectionLayer_ThingsPowerGrid.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_SectionLayer_ThingsGeneral.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_Pawn.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_ReservationUtility.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\RealFoWModDefaultsDef.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompMainComponent.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompComponentsPositionTracker.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompProvideVision.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompAffectVision.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompProperties_AffectVision.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompProperties_ProvideVision.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\ThingSubComp.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\MapUtils.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Utils\FoWThingUtils.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_LetterStack.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompViewBlockerWatcher.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_GenMapUI.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompHideFromPlayer.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\MapComponentSeenFog.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompHiddenable.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\CompFieldOfViewWatcher.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_MouseoverReadout.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_Selector.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\SectionLayer_FoVLayer.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\ShadowCaster.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\RealFoWModStarter.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\RFOWSettings.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\AttackTargetFinder_CanSee.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Verb_Look.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_Verb.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_Messages.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\..\workshop\content\294100\2009463077\Current\Assemblies\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp, Version=0.16.6198.16102, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Assembly-CSharp">
       <HintPath>..\..\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\RimWorldWin64_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Assembly-CSharp_prepatched">
-      <HintPath>..\..\RimWorldWin64_Data\Managed\Assembly-CSharp_prepatched.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ISharpZipLib">
@@ -121,48 +184,64 @@
       <HintPath>..\..\RimWorldWin64_Data\Managed\Mono.Security.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel.Internals, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\RimWorldWin64_Data\Managed\System.ServiceModel.Internals.dll</HintPath>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\Unity.TextMeshPro.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine.AccessibilityModule">
-      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.AccessibilityModule.dll</HintPath>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.ARModule">
-      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.ARModule.dll</HintPath>
+    <Reference Include="UnityEngine.AIModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.AIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.AudioModule">
-      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ClothModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.ClothModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ClusterInputModule">
       <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.ClusterInputModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.ClusterRendererModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.ClusterRendererModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CrashReportingModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.CrashReportingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.DirectorModule">
       <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.DirectorModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.FileSystemHttpModule">
-      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.FileSystemHttpModule.dll</HintPath>
+    <Reference Include="UnityEngine.DSPGraphModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.DSPGraphModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.GameCenterModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.GameCenterModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.GridModule">
       <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.GridModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.HotReloadModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.HotReloadModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
@@ -177,28 +256,64 @@
       <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.InputModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.JSONSerializeModule">
       <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.LocalizationModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.LocalizationModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
       <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.PerformanceReportingModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.PerformanceReportingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.Physics2DModule">
       <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ProfilerModule">
       <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.ProfilerModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.ScreenCaptureModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.ScreenCaptureModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.SharedInternalsModule">
       <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.SharedInternalsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.SpriteMaskModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.SpriteMaskModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.SpriteShapeModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.SpriteShapeModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.StreamingModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.StreamingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEngine.SubstanceModule">
       <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.SubstanceModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.SubsystemsModule">
+      <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.SubsystemsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TerrainModule">
@@ -301,76 +416,6 @@
       <HintPath>..\..\RimWorldWin64_Data\Managed\UnityEngine.XRModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Sources\RimWorldRealFoW\Building_CameraConsole.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Building_SurveillanceCamera.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\FoWDef.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\PlaceWorker_NextToWall.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\WorkGiver_SurveilCameraConsole.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\JobDriver_SurveilCameraConsole.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\PlaceWorker_UnderRoof.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_GenView.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_RoofGrid.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_TerrainGrid.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_FertilityGrid.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_Designation.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_MainTabWindow_Wildlife.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_BeautyUtility.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_MoteBubble.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_Designator_Place_Postfix.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_Designator_Mine.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_Designator_Prefix.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_EnvironmentInspectDrawer.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_HaulAIUtility.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_SectionLayer_ThingsPowerGrid.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_SectionLayer_ThingsGeneral.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_Pawn.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_ReservationUtility.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\RealFoWModDefaultsDef.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\CompMainComponent.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\CompComponentsPositionTracker.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\CompProvideVision.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\CompAffectVision.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\CompProperties_AffectVision.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\CompProperties_ProvideVision.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ThingSubComp.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\MapUtils.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Utils\FoWThingUtils.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_LetterStack.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\CompViewBlockerWatcher.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_GenMapUI.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\CompHideFromPlayer.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\MapComponentSeenFog.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\CompHiddenable.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\CompFieldOfViewWatcher.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_MouseoverReadout.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_Selector.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\SectionLayer_FoVLayer.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\ShadowCaster.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\RealFoWModStarter.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\RFOWSettings.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\AttackTargetFinder_CanSee.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Verb_Look.cs" />
-
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_Verb.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\Detours\_Messages.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
 using Verse;
-
+using RimWorldRealFoW.Utils;
 namespace RimWorldRealFoW.Detours
 {
 	// Token: 0x0200001A RID: 26
@@ -15,7 +15,15 @@ namespace RimWorldRealFoW.Detours
 			__result = Find.CurrentMap.mapPawns.AllPawns.Where(delegate (Pawn p)
 			{
 				
-				return p.Spawned && (p.Faction == null || p.Faction == Faction.OfInsects) && p.AnimalOrWildMan() && !p.Position.Fogged(p.Map);
+				return 
+				p.Spawned && (p.Faction == null 
+				|| p.Faction == Faction.OfInsects) 
+				&& p.AnimalOrWildMan() 
+				&& !p.Position.Fogged(p.Map)
+				&& (p.fowIsVisible()||RFOWSettings.wildLifeTabVisible)
+				;
+
+			
 			});
 			return false;
 		}

@@ -65,6 +65,7 @@ namespace RimWorldRealFoW
             row.Label("turretVisionModDesc".Translate()+ ": " + Math.Round(turretVisionModifier,2).ToString(), -1f, null);
             turretVisionModifier = row.Slider(turretVisionModifier, 0.2f, 2);
             addGap(row);
+            row.CheckboxLabeled("wildLifeTabVisible".Translate(), ref RFOWSettings.wildLifeTabVisible,"wildLifeTabVisibleDesc".Translate() );
             row.CheckboxLabeled("NeedWatcher".Translate(), ref RFOWSettings.needWatcher, "NeedWatcherDesc".Translate());
             //if (needWatcher)
             //    row.CheckboxLabeled("NeedStorage".Translate(), ref RFOWSettings.needMemoryStorage, "NeedStorageDesc".Translate());
@@ -105,6 +106,7 @@ namespace RimWorldRealFoW
 			Scribe_Values.Look<float>(ref RFOWSettings.animalVisionModifier, "animalVisionMod", 0.5f, false);
 			Scribe_Values.Look<float>(ref RFOWSettings.turretVisionModifier, "turretVisionMod", 0.7f, false);
 
+            Scribe_Values.Look<bool>(ref RFOWSettings.wildLifeTabVisible, "wildLifeTabVisible", true, false);
 
             Scribe_Values.Look<bool>(ref RFOWSettings.needWatcher, "needWatcher", true, false);
             Scribe_Values.Look<bool>(ref RFOWSettings.needMemoryStorage, "needMemoryStorage", true, false);
@@ -126,6 +128,7 @@ namespace RimWorldRealFoW
 
         public static bool needWatcher = true;
 
+        public static bool wildLifeTabVisible = true;
         public static bool needMemoryStorage = true;
         public enum FogFadeSpeedEnum
         {

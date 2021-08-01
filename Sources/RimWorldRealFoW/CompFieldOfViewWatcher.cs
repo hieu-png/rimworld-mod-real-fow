@@ -88,7 +88,7 @@ namespace RimWorldRealFoW
             }
             else
             {
-                Log.Message("Removing unneeded FoV watcher from " + this.parent.ThingID, false);
+                Log.Message("Removing unneeded FoV watcher from " + this.parent.ThingID);
                 this.disabled = true;
                 this.mainComponent.compFieldOfViewWatcher = null;
             }
@@ -365,10 +365,10 @@ namespace RimWorldRealFoW
         {
             if (this.pawn == null)
             {
-                Log.Error("calcPawnSightRange performed on non pawn thing", false);
+                
+                Log.Message("calcPawnSightRange performed on non pawn thing");
                 return 0f;
             }
-
             float viewRange = baseViewRange;
             //float sightCapacity = ;
             this.initMap();

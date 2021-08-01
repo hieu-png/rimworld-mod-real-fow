@@ -6,12 +6,12 @@
 		<description>A central hub for monitoring camera, allowing them to actually deliver vision</description>
 		<thingClass>RimWorldRealFoW.Building_CameraConsole</thingClass>
 		<building>
-				<joyKind>Television</joyKind>
-				<watchBuildingStandDistanceRange>
-					<min>3</min>
-					<max>3</max>
-				</watchBuildingStandDistanceRange>
-				<watchBuildingStandRectWidth>3</watchBuildingStandRectWidth>
+			<joyKind>Television</joyKind>
+			<watchBuildingStandDistanceRange>
+				<min>3</min>
+				<max>3</max>
+			</watchBuildingStandDistanceRange>
+			<watchBuildingStandRectWidth>3</watchBuildingStandRectWidth>
 		</building>
 		<graphicData>
 			<texPath>Things/Buildings/CameraConsole</texPath>
@@ -48,7 +48,6 @@
 			<Mass>30</Mass>
 		</statBases>
 		<comps>
-		
 			<li Class="CompProperties_Glower">
 				<glowRadius>5</glowRadius>
 				<glowColor>(153, 204, 255,0)</glowColor>
@@ -71,29 +70,25 @@
 			<li>CameraSecurity</li>
 		</researchPrerequisites>
 	</ThingDef>
-	
-	 <JobDef>
-    <defName>SurveilCameraConsole</defName>
-    <driverClass>RimWorldRealFoW.JobDriver_SurveilCameraConsole</driverClass>
-    <reportString>surveil TargetA.</reportString>
-    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
-  </JobDef>
-  
-    <WorkGiverDef>
-    <defName>SurveilCameraConsole</defName>
-    <label>surveil camera Console</label>
-    <giverClass>RimWorldRealFoW.WorkGiver_SurveilCameraConsole</giverClass>
-    <workType>BasicWorker</workType>
-    <priorityInType>150</priorityInType>
-    <verb>operate</verb>
-    <gerund>operating</gerund>
-    <requiredCapacities>
-      <li>Manipulation</li>
-    </requiredCapacities>
-    <prioritizeSustains>true</prioritizeSustains>
-  </WorkGiverDef>
-  
-  
+	<JobDef>
+		<defName>SurveilCameraConsole</defName>
+		<driverClass>RimWorldRealFoW.JobDriver_SurveilCameraConsole</driverClass>
+		<reportString>surveil TargetA.</reportString>
+		<allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+	</JobDef>
+	<WorkGiverDef>
+		<defName>SurveilCameraConsole</defName>
+		<label>surveil camera Console</label>
+		<giverClass>RimWorldRealFoW.WorkGiver_SurveilCameraConsole</giverClass>
+		<workType>BasicWorker</workType>
+		<priorityInType>150</priorityInType>
+		<verb>operate</verb>
+		<gerund>operating</gerund>
+		<requiredCapacities>
+			<li>Manipulation</li>
+		</requiredCapacities>
+		<prioritizeSustains>true</prioritizeSustains>
+	</WorkGiverDef>
 	<JobDef>
 		<defName>WatchCamera</defName>
 		<driverClass>JobDriver_WatchTelevision</driverClass>

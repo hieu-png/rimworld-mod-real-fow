@@ -194,7 +194,7 @@ namespace RimWorldRealFoW
 					sourceType,
 					" but found ",
 					method.DeclaringType
-				}), false);
+				}));
 			}
 			bool flag3 = method != null;
 			if (flag3)
@@ -252,7 +252,7 @@ namespace RimWorldRealFoW
 							" to ",
 							targetType,
 							"."
-						}), false);
+						}));
 					}
 					else
 					{
@@ -265,7 +265,7 @@ namespace RimWorldRealFoW
 							" to ",
 							targetType,
 							"."
-						}), false);
+						}));
 					}
 				}
 				else
@@ -279,7 +279,7 @@ namespace RimWorldRealFoW
 						" to ",
 						targetType,
 						"."
-					}), false);
+					}));
 				}
 			}
 			else
@@ -293,7 +293,7 @@ namespace RimWorldRealFoW
 					" to ",
 					targetType,
 					"."
-				}), false);
+				}));
 			}
 		}
 
@@ -310,8 +310,8 @@ namespace RimWorldRealFoW
 			}
 			catch (Exception ex)
 			{
-				Log.Warning("Error patching with Harmony: " + ex.Message, false);
-				Log.Warning(ex.StackTrace, false);
+				Log.Warning("Error patching with Harmony: " + ex.Message);
+				Log.Warning(ex.StackTrace);
 				result = false;
 			}
 			return result;

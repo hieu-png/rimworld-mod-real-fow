@@ -26,6 +26,7 @@ namespace RimWorldRealFoW
 			return powerComp.PowerOn;
         }
 
+
 		public override void SpawnSetup(Map map, bool respawningAfterLoad)
 		{
 			base.SpawnSetup(map, respawningAfterLoad);
