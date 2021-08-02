@@ -57,18 +57,24 @@ namespace RimWorldRealFoW
             addGap(row);
             row.Label("baseViewRangeDesc".Translate() + " (need save reload to be changed): " + baseViewRange.ToString(), -1f, null);
             baseViewRange = (int)row.Slider((float)RFOWSettings.baseViewRange, 10f, 100);
-            addGap(row);
-            row.Label("buildingVisionModDesc".Translate() + " (the range show will not be accurate): " + Math.Round(buildingVisionModifier,2).ToString(), -1f, null);
+            row.Label("baseHearingRange".Translate()+": " + Math.Round(baseHearingRange, 1).ToString(), -1f, null);
+            baseHearingRange = row.Slider(RFOWSettings.baseHearingRange, 0, 30);
+            row.Label("buildingVisionModDesc".Translate() + " (the range show will not be accurate): " + Math.Round(buildingVisionModifier, 2).ToString(), -1f, null);
             buildingVisionModifier = row.Slider(buildingVisionModifier, 0.2f, 2);
-            row.Label("animalVisionModDesc".Translate() + ": " + Math.Round(animalVisionModifier,2).ToString(), -1f, null);
+            row.Label("animalVisionModDesc".Translate() + ": " + Math.Round(animalVisionModifier, 2).ToString(), -1f, null);
             animalVisionModifier = row.Slider(animalVisionModifier, 0.2f, 2);
-            row.Label("turretVisionModDesc".Translate()+ ": " + Math.Round(turretVisionModifier,2).ToString(), -1f, null);
+            row.Label("turretVisionModDesc".Translate() + ": " + Math.Round(turretVisionModifier, 2).ToString(), -1f, null);
             turretVisionModifier = row.Slider(turretVisionModifier, 0.2f, 2);
-            addGap(row);
-            row.CheckboxLabeled("wildLifeTabVisible".Translate(), ref RFOWSettings.wildLifeTabVisible,"wildLifeTabVisibleDesc".Translate() );
+            row.CheckboxLabeled("prisonerGiveVision".Translate(), ref RFOWSettings.prisonerGiveVision, "prisonerGiveVision".Translate());
+            row.CheckboxLabeled("wildLifeTabVisible".Translate(), ref RFOWSettings.wildLifeTabVisible, "wildLifeTabVisibleDesc".Translate());
             row.CheckboxLabeled("NeedWatcher".Translate(), ref RFOWSettings.needWatcher, "NeedWatcherDesc".Translate());
-            //if (needWatcher)
-            //    row.CheckboxLabeled("NeedStorage".Translate(), ref RFOWSettings.needMemoryStorage, "NeedStorageDesc".Translate());
+            row.CheckboxLabeled("hideEventNegative".Translate(), ref RFOWSettings.hideEventNegative, "hideEventNegative".Translate());
+            row.CheckboxLabeled("hideEventNeutral".Translate(), ref RFOWSettings.hideEventNeutral, "hideEventNeutral".Translate());
+            row.CheckboxLabeled("hideEventPositive".Translate(), ref RFOWSettings.hideEventPositive, "hideEventPositive".Translate());     
+            row.CheckboxLabeled("hideThreatBig".Translate(), ref RFOWSettings.hideThreatBig, "hideThreatBig".Translate());
+            row.CheckboxLabeled("hideThreatSmall".Translate(), ref RFOWSettings.hideThreatSmall, "hideThreatSmall".Translate());
+            row.CheckboxLabeled("censorMode".Translate(), ref RFOWSettings.censorMode, "censorMode".Translate());
+
 
 
             row.End();
@@ -102,14 +108,23 @@ namespace RimWorldRealFoW
             Scribe_Values.Look<RFOWSettings.FogAlpha>(ref RFOWSettings.fogAlpha, "fogAlpha", RFOWSettings.FogAlpha.Medium, false);
             Scribe_Values.Look<int>(ref RFOWSettings.baseViewRange, "baseViewRange", 60, false);
 
-			Scribe_Values.Look<float>(ref RFOWSettings.buildingVisionModifier, "buildingVisionMod", 1, false);
-			Scribe_Values.Look<float>(ref RFOWSettings.animalVisionModifier, "animalVisionMod", 0.5f, false);
-			Scribe_Values.Look<float>(ref RFOWSettings.turretVisionModifier, "turretVisionMod", 0.7f, false);
+            Scribe_Values.Look<float>(ref RFOWSettings.buildingVisionModifier, "buildingVisionMod", 1, false);
+            Scribe_Values.Look<float>(ref RFOWSettings.animalVisionModifier, "animalVisionMod", 0.5f, false);
+            Scribe_Values.Look<float>(ref RFOWSettings.turretVisionModifier, "turretVisionMod", 0.7f, false);
+            Scribe_Values.Look<float>(ref RFOWSettings.baseHearingRange, "baseHearingRange", 10, false);
 
             Scribe_Values.Look<bool>(ref RFOWSettings.wildLifeTabVisible, "wildLifeTabVisible", true, false);
+            Scribe_Values.Look<bool>(ref RFOWSettings.prisonerGiveVision, "prisonerGiveVision", false, false);
 
             Scribe_Values.Look<bool>(ref RFOWSettings.needWatcher, "needWatcher", true, false);
             Scribe_Values.Look<bool>(ref RFOWSettings.needMemoryStorage, "needMemoryStorage", true, false);
+
+            Scribe_Values.Look<bool>(ref RFOWSettings.hideEventNegative, "hideEventNegative", false, false);
+            Scribe_Values.Look<bool>(ref RFOWSettings.hideEventNeutral, "hideEventNeutral", false, false);
+            Scribe_Values.Look<bool>(ref RFOWSettings.hideEventPositive, "hideEventPositive", false, false);
+            Scribe_Values.Look<bool>(ref RFOWSettings.hideThreatBig, "hideThreatBig", false, false);
+            Scribe_Values.Look<bool>(ref RFOWSettings.hideThreatSmall, "hideThreatSmall", false, false);
+            Scribe_Values.Look<bool>(ref RFOWSettings.censorMode, "censorMode", false, false);
 
             RFOWSettings.applySettings();
         }
@@ -119,15 +134,21 @@ namespace RimWorldRealFoW
         public static RFOWSettings.FogAlpha fogAlpha = RFOWSettings.FogAlpha.Medium;
 
         public static int baseViewRange = 60;
+        public static float baseHearingRange = 10;
 
         public static float buildingVisionModifier = 1;
 
         public static float turretVisionModifier = 0.7f;
 
         public static float animalVisionModifier = 0.5f;
-
+        public static bool censorMode = false;
         public static bool needWatcher = true;
-
+        public static bool hideThreatBig = false;
+        public static bool hideThreatSmall = false;
+        public static bool hideEventPositive = false;
+        public static bool hideEventNegative = false;
+        public static bool hideEventNeutral = false;
+        public static bool prisonerGiveVision = false;
         public static bool wildLifeTabVisible = true;
         public static bool needMemoryStorage = true;
         public enum FogFadeSpeedEnum

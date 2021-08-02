@@ -4,6 +4,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using Verse.AI;
+using System.Text;
 namespace RimWorldRealFoW
 {
 	[StaticConstructorOnStartup]
@@ -26,7 +27,20 @@ namespace RimWorldRealFoW
 			return powerComp.PowerOn;
         }
 
+        public override string GetInspectString()
+        {
+            StringBuilder inspect = new StringBuilder();
+            inspect.Append(base.GetInspectString());
+			if(mapComp.workingCameraConsole)
+			{
+            inspect.AppendInNewLine("Revealing".Translate());
+			} else {
+				inspect.AppendInNewLine("NoCameraConsole".Translate());
 
+			}
+
+            return inspect.ToString();
+        }
 		public override void SpawnSetup(Map map, bool respawningAfterLoad)
 		{
 			base.SpawnSetup(map, respawningAfterLoad);

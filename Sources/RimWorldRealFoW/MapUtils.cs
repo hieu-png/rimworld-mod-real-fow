@@ -1,6 +1,7 @@
 ﻿using System;
 using Verse;
-
+using UnityEngine;
+using RimWorld;
 namespace RimWorldRealFoW
 {
 	// Token: 0x02000008 RID: 8
@@ -25,5 +26,16 @@ namespace RimWorldRealFoW
 				
 			}		
 		}
+		public static void MakeSoundWave(Vector3 loc, Map map, float size, float velocity)
+		{
+			//if (!loc.ShouldSpawnMotesAt(map) || map.moteCounter.SaturatedLowPriority)
+			//{
+			//	return;
+			//}
+			MoteSoundWave moteSoundWave = (MoteSoundWave)ThingMaker.MakeThing(FoWDef.Mote_SoundWave, null);
+			moteSoundWave.Initialize(loc, size, velocity);
+			GenSpawn.Spawn(moteSoundWave, loc.ToIntVec3(), map, WipeMode.Vanish);
+		}
+
 	}
 }

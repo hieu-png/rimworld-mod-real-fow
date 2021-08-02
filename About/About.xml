@@ -19,6 +19,7 @@
 	<loadAfter>
 		<li>Ludeon.RimWorld</li>
 		<li>brrainz.harmony</li>
+		<li>CETeam.CombatExtended</li>
 	</loadAfter>
 	<url>https://ludeon.com/forums/index.php?topic=34724.0</url>
 	<description>This mod adds a real Fog of War based on Field of Views, to limit visiblity and interaction of elements on the map, for both player and AI.</description>

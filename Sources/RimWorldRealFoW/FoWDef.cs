@@ -20,6 +20,7 @@ namespace RimWorldRealFoW
 
         public static StatDef NightVisionEffectiveness;
 
+		public static ThingDef Mote_SoundWave;
 
     }
 }

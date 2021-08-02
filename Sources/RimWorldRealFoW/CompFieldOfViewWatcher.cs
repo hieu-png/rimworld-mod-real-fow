@@ -124,6 +124,19 @@ namespace RimWorldRealFoW
                     {
                         this.lastMovementTick = ticksGame;
                     }
+                    if (RFOWSettings.baseHearingRange > 0
+                        &&pawn.Faction == Faction.OfPlayer
+                        && thingType == ThingType.pawn
+                        && ticksGame % 100 == 0)
+                    {
+                        //hearingTickFrequency = 90; //+ 20 * UnityEngine.Random.Range(-1, 2);
+                        livePawnHear(
+                            pawn,
+                            capacities.GetLevel(PawnCapacityDefOf.Hearing),
+                            pawn.Faction,
+                            RFOWSettings.baseHearingRange);
+                    }
+
                     if (this.lastPosition != CompFieldOfViewWatcher.iv3Invalid && this.lastPosition != this.parent.Position)
                     {
 
@@ -196,16 +209,16 @@ namespace RimWorldRealFoW
 
                     this.initMap();
                     Faction faction = parent.Faction;
-                    if (faction != null && faction.Name == "Zombie")
-                    {
-                        this.disabled = true;
-                        return;
-                    }
                     if (faction != null && (this.pawn == null || !this.pawn.Dead))
                     {
                         if (thingType == ThingType.pawn)
                         {
+                            if(RFOWSettings.prisonerGiveVision && pawn.IsPrisonerOfColony) {
+                                livePawnCalculateFov(position, 0.2f, forceUpdate, Faction.OfPlayer);
+                            }
+                            else
                             livePawnCalculateFov(position, 1, forceUpdate, faction);
+
                         }
                         else if (thingType == ThingType.animal)
                         {
@@ -365,7 +378,7 @@ namespace RimWorldRealFoW
         {
             if (this.pawn == null)
             {
-                
+
                 Log.Message("calcPawnSightRange performed on non pawn thing");
                 return 0f;
             }
@@ -642,7 +655,6 @@ namespace RimWorldRealFoW
             }
         }
 
-        // Token: 0x0600006F RID: 111 RVA: 0x00008180 File Offset: 0x00006380
         public void refreshFovTarget(ref IntVec3 targetPos)
         {
             if (!setupDone)
@@ -894,6 +906,38 @@ namespace RimWorldRealFoW
 
         // Token: 0x0400005E RID: 94
 
+        private void livePawnHear(
+            Pawn thisPawn,
+            float hearRangeMod,
+            Faction faction,
+            float hearRange)
+        {
+            foreach (Thing thing in GenRadial.RadialDistinctThingsAround(
+                thisPawn.Position, thisPawn.Map, hearRange * hearRangeMod, true))
+            {
+                Pawn other = thing as Pawn;
+                if (other != null)
+                {
+                    if (other.Faction != faction
+                        && (other.pather == null || other.pather.Moving)
+                        && !this.mapCompSeenFog.isShown(faction, other.Position)
+                        )
+                    {
+                        float otherSize = other.BodySize;
+                        // MoteMaker.MakeWaterSplash(other.Position.ToVector3(), this.map, other.BodySize, 2);
+                        MapUtils.MakeSoundWave(
+                            other.Position.ToVector3() + new Vector3(otherSize * 0.5f, 0, otherSize * 0.5f),
+                            this.map,
+                            Mathf.Lerp(1.5f, 3.5f, otherSize / 4),
+                            Mathf.Lerp(1f, 2.5f, otherSize / 4));
+
+                    }
+                }
+            }
+
+        }
+
+
         private void livePawnCalculateFov(
             IntVec3 position,
             float sightRangeMod,
@@ -1033,6 +1077,7 @@ namespace RimWorldRealFoW
 
         private Pawn pawn;
 
+        private float hearingTickFrequency = 120;
         private float dayVisionEffectiveness;
 
         private float nightVisionEffectiveness;

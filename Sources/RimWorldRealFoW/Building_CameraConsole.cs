@@ -2,7 +2,7 @@
 using RimWorld;
 using UnityEngine;
 using Verse;
-
+using System.Text;
 namespace RimWorldRealFoW
 {
     [StaticConstructorOnStartup]
@@ -26,8 +26,16 @@ namespace RimWorldRealFoW
         {
 
         }
+        
+        public override string GetInspectString()
+        {
+            StringBuilder inspect = new StringBuilder();
+            inspect.Append(base.GetInspectString());
+            if(mapComp!=null)
+            inspect.AppendInNewLine("CameraCount".Translate() + ": " + mapComp.SurveillanceCameraCount());
 
-
+            return inspect.ToString();
+        }
         public bool WorkingNow
         {
             get
@@ -61,11 +69,27 @@ namespace RimWorldRealFoW
                     );
                 }
                 workingGraphics[cameraCount].Draw(this.DrawPos + new Vector3(0f, 1f, 0f), base.Rotation, this, 0f);
+                if(RFOWSettings.censorMode) {
+                    if(censorGraphic == null) {
+                    censorGraphic = GraphicDatabase.Get(
+                    this.def.graphicData.graphicClass,
+                    this.def.graphicData.texPath + "_FX_Censor" ,
+                    ShaderDatabase.MoteGlow,
+                    this.def.graphicData.drawSize,
+                    this.DrawColor,
+                    this.DrawColorTwo
+
+                    );                        
+                    }
+                    censorGraphic.Draw(this.DrawPos + new Vector3(0f, 1f, 0f), base.Rotation, this, 0f);
+                }
+            
             }
         }
         public override void Draw()
         {
-            ((ThingWithComps)this).Draw();
+            //((ThingWithComps)this).Draw();
+            base.Draw();
             DrawOverLay();
 
         }
@@ -113,6 +137,8 @@ namespace RimWorldRealFoW
         public int lastTick;
 
         private Graphic[] workingGraphics = new Graphic[13];
+
+        private Graphic censorGraphic = null;
 
     }
 }
