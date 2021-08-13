@@ -162,12 +162,31 @@ namespace RimWorldRealFoW
 
 			harmony.Patch(
 				typeof(Verse.AI.AttackTargetFinder).GetMethod("CanSee"),
-				prefix: new HarmonyMethod(typeof(AttackTargetFinder_CanSee).GetMethod("CanSeePreFix")));
+				prefix: new HarmonyMethod(typeof(HarmonyPatches).GetMethod("CanSeePreFix")));
 			harmony.Patch(
 				typeof(LetterStack).GetMethod("ReceiveLetter", new Type[]{
 					typeof(Letter), typeof(string)
 					}),
-				prefix: new HarmonyMethod(typeof(LetterSuppress).GetMethod("ReceiveLetterPrefix")));				
+				prefix: new HarmonyMethod(typeof(HarmonyPatches).GetMethod("ReceiveLetterPrefix")));
+		
+			if(ModsConfig.IsActive("jaxe.bubbles")) {
+				MethodInfo drawBubble = AccessTools.Method(
+					"Bubbles.Interface.Bubbler:DrawBubble"
+					//,new Type[] {typeof(Pawn), typeof(bool), typeof(float)}
+					
+					);
+				if(drawBubble != null) {
+					Log.Message("Interaction bubble is active. Patching");
+					harmony.Patch(
+					drawBubble,
+					prefix: new HarmonyMethod(typeof(HarmonyPatches).GetMethod("DrawBubblePrefix"))
+					);
+				}
+				else {
+					Log.Warning("RFow is active but can't patch DrawBubble method");
+				}
+			} 
+		
 		}
 
 		// Token: 0x06000020 RID: 32 RVA: 0x00003AA2 File Offset: 0x00001CA2
@@ -175,6 +194,8 @@ namespace RimWorldRealFoW
 		{
 			RealFoWModStarter.patchMethod(sourceType, targetType, methodName, null);
 		}
+
+
 
 		// Token: 0x06000021 RID: 33 RVA: 0x00003AB0 File Offset: 0x00001CB0
 		public static void patchMethod(Type sourceType, Type targetType, string methodName, params Type[] types)
@@ -326,4 +347,47 @@ namespace RimWorldRealFoW
 		// Token: 0x0400001B RID: 27
 		private static Harmony harmony = new Harmony("com.github.lukakama.rimworldmodrealfow");
 	}
+
+	[HarmonyPatch]
+    static class InteractionBubblesPatch
+    {
+        static MethodBase target;
+
+        static bool Prepare()
+        {
+            Type type;
+
+            var mod = LoadedModManager.RunningMods.FirstOrDefault(m => m.Name == "Interaction Bubbles");
+            if (mod == null) {
+                return false;
+            }
+
+            type = mod.assemblies.loadedAssemblies
+                        .FirstOrDefault(a => a.GetName().Name == "Bubbles")?
+                        .GetType("Bubbles.Interface.Bubbler");
+
+            if (type == null) {
+                Log.Message("RFoW: Interaction bubble not installed. Ignore");
+
+                return false;
+            }
+
+            target = AccessTools.DeclaredMethod(type, "DrawBubble");
+
+            if (target == null) {
+                Log.Warning("RFoW: Can't patch Interaction bubbles's Bubbler.DrawBubble");
+
+                return false;
+            }
+
+            return true;
+        }
+
+        static MethodBase TargetMethod()
+        {
+            return target;
+        }
+
+
+    }
 }

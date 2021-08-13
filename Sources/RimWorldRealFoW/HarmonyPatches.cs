@@ -1,22 +1,39 @@
 using System;
-using System.Linq;
-using System.Reflection;
+using System.Collections.Generic;
 using HarmonyLib;
 using RimWorld;
+using UnityEngine;
 using Verse;
+using Verse.AI;
 
 namespace RimWorldRealFoW
 {
-    [HarmonyPatch(typeof(LetterStack), "ReceiveLetter",new Type[] {
-        typeof(Letter),
-        typeof(string)
-    })]
-    internal class LetterSuppress
+    internal class HarmonyPatches
     {
+        //Pawn will not target thing that is hidden by the fog
+        [HarmonyPrefix]
+        public static bool CanSeePreFix(ref bool __result, Thing seer, Thing target, Func<IntVec3, bool> validator = null)
+        {
+
+            __result = MapUtils.getMapComponentSeenFog(seer.Map).isShown(seer.Faction, target.Position);
+
+            return __result;
+        }
+        //For interaction bubbles
+        [HarmonyPrefix]
+        public static bool DrawBubblePrefix(Pawn pawn, bool isSelected, float scale)
+        {
+            if (!RFOWSettings.hideSpeakBubble)
+                return true;
+            if (pawn != null && !pawn.IsColonist && pawn.Map != null)
+                return MapUtils.getMapComponentSeenFog(pawn.Map).isShown(Faction.OfPlayer, pawn.Position);
+            return true;
+        }
+        //For suppressing letter
         [HarmonyPrefix]
         public static bool ReceiveLetterPrefix(ref Letter let)
         {
-            
+
             if (let.def == LetterDefOf.NegativeEvent && RFOWSettings.hideEventNegative)
             {
                 return false;

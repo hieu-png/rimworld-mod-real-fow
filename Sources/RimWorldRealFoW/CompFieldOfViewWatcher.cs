@@ -8,9 +8,11 @@ using Verse.AI;
 
 namespace RimWorldRealFoW
 {
+    
     // Token: 0x02000014 RID: 20
     public class CompFieldOfViewWatcher : ThingSubComp
     {
+        
         enum ThingType
         {
             turret,
@@ -64,7 +66,7 @@ namespace RimWorldRealFoW
                     thingType = ThingType.pawn;
                 }
 
-                this.def = this.parent.def;
+                //this.def = this.parent.def;
 
                 this.dayVisionEffectiveness = pawn.GetStatValue(FoWDef.DayVisionEffectiveness, false);
                 this.nightVisionEffectiveness = pawn.GetStatValue(FoWDef.NightVisionEffectiveness, true);
@@ -96,7 +98,7 @@ namespace RimWorldRealFoW
             this.initMap();
             this.lastMovementTick = Find.TickManager.TicksGame;
             this.lastPositionUpdateTick = this.lastMovementTick;
-            this.updateFoV();
+                this.updateFoV();
         }
 
         public override void PostExposeData()
@@ -124,17 +126,24 @@ namespace RimWorldRealFoW
                     {
                         this.lastMovementTick = ticksGame;
                     }
-                    if (RFOWSettings.baseHearingRange > 0
-                        &&pawn.Faction == Faction.OfPlayer
-                        && thingType == ThingType.pawn
-                        && ticksGame % 100 == 0)
+                    if (RFOWSettings.baseHearingRange > 0)
                     {
-                        //hearingTickFrequency = 90; //+ 20 * UnityEngine.Random.Range(-1, 2);
-                        livePawnHear(
-                            pawn,
-                            capacities.GetLevel(PawnCapacityDefOf.Hearing),
-                            pawn.Faction,
-                            RFOWSettings.baseHearingRange);
+                        float hearing = capacities.GetLevel(PawnCapacityDefOf.Hearing);
+                        if (hearing > 0
+                            && pawn.Faction == Faction.OfPlayer
+                            && thingType == ThingType.pawn)
+                        {
+                            if(ticksGame % 100 == 0)
+                            livePawnHear(pawn, pawn.Faction);
+                            if (ticksGame % 200 == 0)
+                            {
+                                updateNearbyPawn(
+                                pawn,
+                                RFOWSettings.baseHearingRange,
+                                capacities.GetLevel(PawnCapacityDefOf.Hearing));
+                            }
+                        }
+
                     }
 
                     if (this.lastPosition != CompFieldOfViewWatcher.iv3Invalid && this.lastPosition != this.parent.Position)
@@ -213,11 +222,12 @@ namespace RimWorldRealFoW
                     {
                         if (thingType == ThingType.pawn)
                         {
-                            if(RFOWSettings.prisonerGiveVision && pawn.IsPrisonerOfColony) {
+                            if (RFOWSettings.prisonerGiveVision && pawn.IsPrisonerOfColony)
+                            {
                                 livePawnCalculateFov(position, 0.2f, forceUpdate, Faction.OfPlayer);
                             }
                             else
-                            livePawnCalculateFov(position, 1, forceUpdate, faction);
+                                livePawnCalculateFov(position, 1, forceUpdate, faction);
 
                         }
                         else if (thingType == ThingType.animal)
@@ -905,34 +915,55 @@ namespace RimWorldRealFoW
         }
 
         // Token: 0x0400005E RID: 94
-
+        public void updateNearbyPawn(Pawn thisPawn, float range, float rangeMod)
+        {
+            if (thisPawn.Map != null)
+            {
+                //nearByPawn.Clear();
+                nearByPawn = MapUtils.GetPawnsAround(thisPawn.Position,(int)(range*rangeMod), thisPawn.Map) as List<Pawn>;
+               // foreach (Thing thing in GenRadial.RadialDistinctThingsAround(
+               //     thisPawn.Position, thisPawn.Map, range * rangeMod, true))
+               /*foreach(Pawn other in MapUtils.GetPawnsAround(thisPawn.Position,(int)( range * rangeMod), thisPawn.Map))
+                {
+                    //Pawn other = thing as Pawn;
+                    if (other != null) {
+                        nearByPawn.Add(other);
+                        }
+                }
+                /*
+                this
+                foreach(Pawn other in thisPawn.Map.mapPawns.AllPawnsSpawned) {
+                    if(other.Position.DistanceTo(thisPawn.Position) < range * rangeMod) {
+                        nearByPawn.Add(other);
+                    }
+                }*/
+            } else nearByPawn.Clear();
+        }
         private void livePawnHear(
             Pawn thisPawn,
-            float hearRangeMod,
-            Faction faction,
-            float hearRange)
+            Faction faction
+            )
         {
-            foreach (Thing thing in GenRadial.RadialDistinctThingsAround(
-                thisPawn.Position, thisPawn.Map, hearRange * hearRangeMod, true))
+            foreach (Pawn other in nearByPawn)
             {
-                Pawn other = thing as Pawn;
-                if (other != null)
+                //Pawn other = thing as Pawn;
+                // if (other != null)
+                if (
+                    other.Faction != faction
+                    && (other.pather != null && other.pather.Moving)
+                    && !this.mapCompSeenFog.isShown(faction, other.Position)
+                    )
                 {
-                    if (other.Faction != faction
-                        && (other.pather == null || other.pather.Moving)
-                        && !this.mapCompSeenFog.isShown(faction, other.Position)
-                        )
-                    {
-                        float otherSize = other.BodySize;
-                        // MoteMaker.MakeWaterSplash(other.Position.ToVector3(), this.map, other.BodySize, 2);
-                        MapUtils.MakeSoundWave(
-                            other.Position.ToVector3() + new Vector3(otherSize * 0.5f, 0, otherSize * 0.5f),
-                            this.map,
-                            Mathf.Lerp(1.5f, 3.5f, otherSize / 4),
-                            Mathf.Lerp(1f, 2.5f, otherSize / 4));
+                    float otherSize = other.BodySize;
+                    // MoteMaker.MakeWaterSplash(other.Position.ToVector3(), this.map, other.BodySize, 2);
+                    MapUtils.MakeSoundWave(
+                        other.Position.ToVector3() + new Vector3(otherSize * 0.5f, 0, otherSize * 0.5f),
+                        this.map,
+                        Mathf.Lerp(1.5f, 3.5f, otherSize / 4),
+                        Mathf.Lerp(1f, 2.5f, otherSize / 4));
 
-                    }
                 }
+
             }
 
         }
@@ -1009,7 +1040,6 @@ namespace RimWorldRealFoW
 
         private bool calculated;
 
-        // private Dictionary<Verb,float> attackVerbRange;
         private IntVec3 lastPosition;
 
         public int lastSightRange;
@@ -1072,7 +1102,7 @@ namespace RimWorldRealFoW
 
         private CompProvideVision compProvideVision;
 
-
+        public List<Pawn> nearByPawn = new List<Pawn>();
         private bool setupDone = false;
 
         private Pawn pawn;
@@ -1081,34 +1111,25 @@ namespace RimWorldRealFoW
         private float dayVisionEffectiveness;
 
         private float nightVisionEffectiveness;
-        private ThingDef def;
+        //private ThingDef def;
 
 
-        // Token: 0x0400007E RID: 126
         private PawnCapacitiesHandler capacities;
 
-        // Token: 0x0400007F RID: 127
         private Building building;
 
-        // Token: 0x04000080 RID: 128
         private Building_TurretGun turret;
 
-        // Token: 0x04000081 RID: 129
         private List<Hediff> hediffs;
 
-        // Token: 0x04000082 RID: 130
         private Pawn_PathFollower pawnPather;
 
-        // Token: 0x04000083 RID: 131
         private RaceProperties raceProps;
 
-        // Token: 0x04000084 RID: 132
         private int lastMovementTick;
 
-        // Token: 0x04000085 RID: 133
         private int lastPositionUpdateTick;
 
-        // Token: 0x04000086 RID: 134
         private bool disabled;
     }
 }

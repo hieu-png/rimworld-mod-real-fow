@@ -66,6 +66,8 @@
 		<hasInteractionCell>true</hasInteractionCell>
 		<terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
 		<constructionSkillPrerequisite>5</constructionSkillPrerequisite>
+		<drawerType>MapMeshAndRealTime</drawerType>
+		
 		<researchPrerequisites>
 			<li>CameraSecurity</li>
 		</researchPrerequisites>

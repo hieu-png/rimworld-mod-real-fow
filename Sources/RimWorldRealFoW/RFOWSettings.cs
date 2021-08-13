@@ -54,7 +54,6 @@ namespace RimWorldRealFoW
             Text.Font = GameFont.Tiny;
             row.Label("fogFadeSpeedSetting_desc".Translate(), -1f, null);
             Text.Font = GameFont.Small;
-            addGap(row);
             row.Label("baseViewRangeDesc".Translate() + " (need save reload to be changed): " + baseViewRange.ToString(), -1f, null);
             baseViewRange = (int)row.Slider((float)RFOWSettings.baseViewRange, 10f, 100);
             row.Label("baseHearingRange".Translate()+": " + Math.Round(baseHearingRange, 1).ToString(), -1f, null);
@@ -73,7 +72,8 @@ namespace RimWorldRealFoW
             row.CheckboxLabeled("hideEventPositive".Translate(), ref RFOWSettings.hideEventPositive, "hideEventPositive".Translate());     
             row.CheckboxLabeled("hideThreatBig".Translate(), ref RFOWSettings.hideThreatBig, "hideThreatBig".Translate());
             row.CheckboxLabeled("hideThreatSmall".Translate(), ref RFOWSettings.hideThreatSmall, "hideThreatSmall".Translate());
-            row.CheckboxLabeled("censorMode".Translate(), ref RFOWSettings.censorMode, "censorMode".Translate());
+            //row.CheckboxLabeled("censorMode".Translate(), ref RFOWSettings.censorMode, "censorMode".Translate());
+            row.CheckboxLabeled("hideSpeakBubble".Translate(), ref RFOWSettings.hideSpeakBubble, "hideSpeakBubbleDesc".Translate());
 
 
 
@@ -125,6 +125,7 @@ namespace RimWorldRealFoW
             Scribe_Values.Look<bool>(ref RFOWSettings.hideThreatBig, "hideThreatBig", false, false);
             Scribe_Values.Look<bool>(ref RFOWSettings.hideThreatSmall, "hideThreatSmall", false, false);
             Scribe_Values.Look<bool>(ref RFOWSettings.censorMode, "censorMode", false, false);
+            Scribe_Values.Look<bool>(ref RFOWSettings.hideSpeakBubble, "hideSpeakBubble", false, false);
 
             RFOWSettings.applySettings();
         }
@@ -141,6 +142,9 @@ namespace RimWorldRealFoW
         public static float turretVisionModifier = 0.7f;
 
         public static float animalVisionModifier = 0.5f;
+
+        public static bool hideSpeakBubble = false;
+
         public static bool censorMode = false;
         public static bool needWatcher = true;
         public static bool hideThreatBig = false;
