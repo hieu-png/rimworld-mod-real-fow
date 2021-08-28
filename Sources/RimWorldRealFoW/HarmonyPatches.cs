@@ -14,10 +14,18 @@ namespace RimWorldRealFoW
         [HarmonyPrefix]
         public static bool CanSeePreFix(ref bool __result, Thing seer, Thing target, Func<IntVec3, bool> validator = null)
         {
+            Pawn seerPawn = seer as Pawn;
+            if (
+                seerPawn != null && seer.Faction != null 
+                && (RFOWSettings.aiSmart && seer.Faction != Faction.OfPlayer) 
+                && seerPawn.RaceProps.Humanlike)
+            {
+                __result =  MapUtils.getMapComponentSeenFog(seer.Map).isShown(seer.Faction, target.Position);
 
-            __result = MapUtils.getMapComponentSeenFog(seer.Map).isShown(seer.Faction, target.Position);
-
-            return __result;
+                return __result;
+            }
+            else
+                return true;
         }
         //For interaction bubbles
         [HarmonyPrefix]

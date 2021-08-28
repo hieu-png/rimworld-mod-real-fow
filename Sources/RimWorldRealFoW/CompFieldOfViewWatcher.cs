@@ -260,7 +260,7 @@ namespace RimWorldRealFoW
                             if ((this.compPowerTrader != null && !this.compPowerTrader.PowerOn)
                                 || (this.compRefuelable != null && !this.compRefuelable.HasFuel)
                                 || (this.compFlickable != null && !this.compFlickable.SwitchIsOn)
-                                || !this.mapCompSeenFog.workingCameraConsole
+                                //|| !this.mapCompSeenFog.workingCameraConsole
                                 )
                             {
                                 sightRange = 0;

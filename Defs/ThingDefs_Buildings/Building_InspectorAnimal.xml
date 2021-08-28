@@ -71,6 +71,31 @@
 		</comps>
 	</ThingDef>
 	<ThingDef ParentName="InspectorAnimalBase">
+		<defName>InspectorHare</defName>
+		<label>inspector Hare</label>
+		<description>It's a Hare that monitors your surroundings and tells you what's going on. It consumes haygrass.</description>
+		<graphicData>
+			<texPath>Things/Buildings/InspectorHare</texPath>
+		</graphicData>
+		<soundImpactDefault>Pawn_Hare_Wounded</soundImpactDefault>
+
+		<costList>
+			<WoodLog>50</WoodLog>
+		</costList>
+		<comps>
+			<li Class="CompProperties_Refuelable">
+				<fuelConsumptionRate>10</fuelConsumptionRate>
+				<fuelCapacity>60.0</fuelCapacity>
+				<fuelFilter>
+					<thingDefs>
+						<li>Hay</li>
+					</thingDefs>
+				</fuelFilter>
+				<initialFuelPercent>1</initialFuelPercent>
+			</li>
+		</comps>
+	</ThingDef>	
+	<ThingDef ParentName="InspectorAnimalBase">
 		<defName>InspectorMonkey</defName>
 		<label>inspector Monkey</label>
 		<description>It's a Monkey that monitors your surroundings and tells you what's going on. It consumes berries.</description>
