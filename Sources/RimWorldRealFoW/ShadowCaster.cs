@@ -7,7 +7,7 @@ namespace RimWorldRealFoW
 	public class ShadowCaster
 	{
 		// Token: 0x06000023 RID: 35 RVA: 0x00003E18 File Offset: 0x00002018
-		public static void computeFieldOfViewWithShadowCasting(int startX, int startY, int radius, bool[] viewBlockerCells, int maxX, int maxY, bool handleSeenAndCache, MapComponentSeenFog mapCompSeenFog, Faction faction, short[] factionShownCells, bool[] fovGrid, int fovGridMinX, int fovGridMinY, int fovGridWidth, bool[] oldFovGrid, int oldFovGridMinX, int oldFovGridMaxX, int oldFovGridMinY, int oldFovGridMaxY, int oldFovGridWidth, byte specificOctant = 255, int targetX = -1, int targetY = -1)
+		public static void computeFieldOfViewWithShadowCasting(int startX, int startY, int radius, bool[] viewBlockerCells, int maxX, int maxY, bool handleSeenAndCache, MapComponentSeenFog mapCompSeenFog, Faction faction, short[] factionShownCells, bool[] fovGrid, int fovGridMinX, int fovGridMinY, int fovGridWidth, bool[] oldFovGrid, int oldFovGridMinX, int oldFovGridMaxX, int oldFovGridMinY, int oldFovGridMaxY, int oldFovGridWidth, byte specificOctant = 255, int targetX = -1, int targetY = -1, bool ignoreWalls = false, RoofGrid roofGrid = null)
 		{
 			int r_r = radius * radius;
 			bool flag = specificOctant == byte.MaxValue;
@@ -15,17 +15,17 @@ namespace RimWorldRealFoW
 			{
 				for (byte b = 0; b < 8; b += 1)
 				{
-					ShadowCaster.computeFieldOfViewInOctantZero(b, fovGrid, fovGridMinX, fovGridMinY, fovGridWidth, oldFovGrid, oldFovGridMinX, oldFovGridMaxX, oldFovGridMinY, oldFovGridMaxY, oldFovGridWidth, radius, r_r, startX, startY, maxX, maxY, viewBlockerCells, handleSeenAndCache, mapCompSeenFog, faction, factionShownCells, targetX, targetY, 0, 1, 1, 1, 0);
+					ShadowCaster.computeFieldOfViewInOctantZero(b, fovGrid, fovGridMinX, fovGridMinY, fovGridWidth, oldFovGrid, oldFovGridMinX, oldFovGridMaxX, oldFovGridMinY, oldFovGridMaxY, oldFovGridWidth, radius, r_r, startX, startY, maxX, maxY, viewBlockerCells, handleSeenAndCache, mapCompSeenFog, faction, factionShownCells, targetX, targetY, 0, 1, 1, 1, 0, ignoreWalls, roofGrid);
 				}
 			}
 			else
 			{
-				ShadowCaster.computeFieldOfViewInOctantZero(specificOctant, fovGrid, fovGridMinX, fovGridMinY, fovGridWidth, oldFovGrid, oldFovGridMinX, oldFovGridMaxX, oldFovGridMinY, oldFovGridMaxY, oldFovGridWidth, radius, r_r, startX, startY, maxX, maxY, viewBlockerCells, handleSeenAndCache, mapCompSeenFog, faction, factionShownCells, targetX, targetY, 0, 1, 1, 1, 0);
+				ShadowCaster.computeFieldOfViewInOctantZero(specificOctant, fovGrid, fovGridMinX, fovGridMinY, fovGridWidth, oldFovGrid, oldFovGridMinX, oldFovGridMaxX, oldFovGridMinY, oldFovGridMaxY, oldFovGridWidth, radius, r_r, startX, startY, maxX, maxY, viewBlockerCells, handleSeenAndCache, mapCompSeenFog, faction, factionShownCells, targetX, targetY, 0, 1, 1, 1, 0, ignoreWalls, roofGrid);
 			}
 		}
 
 		// Token: 0x06000024 RID: 36 RVA: 0x00003EBC File Offset: 0x000020BC
-		private static void computeFieldOfViewInOctantZero(byte octant, bool[] fovGrid, int fovGridMinX, int fovGridMinY, int fovGridWidth, bool[] oldFovGrid, int oldFovGridMinX, int oldFovGridMaxX, int oldFovGridMinY, int oldFovGridMaxY, int oldFovGridWidth, int radius, int r_r, int startX, int startY, int maxX, int maxY, bool[] viewBlockerCells, bool handleSeenAndCache, MapComponentSeenFog mapCompSeenFog, Faction faction, short[] factionShownCells, int targetX, int targetY, int x, int topVectorX, int topVectorY, int bottomVectorX, int bottomVectorY)
+		private static void computeFieldOfViewInOctantZero(byte octant, bool[] fovGrid, int fovGridMinX, int fovGridMinY, int fovGridWidth, bool[] oldFovGrid, int oldFovGridMinX, int oldFovGridMaxX, int oldFovGridMinY, int oldFovGridMaxY, int oldFovGridWidth, int radius, int r_r, int startX, int startY, int maxX, int maxY, bool[] viewBlockerCells, bool handleSeenAndCache, MapComponentSeenFog mapCompSeenFog, Faction faction, short[] factionShownCells, int targetX, int targetY, int x, int topVectorX, int topVectorY, int bottomVectorX, int bottomVectorY, bool ignoreWalls = false, RoofGrid roofGrid = null)
 		{
 			int num = 0;
 			int num2 = 0;
@@ -190,7 +190,13 @@ namespace RimWorldRealFoW
 								}
 							}
 						}
-						bool flag22 = !flag15 || num2 < 0 || num < 0 || num2 >= maxX || num >= maxY || viewBlockerCells[num9];
+						bool flag22 = !flag15 || num2 < 0 || num < 0 || num2 >= maxX || num >= maxY || (viewBlockerCells[num9] && !ignoreWalls);
+
+                        if (!flag22 && roofGrid != null)
+                        {
+                            flag22 = ignoreWalls && roofGrid.Roofed(num9);
+                        }
+
 						bool flag23 = flag8;
 						if (flag23)
 						{

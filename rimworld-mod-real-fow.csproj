@@ -93,6 +93,7 @@
   <ItemGroup>
     <Compile Include="Sources\RimWorldRealFoW\Building_CameraConsole.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Building_SurveillanceCamera.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_JobDriver_Wait.cs" />
     <Compile Include="Sources\RimWorldRealFoW\FoWDef.cs" />
     <Compile Include="Sources\RimWorldRealFoW\PlaceWorker_NextToWall.cs" />
     <Compile Include="Sources\RimWorldRealFoW\WorkGiver_SurveilCameraConsole.cs" />
@@ -140,9 +141,8 @@
     <Compile Include="Sources\RimWorldRealFoW\RFOWSettings.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Verb_Look.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Graphic_MoteSoundWave.cs" />
-    <Compile Include="Sources\RimWorldRealFoW\MoteSoundWave.cs" />   
-     <Compile Include="Sources\RimWorldRealFoW\HarmonyPatches.cs" />   
-   
+    <Compile Include="Sources\RimWorldRealFoW\MoteSoundWave.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\HarmonyPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_Verb.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_Messages.cs" />

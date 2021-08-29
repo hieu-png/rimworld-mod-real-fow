@@ -13,7 +13,7 @@ namespace RimWorldRealFoW.Detours
 		// Token: 0x0600008D RID: 141 RVA: 0x000093E0 File Offset: 0x000075E0
 		private static void CanHitCellFromCellIgnoringRange_Postfix(this Verb __instance, ref bool __result, IntVec3 sourceSq, IntVec3 targetLoc, bool includeCorners = false)
 		{
-			bool flag = __result && __instance.verbProps.requireLineOfSight;
+			bool flag = (__result && __instance.verbProps.requireLineOfSight) || onTower(sourceSq, __instance.caster);
 			if (flag)
 			{
 				__result = ((__instance.caster.Faction != null && _Verb.seenByFaction(__instance.caster, targetLoc)) || _Verb.fovLineOfSight(sourceSq, targetLoc, __instance.caster));
@@ -27,6 +27,14 @@ namespace RimWorldRealFoW.Detours
 			bool flag = mapComponentSeenFog != null;
 			return !flag || mapComponentSeenFog.isShown(thing.Faction, targetLoc);
 		}
+
+        private static bool onTower(IntVec3 sourceSq, Thing thing)
+        {
+            CompMainComponent compMain = (CompMainComponent)thing.TryGetComp(CompMainComponent.COMP_DEF);
+            CompFieldOfViewWatcher compFoV = compMain.compFieldOfViewWatcher;
+
+            return compFoV.OnTower(sourceSq);
+        }
 
 		// Token: 0x0600008F RID: 143 RVA: 0x0000946C File Offset: 0x0000766C
 		private static bool fovLineOfSight(IntVec3 sourceSq, IntVec3 targetLoc, Thing thing)
@@ -50,6 +58,7 @@ namespace RimWorldRealFoW.Detours
 				CompMainComponent compMainComponent = (CompMainComponent)thing.TryGetComp(CompMainComponent.COMP_DEF);
 				CompFieldOfViewWatcher compFieldOfViewWatcher = compMainComponent.compFieldOfViewWatcher;
 				int num = Mathf.RoundToInt(compFieldOfViewWatcher.calcPawnSightRange(sourceSq, true, !thing.Position.AdjacentToCardinal(sourceSq)));
+				bool onTower = compFieldOfViewWatcher.OnTower(sourceSq);
 				bool flag3 = !sourceSq.InHorDistOf(targetLoc, (float)num);
 				if (flag3)
 				{
@@ -118,7 +127,7 @@ namespace RimWorldRealFoW.Detours
 					}
 					Map map = thing.Map;
 					bool[] array = new bool[1];
-					ShadowCaster.computeFieldOfViewWithShadowCasting(sourceSq.x, sourceSq.z, num, mapComponentSeenFog.viewBlockerCells, map.Size.x, map.Size.z, false, null, null, null, array, 0, 0, 0, null, 0, 0, 0, 0, 0, specificOctant, targetLoc.x, targetLoc.z);
+					ShadowCaster.computeFieldOfViewWithShadowCasting(sourceSq.x, sourceSq.z, num, mapComponentSeenFog.viewBlockerCells, map.Size.x, map.Size.z, false, null, null, null, array, 0, 0, 0, null, 0, 0, 0, 0, 0, specificOctant, targetLoc.x, targetLoc.z, onTower, map.roofGrid);
 					result = array[0];
 				}
 			}

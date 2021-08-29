@@ -74,6 +74,7 @@ namespace RimWorldRealFoW
 		public static void injectDetours()
 		{
 			RealFoWModStarter.patchMethod(typeof(Verb), typeof(_Verb), "CanHitCellFromCellIgnoringRange");
+            RealFoWModStarter.patchMethod(typeof(JobDriver_Wait), typeof(_JobDriver_Wait), "CheckForAutoAttack");
 			RealFoWModStarter.patchMethod(typeof(Selector), typeof(_Selector), "Select");
 			RealFoWModStarter.patchMethod(typeof(MouseoverReadout), typeof(_MouseoverReadout), "MouseoverReadoutOnGUI");
 			RealFoWModStarter.patchMethod(typeof(BeautyUtility), typeof(_BeautyUtility), "FillBeautyRelevantCells");
