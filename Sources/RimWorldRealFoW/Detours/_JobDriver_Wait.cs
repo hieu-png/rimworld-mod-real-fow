@@ -13,12 +13,19 @@ namespace RimWorldRealFoW.Sources.RimWorldRealFoW.Detours
 {
     static class _JobDriver_Wait
     {
-        static void CheckForAutoAttack_Postfix(JobDriver __instance)
+        static void CheckForAutoAttack_Postfix(JobDriver __instance) // NOTE FOR LATER: CHANGE ONTOWER CHECK TO BE AROUND BESTSHOOTTARGETFROMCURRENTPOSITION OR TRYSTARTATTACK SO THAT A TARGET CAN BE IDENTIFIED FOR IF THE ENEMY IS ONTOWER
         {
-            if (!onTower(__instance.pawn.Position, __instance.pawn))
-            {
+            bool shootingAtTower = false;
+
+            CompMainComponent compMain = (CompMainComponent)__instance.pawn.TryGetComp(CompMainComponent.COMP_DEF);
+
+            if (compMain == null)
                 return;
-            }
+
+            CompFieldOfViewWatcher compFoV = compMain.compFieldOfViewWatcher;
+
+            if (compFoV == null)
+                return;
 
             if ((__instance.pawn.story == null ||
                  !__instance.pawn.story.DisabledWorkTagsBackstoryAndTraits.HasFlag(WorkTags.Violent))
@@ -36,21 +43,30 @@ namespace RimWorldRealFoW.Sources.RimWorldRealFoW.Detours
                     Thing thing = (Thing)AttackTargetFinder.BestShootTargetFromCurrentPosition(__instance.pawn, targetScanFlags, null, 0f, 9999f);
                     if (thing != null)
                     {
-                        __instance.pawn.TryStartAttack(thing);
-                        __instance.collideWithPawns = true;
-                        return;
+                        if (onTower(thing.Position, compFoV) ||
+                            onTower(__instance.pawn.Position, compFoV))
+                        {
+                            __instance.pawn.TryStartAttack(thing);
+                            __instance.collideWithPawns = true;
+                            return;
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
                 }
             }
         }
 
-        private static bool onTower(IntVec3 sourceSq, Thing thing)
+        private static bool onTower(IntVec3 sourceSq, CompFieldOfViewWatcher compFoV)
         {
-            CompMainComponent compMain = (CompMainComponent)thing.TryGetComp(CompMainComponent.COMP_DEF);
-            CompFieldOfViewWatcher compFoV = compMain.compFieldOfViewWatcher;
-
-
             return compFoV.OnTower(sourceSq);
+        }
+
+        private static bool isUnderRoof(IntVec3 sourceSq, CompFieldOfViewWatcher compFoV)
+        {
+            return compFoV.IsUnderRoof(sourceSq);
         }
     }
 }

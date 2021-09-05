@@ -6,6 +6,7 @@ using HarmonyLib;
 using RimWorld;
 using RimWorldRealFoW.Detours;
 using RimWorldRealFoW;
+using RimWorldRealFoW.Sources.RimWorldRealFoW.Detours;
 using UnityEngine;
 using Verse;
 using Verse.AI;
@@ -186,9 +187,8 @@ namespace RimWorldRealFoW
 				else {
 					Log.Warning("RFow is active but can't patch DrawBubble method");
 				}
-			} 
-		
-		}
+			}
+        }
 
 		// Token: 0x06000020 RID: 32 RVA: 0x00003AA2 File Offset: 0x00001CA2
 		public static void patchMethod(Type sourceType, Type targetType, string methodName)

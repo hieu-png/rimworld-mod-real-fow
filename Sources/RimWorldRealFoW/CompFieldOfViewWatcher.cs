@@ -512,7 +512,13 @@ namespace RimWorldRealFoW
 
         public bool OnTower(IntVec3 position)
         {
-            List<CompAffectVision> compsAffectVision = mapCompSeenFog.compAffectVisionGrid[(position.z * mapSizeX) + position.x];
+            int posIndex = (position.z * mapSizeX) + position.x;
+            return OnTower(posIndex);
+        }
+
+        public bool OnTower(int index)
+        {
+            List<CompAffectVision> compsAffectVision = mapCompSeenFog.compAffectVisionGrid[index];
             int compsCount = compsAffectVision.Count;
             for (int i = 0; i < compsCount; i++)
             {
@@ -520,6 +526,11 @@ namespace RimWorldRealFoW
             }
 
             return false;
+        }
+
+        public bool IsUnderRoof(IntVec3 position)
+        {
+            return map.roofGrid.Roofed(position);
         }
 
         // Token: 0x0600006D RID: 109 RVA: 0x00007C54 File Offset: 0x00005E54
@@ -993,7 +1004,7 @@ namespace RimWorldRealFoW
         {
             IntVec3[] peekDirection = null;
             int sightRange = -1;
-            bool onTower = OnTower(position)
+            bool onTower = OnTower(position);
 
             if (sightRangeMod != 0)
                 sightRange = Mathf.RoundToInt(sightRangeMod * this.calcPawnSightRange(position, false, false));

@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using RimWorld;
+using RimWorldRealFoW.Utils;
+using UnityEngine;
+using Verse;
 
 namespace RimWorldRealFoW
 {
@@ -27,10 +31,31 @@ namespace RimWorldRealFoW
 		// Token: 0x06000024 RID: 36 RVA: 0x00003EBC File Offset: 0x000020BC
 		private static void computeFieldOfViewInOctantZero(byte octant, bool[] fovGrid, int fovGridMinX, int fovGridMinY, int fovGridWidth, bool[] oldFovGrid, int oldFovGridMinX, int oldFovGridMaxX, int oldFovGridMinY, int oldFovGridMaxY, int oldFovGridWidth, int radius, int r_r, int startX, int startY, int maxX, int maxY, bool[] viewBlockerCells, bool handleSeenAndCache, MapComponentSeenFog mapCompSeenFog, Faction faction, short[] factionShownCells, int targetX, int targetY, int x, int topVectorX, int topVectorY, int bottomVectorX, int bottomVectorY, bool ignoreWalls = false, RoofGrid roofGrid = null)
 		{
-			int num = 0;
-			int num2 = 0;
+			int worldY = 0;
+			int worldX = 0;
 			bool flag = true;
-			while (flag || !ShadowCaster.queue.Empty())
+
+            if (mapCompSeenFog != null)
+            {
+                HashSet<MapTower> towers = mapCompSeenFog.compAffectVisionList;
+				Log.Warning("Tower count: "+towers.Count);
+                foreach (MapTower mapTower in towers)
+                {
+					Log.Warning("Tower name: "+mapTower.compAffectVision.parent.Label);
+                    float distance = float.MaxValue;
+                    float xSub = mapTower.xPos - startX;
+                    float ySub = mapTower.yPos - startY;
+                    distance = Mathf.Sqrt(Mathf.Pow(xSub, 2) + Mathf.Pow(ySub, 2));
+                    if (distance < radius)
+                    {
+                        Log.Warning("Tower in range at distance "+distance+" out of radius "+radius+". Starting point at: " + startX + ", " + startY + ". Faction is " + faction.Name);
+                        int posIndex = (mapTower.yPos * maxX) + mapTower.xPos;
+                        mapCompSeenFog.incrementSeen(faction, factionShownCells, posIndex);
+                    }
+                }
+			}
+
+            while (flag || !ShadowCaster.queue.Empty())
 			{
 				bool flag2 = !flag;
 				if (flag2)
@@ -48,8 +73,8 @@ namespace RimWorldRealFoW
 				}
 				while (x <= radius)
 				{
-					int num3 = 2 * x;
-					int num4 = x * x;
+					int twoX = 2 * x;
+					int xSqrd = x * x;
 					bool flag3 = x == 0;
 					int num5;
 					if (flag3)
@@ -58,8 +83,8 @@ namespace RimWorldRealFoW
 					}
 					else
 					{
-						int num6 = (num3 + 1) * topVectorY / (2 * topVectorX);
-						int num7 = (num3 + 1) * topVectorY % (2 * topVectorX);
+						int num6 = (twoX + 1) * topVectorY / (2 * topVectorX);
+						int num7 = (twoX + 1) * topVectorY % (2 * topVectorX);
 						bool flag4 = num7 > topVectorX;
 						if (flag4)
 						{
@@ -78,8 +103,8 @@ namespace RimWorldRealFoW
 					}
 					else
 					{
-						int num6 = (num3 - 1) * bottomVectorY / (2 * bottomVectorX);
-						int num7 = (num3 - 1) * bottomVectorY % (2 * bottomVectorX);
+						int num6 = (twoX - 1) * bottomVectorY / (2 * bottomVectorX);
+						int num7 = (twoX - 1) * bottomVectorY % (2 * bottomVectorX);
 						bool flag6 = num7 >= bottomVectorX;
 						if (flag6)
 						{
@@ -95,108 +120,112 @@ namespace RimWorldRealFoW
 					bool flag9 = octant == 1 || octant == 2;
 					if (flag9)
 					{
-						num = startY + x;
+						worldY = startY + x;
 					}
 					else
 					{
 						bool flag10 = octant == 3 || octant == 4;
 						if (flag10)
 						{
-							num2 = startX - x;
+							worldX = startX - x;
 						}
 						else
 						{
 							bool flag11 = octant == 5 || octant == 6;
 							if (flag11)
 							{
-								num = startY - x;
+								worldY = startY - x;
 							}
 							else
 							{
-								num2 = startX + x;
+								worldX = startX + x;
 							}
 						}
 					}
-					for (int i = num5; i >= num8; i--)
+					for (int y = num5; y >= num8; y--)
 					{
 						bool flag12 = octant == 1 || octant == 6;
 						if (flag12)
 						{
-							num2 = startX + i;
+							worldX = startX + y;
 						}
 						else
 						{
 							bool flag13 = octant == 2 || octant == 5;
 							if (flag13)
 							{
-								num2 = startX - i;
+								worldX = startX - y;
 							}
 							else
 							{
 								bool flag14 = octant == 4 || octant == 7;
 								if (flag14)
 								{
-									num = startY - i;
+									worldY = startY - y;
 								}
 								else
 								{
-									num = startY + i;
+									worldY = startY + y;
 								}
 							}
 						}
-						int num9 = num * maxX + num2;
-						bool flag15 = num4 + i * i < r_r;
-						bool flag16 = flag15 && num2 >= 0 && num >= 0 && num2 < maxX && num < maxY;
-						if (flag16)
-						{
-							bool flag17 = targetX == -1;
-							if (flag17)
-							{
-								int num10 = (num - fovGridMinY) * fovGridWidth + (num2 - fovGridMinX);
-								bool flag18 = !fovGrid[num10];
-								if (flag18)
-								{
-									fovGrid[num10] = true;
-									if (handleSeenAndCache)
-									{
-										bool flag19 = oldFovGrid == null || num2 < oldFovGridMinX || num < oldFovGridMinY || num2 > oldFovGridMaxX || num > oldFovGridMaxY;
-										if (flag19)
-										{
-											mapCompSeenFog.incrementSeen(faction, factionShownCells, num9);
-										}
-										else
-										{
-											int num11 = (num - oldFovGridMinY) * oldFovGridWidth + (num2 - oldFovGridMinX);
-											bool flag20 = !oldFovGrid[num11];
-											if (flag20)
-											{
-												mapCompSeenFog.incrementSeen(faction, factionShownCells, num9);
-											}
-											else
-											{
-												oldFovGrid[num11] = false;
-											}
-										}
-									}
-								}
-							}
-							else
-							{
-								bool flag21 = targetX == num2 && targetY == num;
-								if (flag21)
-								{
-									fovGrid[0] = true;
-									return;
-								}
-							}
-						}
-						bool flag22 = !flag15 || num2 < 0 || num < 0 || num2 >= maxX || num >= maxY || (viewBlockerCells[num9] && !ignoreWalls);
+						int worldIdx = worldY * maxX + worldX;
+						
+						bool inRadius = xSqrd + y * y < r_r;
+						bool flag16 = inRadius && worldX >= 0 && worldY >= 0 && worldX < maxX && worldY < maxY;
+                        if (flag16)
+                        {
+                            bool flag17 = targetX == -1;
+                            if (flag17)
+                            {
+                                int num10 = (worldY - fovGridMinY) * fovGridWidth + (worldX - fovGridMinX);
+                                bool flag18 = !fovGrid[num10];
+                                if (flag18)
+                                {
+                                    fovGrid[num10] = true;
+                                    if (handleSeenAndCache)
+                                    {
+                                        bool flag19 = oldFovGrid == null || worldX < oldFovGridMinX ||
+                                                      worldY < oldFovGridMinY || worldX > oldFovGridMaxX ||
+                                                      worldY > oldFovGridMaxY;
+                                        if (flag19)
+                                        {
+                                            mapCompSeenFog.incrementSeen(faction, factionShownCells, worldIdx);
+                                        }
+                                        else
+                                        {
+                                            int num11 = (worldY - oldFovGridMinY) * oldFovGridWidth +
+                                                        (worldX - oldFovGridMinX);
+                                            bool flag20 = !oldFovGrid[num11];
+                                            if (flag20)
+                                            {
+                                                mapCompSeenFog.incrementSeen(faction, factionShownCells, worldIdx);
+                                            }
+                                            else
+                                            {
+                                                oldFovGrid[num11] = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                bool flag21 = targetX == worldX && targetY == worldY;
+                                if (flag21)
+                                {
+                                    fovGrid[0] = true;
+                                    return;
+                                }
+                            }
+                        }
+                        bool flag22 = (!inRadius || worldX < 0 || worldY < 0 || worldX >= maxX || worldY >= maxY || (viewBlockerCells[worldIdx] && !ignoreWalls));
 
                         if (!flag22 && roofGrid != null)
                         {
-                            flag22 = ignoreWalls && roofGrid.Roofed(num9);
+                            flag22 = ignoreWalls && roofGrid.Roofed(worldIdx);
                         }
-
+						
 						bool flag23 = flag8;
 						if (flag23)
 						{
@@ -210,8 +239,8 @@ namespace RimWorldRealFoW
 									ptr2.x = x + 1;
 									ptr2.topVectorX = topVectorX;
 									ptr2.topVectorY = topVectorY;
-									ptr2.bottomVectorX = num3 - 1;
-									ptr2.bottomVectorY = 2 * i + 1;
+									ptr2.bottomVectorX = twoX - 1;
+									ptr2.bottomVectorY = 2 * y + 1;
 								}
 							}
 							else
@@ -219,8 +248,8 @@ namespace RimWorldRealFoW
 								bool flag26 = flag7;
 								if (flag26)
 								{
-									topVectorX = num3 + 1;
-									topVectorY = 2 * i + 1;
+									topVectorX = twoX + 1;
+									topVectorY = 2 * y + 1;
 								}
 							}
 						}
@@ -236,6 +265,24 @@ namespace RimWorldRealFoW
 				}
 			}
 		}
+
+		public static bool OnTower(MapComponentSeenFog mapCompSeenFog, int index)
+        {
+            if (mapCompSeenFog == null)
+                return false;
+
+            if (index >= mapCompSeenFog.compAffectVisionGrid.Length || index < 0)
+                return false;
+
+            List<CompAffectVision> compsAffectVision = mapCompSeenFog.compAffectVisionGrid[index];
+            int compsCount = compsAffectVision.Count;
+            if (compsCount > 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
 		// Token: 0x0400001C RID: 28
 		private static ShadowCaster.ColumnPortionQueue queue = new ShadowCaster.ColumnPortionQueue(64);

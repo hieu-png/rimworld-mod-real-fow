@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HarmonyLib;
 using RimWorld;
 using RimWorldRealFoW;
@@ -177,15 +178,23 @@ namespace RimWorldRealFoW
 		{
 			if (x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ)
 			{
-				this.compAffectVisionGrid[z * this.mapSizeX + x].Add(comp);
+                if (comp.parent.Label.ToLower().Contains("tower"))
+                {
+                    compAffectVisionList.Add(new MapTower(comp, x, z));
+				}
+                this.compAffectVisionGrid[z * this.mapSizeX + x].Add(comp);
 			}
 		}
 
 		public void DeregisterCompAffectVisionPosition(CompAffectVision comp, int x, int z)
 		{
 			if (x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ)
-			{
-				this.compAffectVisionGrid[z * this.mapSizeX + x].Remove(comp);
+            {
+                if (comp.parent.Label.ToLower().Contains("tower"))
+                {
+                    compAffectVisionList.Remove(new MapTower(comp, x, z));
+                }
+                this.compAffectVisionGrid[z * this.mapSizeX + x].Remove(comp);
 			}
 		}
 
@@ -267,10 +276,21 @@ namespace RimWorldRealFoW
 						{
 							compMainComponent2.compHideFromPlayer.updateVisibility(true, false);
 						}
-					}
-				}
+                    }
+
+                    CompAffectVision compAffectVision = thing.TryGetComp<CompAffectVision>();
+                    if (compAffectVision != null && thing.Label.ToLower().Contains("tower"))
+                    {
+						Log.Message("Adding tower.");
+                        int xPos = thing.Position.x;
+                        int yPos = thing.Position.z;
+                        MapTower newTower = new MapTower(compAffectVision, xPos, yPos);
+
+                        compAffectVisionList.Add(newTower);
+                    }
+                }
 			}
-			this.mapDrawer.RegenerateEverythingNow();
+            this.mapDrawer.RegenerateEverythingNow();
 		}
 
 		public override void ExposeData()
@@ -496,6 +516,7 @@ namespace RimWorldRealFoW
 		private List<CompHideFromPlayer>[] compHideFromPlayerGrid;
 		private byte[] compHideFromPlayerGridCount;
 		public List<CompAffectVision>[] compAffectVisionGrid;
+        public HashSet<MapTower> compAffectVisionList = new HashSet<MapTower>();
 		private Designation[] mineDesignationGrid;
 		private int maxFactionLoadId;
 		private int mapCellLength;
@@ -511,4 +532,18 @@ namespace RimWorldRealFoW
 		private int sectionsSizeY;
 		private int currentGameTick = 0;
 	}
+
+    public struct MapTower
+    {
+        public CompAffectVision compAffectVision;
+        public int xPos;
+        public int yPos;
+
+        public MapTower(CompAffectVision comp, int x, int y)
+        {
+            compAffectVision = comp;
+            xPos = x;
+            yPos = y;
+        }
+    }
 }
