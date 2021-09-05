@@ -19,10 +19,7 @@ namespace RimWorldRealFoW.Sources.RimWorldRealFoW.Detours
 
             CompMainComponent compMain = (CompMainComponent)__instance.pawn.TryGetComp(CompMainComponent.COMP_DEF);
 
-            if (compMain == null)
-                return;
-
-            CompFieldOfViewWatcher compFoV = compMain.compFieldOfViewWatcher;
+            CompFieldOfViewWatcher compFoV = compMain?.compFieldOfViewWatcher;
 
             if (compFoV == null)
                 return;
@@ -33,29 +30,22 @@ namespace RimWorldRealFoW.Sources.RimWorldRealFoW.Detours
                 && (__instance.pawn.drafter == null || __instance.pawn.drafter.FireAtWill))
             {
                 Verb currentEffectiveVerb = __instance.pawn.CurrentEffectiveVerb;
-                if (currentEffectiveVerb != null && !currentEffectiveVerb.verbProps.IsMeleeAttack)
+                if (currentEffectiveVerb == null || currentEffectiveVerb.verbProps.IsMeleeAttack) return;
+
+                TargetScanFlags targetScanFlags = TargetScanFlags.NeedThreat;
+                if (currentEffectiveVerb.IsIncendiary())
                 {
-                    TargetScanFlags targetScanFlags = TargetScanFlags.NeedThreat;
-                    if (currentEffectiveVerb.IsIncendiary())
-                    {
-                        targetScanFlags |= TargetScanFlags.NeedNonBurning;
-                    }
-                    Thing thing = (Thing)AttackTargetFinder.BestShootTargetFromCurrentPosition(__instance.pawn, targetScanFlags, null, 0f, 9999f);
-                    if (thing != null)
-                    {
-                        if (onTower(thing.Position, compFoV) ||
-                            onTower(__instance.pawn.Position, compFoV))
-                        {
-                            __instance.pawn.TryStartAttack(thing);
-                            __instance.collideWithPawns = true;
-                            return;
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
+                    targetScanFlags |= TargetScanFlags.NeedNonBurning;
                 }
+
+                Thing thing = (Thing)AttackTargetFinder.BestShootTargetFromCurrentPosition(__instance.pawn, targetScanFlags, null, 0f, 9999f);
+                if (thing == null) return;
+
+                if (!onTower(thing.Position, compFoV) &&
+                    !onTower(__instance.pawn.Position, compFoV)) return;
+                
+                __instance.pawn.TryStartAttack(thing);
+                __instance.collideWithPawns = true;
             }
         }
 

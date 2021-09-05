@@ -35,22 +35,67 @@ namespace RimWorldRealFoW
 			int worldX = 0;
 			bool flag = true;
 
-            if (mapCompSeenFog != null)
+            if (mapCompSeenFog != null && !UnderRoof(roofGrid, startX, startY))
             {
-                HashSet<MapTower> towers = mapCompSeenFog.compAffectVisionList;
-				Log.Warning("Tower count: "+towers.Count);
-                foreach (MapTower mapTower in towers)
+                HashSet<Vector2> towers = mapCompSeenFog.compAffectVisionList;
+
+				Log.Message("Character ");
+
+                foreach (Vector2 mapTower in towers)
                 {
-					Log.Warning("Tower name: "+mapTower.compAffectVision.parent.Label);
-                    float distance = float.MaxValue;
-                    float xSub = mapTower.xPos - startX;
-                    float ySub = mapTower.yPos - startY;
-                    distance = Mathf.Sqrt(Mathf.Pow(xSub, 2) + Mathf.Pow(ySub, 2));
+                    int towerX = (int) mapTower.x;
+                    int towerY = (int) mapTower.y;
+                    float xSub = towerX - startX;
+                    float ySub = towerY - startY;
+                    float distance = Mathf.Sqrt(Mathf.Pow(xSub, 2) + Mathf.Pow(ySub, 2));
+                    bool clearSight = true;
+
                     if (distance < radius)
                     {
-                        Log.Warning("Tower in range at distance "+distance+" out of radius "+radius+". Starting point at: " + startX + ", " + startY + ". Faction is " + faction.Name);
-                        int posIndex = (mapTower.yPos * maxX) + mapTower.xPos;
-                        mapCompSeenFog.incrementSeen(faction, factionShownCells, posIndex);
+                        IEnumerable<Vector2> pointsToTower = GetPointsOnLine(startX, startY, towerX, towerY);
+
+                        foreach (Vector2 point in pointsToTower)
+                        {
+                            int pointX = (int) point.x;
+                            int pointY = (int) point.y;
+                            if (UnderRoof(roofGrid, pointX, pointY))
+                            {
+                                clearSight = false;
+                                break;
+                            }
+                        }
+
+                        if (clearSight)
+                        {
+                            int posIndex = (towerY * maxX) + towerX;
+
+                            int tFogGridIdx = ((towerY - fovGridMinY) * fovGridWidth) + (towerX - fovGridMinX);
+                            if (!fovGrid[tFogGridIdx])
+                            {
+                                fovGrid[tFogGridIdx] = true;
+                                if (handleSeenAndCache)
+                                {
+                                    if (oldFovGrid == null || towerX < oldFovGridMinX || towerY < oldFovGridMinY || towerX > oldFovGridMaxX || towerY > oldFovGridMaxY)
+                                    {
+                                        mapCompSeenFog.incrementSeen(faction, factionShownCells, posIndex);
+                                    }
+                                    else
+                                    {
+                                        int tOldFogGridIdx = ((towerY - oldFovGridMinY) * oldFovGridWidth) + (towerX - oldFovGridMinX);
+                                        if (!oldFovGrid[tOldFogGridIdx])
+                                        {
+                                            // Old cell was not visible. Increment seen counter in global grid.
+                                            mapCompSeenFog.incrementSeen(faction, factionShownCells, posIndex);
+                                        }
+                                        else
+                                        {
+                                            // Old cell was already visible. Mark it to not be unseen.
+                                            oldFovGrid[tOldFogGridIdx] = false;
+                                        }
+                                    }
+                                }
+                            }
+						}
                     }
                 }
 			}
@@ -266,22 +311,66 @@ namespace RimWorldRealFoW
 			}
 		}
 
-		public static bool OnTower(MapComponentSeenFog mapCompSeenFog, int index)
+        private static bool UnderRoof(RoofGrid roofGrid, int x, int y)
         {
-            if (mapCompSeenFog == null)
-                return false;
+            return roofGrid != null && roofGrid.Roofed(x,y);
+        }
 
-            if (index >= mapCompSeenFog.compAffectVisionGrid.Length || index < 0)
-                return false;
-
-            List<CompAffectVision> compsAffectVision = mapCompSeenFog.compAffectVisionGrid[index];
-            int compsCount = compsAffectVision.Count;
-            if (compsCount > 0)
+		//Using Bresenham's line algorithm to find all coordinates between 2 points
+        private static IEnumerable<Vector2> GetPointsOnLine(int x0, int y0, int x1, int y1)
+        {
+            bool steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
+            if (steep)
             {
-                return true;
+                int t;
+                t = x0; // swap x0 and y0
+                x0 = y0;
+                y0 = t;
+                t = x1; // swap x1 and y1
+                x1 = y1;
+                y1 = t;
             }
+            if (x0 > x1)
+            {
+                int t;
+                t = x0; // swap x0 and x1
+                x0 = x1;
+                x1 = t;
+                t = y0; // swap y0 and y1
+                y0 = y1;
+                y1 = t;
+            }
+            int dx = x1 - x0;
+            int dy = Math.Abs(y1 - y0);
+            int error = dx / 2;
+            int ystep = (y0 < y1) ? 1 : -1;
+            int y = y0;
+            for (int x = x0; x <= x1; x++)
+            {
+                yield return new Vector2(steep ? y : x, steep ? x : y);
+                error -= dy;
+                if (error < 0)
+                {
+                    y += ystep;
+                    error += dx;
+                }
+            }
+        }
 
-            return false;
+        //Alternative method for Bresenham's line algorithm. Plan to compare performance at a later date
+		static IEnumerable<Vector2> GetLine(int x0, int y0, int x1, int y1)
+        {
+            int dx = Math.Abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+            int dy = Math.Abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+            int err = (dx > dy ? dx : -dy) / 2, e2;
+            for (; ; )
+            {
+                yield return new Vector2(x0, y0);
+                if (x0 == x1 && y0 == y1) break;
+                e2 = err;
+                if (e2 > -dx) { err -= dy; x0 += sx; }
+                if (e2 < dy) { err += dx; y0 += sy; }
+            }
         }
 
 		// Token: 0x0400001C RID: 28

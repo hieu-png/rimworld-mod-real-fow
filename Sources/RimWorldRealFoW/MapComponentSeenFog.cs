@@ -180,7 +180,7 @@ namespace RimWorldRealFoW
 			{
                 if (comp.parent.Label.ToLower().Contains("tower"))
                 {
-                    compAffectVisionList.Add(new MapTower(comp, x, z));
+                    compAffectVisionList.Add(new Vector2(x, z));
 				}
                 this.compAffectVisionGrid[z * this.mapSizeX + x].Add(comp);
 			}
@@ -190,10 +190,7 @@ namespace RimWorldRealFoW
 		{
 			if (x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ)
             {
-                if (comp.parent.Label.ToLower().Contains("tower"))
-                {
-                    compAffectVisionList.Remove(new MapTower(comp, x, z));
-                }
+                compAffectVisionList.Remove(new Vector2(x, z));
                 this.compAffectVisionGrid[z * this.mapSizeX + x].Remove(comp);
 			}
 		}
@@ -281,10 +278,9 @@ namespace RimWorldRealFoW
                     CompAffectVision compAffectVision = thing.TryGetComp<CompAffectVision>();
                     if (compAffectVision != null && thing.Label.ToLower().Contains("tower"))
                     {
-						Log.Message("Adding tower.");
                         int xPos = thing.Position.x;
                         int yPos = thing.Position.z;
-                        MapTower newTower = new MapTower(compAffectVision, xPos, yPos);
+                        Vector2 newTower = new Vector2(xPos, yPos);
 
                         compAffectVisionList.Add(newTower);
                     }
@@ -516,7 +512,7 @@ namespace RimWorldRealFoW
 		private List<CompHideFromPlayer>[] compHideFromPlayerGrid;
 		private byte[] compHideFromPlayerGridCount;
 		public List<CompAffectVision>[] compAffectVisionGrid;
-        public HashSet<MapTower> compAffectVisionList = new HashSet<MapTower>();
+        public HashSet<Vector2> compAffectVisionList = new HashSet<Vector2>();
 		private Designation[] mineDesignationGrid;
 		private int maxFactionLoadId;
 		private int mapCellLength;
@@ -532,18 +528,4 @@ namespace RimWorldRealFoW
 		private int sectionsSizeY;
 		private int currentGameTick = 0;
 	}
-
-    public struct MapTower
-    {
-        public CompAffectVision compAffectVision;
-        public int xPos;
-        public int yPos;
-
-        public MapTower(CompAffectVision comp, int x, int y)
-        {
-            compAffectVision = comp;
-            xPos = x;
-            yPos = y;
-        }
-    }
 }
