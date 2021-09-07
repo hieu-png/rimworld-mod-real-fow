@@ -93,8 +93,13 @@
   <ItemGroup>
     <Compile Include="Sources\RimWorldRealFoW\Building_CameraConsole.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Building_SurveillanceCamera.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_JobDriver.cs" />
     <Compile Include="Sources\RimWorldRealFoW\Detours\_JobDriver_Wait.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_JobGiver_AITrashBuildingsDistant.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_JobGiver_AIBreaching.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\Detours\_JobGiver_AITrashColonyClose.cs" />
     <Compile Include="Sources\RimWorldRealFoW\FoWDef.cs" />
+    <Compile Include="Sources\RimWorldRealFoW\FoWUtilities.cs" />
     <Compile Include="Sources\RimWorldRealFoW\PlaceWorker_NextToWall.cs" />
     <Compile Include="Sources\RimWorldRealFoW\WorkGiver_SurveilCameraConsole.cs" />
     <Compile Include="Sources\RimWorldRealFoW\JobDriver_SurveilCameraConsole.cs" />

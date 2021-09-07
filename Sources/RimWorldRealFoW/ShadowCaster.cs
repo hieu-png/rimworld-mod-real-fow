@@ -39,8 +39,6 @@ namespace RimWorldRealFoW
             {
                 HashSet<Vector2> towers = mapCompSeenFog.compAffectVisionList;
 
-				Log.Message("Character ");
-
                 foreach (Vector2 mapTower in towers)
                 {
                     int towerX = (int) mapTower.x;

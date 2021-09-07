@@ -76,15 +76,20 @@ namespace RimWorldRealFoW
 		{
 			RealFoWModStarter.patchMethod(typeof(Verb), typeof(_Verb), "CanHitCellFromCellIgnoringRange");
             RealFoWModStarter.patchMethod(typeof(JobDriver_Wait), typeof(_JobDriver_Wait), "CheckForAutoAttack");
-			RealFoWModStarter.patchMethod(typeof(Selector), typeof(_Selector), "Select");
+            RealFoWModStarter.patchMethod(typeof(JobGiver_AITrashColonyClose), typeof(_JobGiver_AITrashColonyClose), "TryGiveJob");
+            RealFoWModStarter.patchMethod(typeof(JobGiver_AITrashBuildingsDistant), typeof(_JobGiver_AITrashBuildingsDistant), "TryGiveJob");
+            RealFoWModStarter.patchMethod(typeof(JobGiver_AIBreaching), typeof(_JobGiver_AIBreaching), "TryGiveJob");
+            RealFoWModStarter.patchMethod(typeof(Selector), typeof(_Selector), "Select");
 			RealFoWModStarter.patchMethod(typeof(MouseoverReadout), typeof(_MouseoverReadout), "MouseoverReadoutOnGUI");
 			RealFoWModStarter.patchMethod(typeof(BeautyUtility), typeof(_BeautyUtility), "FillBeautyRelevantCells");
 			
 			RealFoWModStarter.patchMethod(typeof(MainTabWindow_Wildlife), typeof(_MainTabWindow_Wildlife), "get_Pawns");
 			
 			RealFoWModStarter.patchMethod(typeof(Pawn), typeof(_Pawn), "DrawGUIOverlay");
-			
-			RealFoWModStarter.patchMethod(typeof(GenMapUI), typeof(_GenMapUI), "DrawThingLabel", new Type[]
+
+            RealFoWModStarter.patchMethod(typeof(JobDriver), typeof(_JobDriver), "SetupToils");
+
+            RealFoWModStarter.patchMethod(typeof(GenMapUI), typeof(_GenMapUI), "DrawThingLabel", new Type[]
 			{
 				typeof(Thing),
 				typeof(string),
