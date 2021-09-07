@@ -13,7 +13,15 @@ namespace RimWorldRealFoW.Detours
 		// Token: 0x0600008D RID: 141 RVA: 0x000093E0 File Offset: 0x000075E0
 		private static void CanHitCellFromCellIgnoringRange_Postfix(this Verb __instance, ref bool __result, IntVec3 sourceSq, IntVec3 targetLoc, bool includeCorners = false)
 		{
-			bool flag = __result && __instance.verbProps.requireLineOfSight;
+            CompMainComponent compMain = (CompMainComponent)__instance.caster.TryGetComp(CompMainComponent.COMP_DEF);
+			if (compMain == null)
+                return;
+
+            CompFieldOfViewWatcher compFoV = compMain.compFieldOfViewWatcher;
+			if (compFoV == null)
+                return;
+
+			bool flag = (__result && __instance.verbProps.requireLineOfSight) || onTower(sourceSq, compFoV) || onTower(targetLoc, compFoV);
 			if (flag)
 			{
 				__result = ((__instance.caster.Faction != null && _Verb.seenByFaction(__instance.caster, targetLoc)) || _Verb.fovLineOfSight(sourceSq, targetLoc, __instance.caster));
@@ -24,9 +32,19 @@ namespace RimWorldRealFoW.Detours
 		private static bool seenByFaction(Thing thing, IntVec3 targetLoc)
 		{
 			MapComponentSeenFog mapComponentSeenFog = thing.Map.getMapComponentSeenFog();
-			bool flag = mapComponentSeenFog != null;
+            bool flag = mapComponentSeenFog != null;
 			return !flag || mapComponentSeenFog.isShown(thing.Faction, targetLoc);
 		}
+
+		private static bool onTower(IntVec3 sourceSq, CompFieldOfViewWatcher compFoV)
+        {
+            return compFoV.OnTower(sourceSq);
+        }
+
+        private static bool isUnderRoof(IntVec3 sourceSq, CompFieldOfViewWatcher compFoV)
+        {
+            return compFoV.IsUnderRoof(sourceSq);
+        }
 
 		// Token: 0x0600008F RID: 143 RVA: 0x0000946C File Offset: 0x0000766C
 		private static bool fovLineOfSight(IntVec3 sourceSq, IntVec3 targetLoc, Thing thing)
@@ -50,6 +68,7 @@ namespace RimWorldRealFoW.Detours
 				CompMainComponent compMainComponent = (CompMainComponent)thing.TryGetComp(CompMainComponent.COMP_DEF);
 				CompFieldOfViewWatcher compFieldOfViewWatcher = compMainComponent.compFieldOfViewWatcher;
 				int num = Mathf.RoundToInt(compFieldOfViewWatcher.calcPawnSightRange(sourceSq, true, !thing.Position.AdjacentToCardinal(sourceSq)));
+				bool onTower = compFieldOfViewWatcher.OnTower(sourceSq);
 				bool flag3 = !sourceSq.InHorDistOf(targetLoc, (float)num);
 				if (flag3)
 				{
@@ -118,7 +137,7 @@ namespace RimWorldRealFoW.Detours
 					}
 					Map map = thing.Map;
 					bool[] array = new bool[1];
-					ShadowCaster.computeFieldOfViewWithShadowCasting(sourceSq.x, sourceSq.z, num, mapComponentSeenFog.viewBlockerCells, map.Size.x, map.Size.z, false, null, null, null, array, 0, 0, 0, null, 0, 0, 0, 0, 0, specificOctant, targetLoc.x, targetLoc.z);
+					ShadowCaster.computeFieldOfViewWithShadowCasting(sourceSq.x, sourceSq.z, num, mapComponentSeenFog.viewBlockerCells, map.Size.x, map.Size.z, false, null, null, null, array, 0, 0, 0, null, 0, 0, 0, 0, 0, specificOctant, targetLoc.x, targetLoc.z, onTower, map.roofGrid);
 					result = array[0];
 				}
 			}

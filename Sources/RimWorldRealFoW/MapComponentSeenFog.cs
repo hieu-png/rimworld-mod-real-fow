@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HarmonyLib;
 using RimWorld;
 using RimWorldRealFoW;
@@ -177,15 +178,20 @@ namespace RimWorldRealFoW
 		{
 			if (x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ)
 			{
-				this.compAffectVisionGrid[z * this.mapSizeX + x].Add(comp);
+                if (comp.parent.Label.ToLower().Contains("tower"))
+                {
+                    compAffectVisionList.Add(new Vector2(x, z));
+				}
+                this.compAffectVisionGrid[z * this.mapSizeX + x].Add(comp);
 			}
 		}
 
 		public void DeregisterCompAffectVisionPosition(CompAffectVision comp, int x, int z)
 		{
 			if (x >= 0 && z >= 0 && x < this.mapSizeX && z < this.mapSizeZ)
-			{
-				this.compAffectVisionGrid[z * this.mapSizeX + x].Remove(comp);
+            {
+                compAffectVisionList.Remove(new Vector2(x, z));
+                this.compAffectVisionGrid[z * this.mapSizeX + x].Remove(comp);
 			}
 		}
 
@@ -267,10 +273,20 @@ namespace RimWorldRealFoW
 						{
 							compMainComponent2.compHideFromPlayer.updateVisibility(true, false);
 						}
-					}
-				}
+                    }
+
+                    CompAffectVision compAffectVision = thing.TryGetComp<CompAffectVision>();
+                    if (compAffectVision != null && thing.Label.ToLower().Contains("tower"))
+                    {
+                        int xPos = thing.Position.x;
+                        int yPos = thing.Position.z;
+                        Vector2 newTower = new Vector2(xPos, yPos);
+
+                        compAffectVisionList.Add(newTower);
+                    }
+                }
 			}
-			this.mapDrawer.RegenerateEverythingNow();
+            this.mapDrawer.RegenerateEverythingNow();
 		}
 
 		public override void ExposeData()
@@ -496,6 +512,7 @@ namespace RimWorldRealFoW
 		private List<CompHideFromPlayer>[] compHideFromPlayerGrid;
 		private byte[] compHideFromPlayerGridCount;
 		public List<CompAffectVision>[] compAffectVisionGrid;
+        public HashSet<Vector2> compAffectVisionList = new HashSet<Vector2>();
 		private Designation[] mineDesignationGrid;
 		private int maxFactionLoadId;
 		private int mapCellLength;

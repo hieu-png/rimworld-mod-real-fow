@@ -31,6 +31,7 @@ namespace RimWorldRealFoW
             this.lastPosition = CompFieldOfViewWatcher.iv3Invalid;
             this.lastSightRange = 0;
             this.lastPeekDirections = null;
+            this.lastOnTower = false;
             this.viewMap1 = null;
             this.viewMap2 = null;
             this.viewRect = new CellRect(-1, -1, 0, 0);
@@ -509,6 +510,29 @@ namespace RimWorldRealFoW
 
         }
 
+        public bool OnTower(IntVec3 position)
+        {
+            int posIndex = (position.z * mapSizeX) + position.x;
+            return OnTower(posIndex);
+        }
+
+        public bool OnTower(int index)
+        {
+            List<CompAffectVision> compsAffectVision = mapCompSeenFog.compAffectVisionGrid[index];
+            int compsCount = compsAffectVision.Count;
+            for (int i = 0; i < compsCount; i++)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool IsUnderRoof(IntVec3 position)
+        {
+            return map.roofGrid.Roofed(position);
+        }
+
         // Token: 0x0600006D RID: 109 RVA: 0x00007C54 File Offset: 0x00005E54
         public override void PostDeSpawn(Map map)
         {
@@ -524,7 +548,7 @@ namespace RimWorldRealFoW
         }
 
         // Token: 0x0600006E RID: 110 RVA: 0x00007CB8 File Offset: 0x00005EB8
-        public void calculateFoV(Thing thing, int intRadius, IntVec3[] peekDirections)
+        public void calculateFoV(Thing thing, int intRadius, IntVec3[] peekDirections, bool onTower = false)
         {
             if (this.setupDone)
             {
@@ -631,9 +655,9 @@ namespace RimWorldRealFoW
                         && ptr2.z >= 0
                         && ptr2.x <= mapWidth
                         && ptr2.z <= mapHeight
-                        && (l == 0 || ptr2.IsInside(thing) || !viewBlockerCells[ptr2.z * mapSizeX + ptr2.x]))
+                        && (l == 0 || ptr2.IsInside(thing) || (!viewBlockerCells[ptr2.z * mapSizeX + ptr2.x] && !onTower)))
                         {
-                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, intRadius, viewBlockerCells, mapSizeX, mapSizeY, true, this.mapCompSeenFog, faction, factionShownCells, newMapView, newViewRecMinX, newViewRecMinZ, newViewWidth, oldMapView, oldViewRecMinX, oldViewRecMaxX, oldViewRecMinZ, oldViewRecMaxZ, oldViewWidth, byte.MaxValue, -1, -1);
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, intRadius, viewBlockerCells, mapSizeX, mapSizeY, true, this.mapCompSeenFog, faction, factionShownCells, newMapView, newViewRecMinX, newViewRecMinZ, newViewWidth, oldMapView, oldViewRecMinX, oldViewRecMaxX, oldViewRecMinZ, oldViewRecMaxZ, oldViewWidth, byte.MaxValue, -1, -1, onTower, map.roofGrid);
                         }
                     }
                 }
@@ -684,6 +708,7 @@ namespace RimWorldRealFoW
             {
                 int radius = this.lastSightRange;
                 IntVec3[] peekDirection = this.lastPeekDirections;
+                bool onTower = lastOnTower;
 
                 int num = this.mapSizeX;
                 int num2 = this.mapSizeZ;
@@ -751,7 +776,7 @@ namespace RimWorldRealFoW
                     if (
                     ptr.x >= 0 && ptr.z >= 0
                     && ptr.x <= num5 && ptr.z <= num6
-                    && (l == 0 || ptr.IsInside(parent) || !viewBlockerCells[ptr.z * num + ptr.x]))
+                    && (l == 0 || ptr.IsInside(parent) || (!viewBlockerCells[ptr.z * num + ptr.x] && !onTower)))
                     {
                         if (ptr.x <= targetPos.x)
                         {
@@ -776,32 +801,32 @@ namespace RimWorldRealFoW
                 for (int m = 0; m < sightRange; m++)
                 {
                     ref IntVec3 ptr2 = ref this.viewPositions[m];
-                    bool flag14 = ptr2.x >= 0 && ptr2.z >= 0 && ptr2.x <= num5 && ptr2.z <= num6 && (m == 0 || ptr2.IsInside(parent) || !viewBlockerCells[ptr2.z * num + ptr2.x]);
+                    bool flag14 = ptr2.x >= 0 && ptr2.z >= 0 && ptr2.x <= num5 && ptr2.z <= num6 && (m == 0 || ptr2.IsInside(parent) || (!viewBlockerCells[ptr2.z * num + ptr2.x] && !onTower));
                     if (flag14)
                     {
                         bool flag15 = q1Updated;
                         if (flag15)
                         {
-                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 0, -1, -1);
-                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 1, -1, -1);
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 0, -1, -1, onTower, map.roofGrid);
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 1, -1, -1, onTower, map.roofGrid);
                         }
                         bool flag16 = q2Updated;
                         if (flag16)
                         {
-                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 2, -1, -1);
-                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 3, -1, -1);
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 2, -1, -1, onTower, map.roofGrid);
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 3, -1, -1, onTower, map.roofGrid);
                         }
                         bool flag17 = q3Updated;
                         if (flag17)
                         {
-                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 4, -1, -1);
-                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 5, -1, -1);
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 4, -1, -1, onTower, map.roofGrid);
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 5, -1, -1, onTower, map.roofGrid);
                         }
                         bool flag18 = q4Updated;
                         if (flag18)
                         {
-                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 6, -1, -1);
-                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 7, -1, -1);
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 6, -1, -1, onTower, map.roofGrid);
+                            ShadowCaster.computeFieldOfViewWithShadowCasting(ptr2.x, ptr2.z, radius, viewBlockerCells, num, num2, true, this.mapCompSeenFog, faction, factionShownCells, newViewMap, minX, minZ, width, oldViewMap, minX, maxX, minZ, maxZ, width, 7, -1, -1, onTower, map.roofGrid);
                         }
                     }
                 }
@@ -979,7 +1004,7 @@ namespace RimWorldRealFoW
         {
             IntVec3[] peekDirection = null;
             int sightRange = -1;
-
+            bool onTower = OnTower(position);
 
             if (sightRangeMod != 0)
                 sightRange = Mathf.RoundToInt(sightRangeMod * this.calcPawnSightRange(position, false, false));
@@ -1013,11 +1038,13 @@ namespace RimWorldRealFoW
                     || faction != this.lastFaction
                     || position != this.lastPosition
                     || sightRange != this.lastSightRange
+                    || onTower != this.lastOnTower
                     || peekDirection != this.lastPeekDirections)
                 {
                     this.calculated = true;
                     this.lastPosition = position;
                     this.lastSightRange = sightRange;
+                    this.lastOnTower = onTower;
                     this.lastPeekDirections = peekDirection;
                     if (this.lastFaction != faction)
                     {
@@ -1028,7 +1055,7 @@ namespace RimWorldRealFoW
                         this.lastFaction = faction;
                         this.lastFactionShownCells = this.mapCompSeenFog.getFactionShownCells(faction);
                     }
-                    this.calculateFoV(parent, sightRange, peekDirection);
+                    this.calculateFoV(parent, sightRange, peekDirection, onTower);
                 }
             }
             else
@@ -1049,6 +1076,8 @@ namespace RimWorldRealFoW
         private Faction lastFaction;
 
         private short[] lastFactionShownCells;
+
+        private bool lastOnTower;
 
         private float baseViewRange;
 
