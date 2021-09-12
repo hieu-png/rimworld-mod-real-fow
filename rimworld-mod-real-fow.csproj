@@ -19,6 +19,9 @@
 		<Reference Include="D:/Steam/steamapps/workshop/content/294100/2009463077/Current/Assemblies/0Harmony.dll">
 			<Private>False</Private>
 		</Reference>
+		<Reference Include="D:\Steam\steamapps\workshop\content\294100\1631756268\Assemblies\CombatExtended.dll">
+			<Private>False</Private>
+		</Reference>		
 		<Reference Include="../../RimWorldWin64_Data/Managed/*.dll">
 			<Private>False</Private>
 		</Reference>

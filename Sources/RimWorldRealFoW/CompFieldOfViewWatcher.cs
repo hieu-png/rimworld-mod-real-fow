@@ -5,7 +5,7 @@ using RimWorldRealFoW;
 using UnityEngine;
 using Verse;
 using Verse.AI;
-
+using CombatExtended;
 namespace RimWorldRealFoW
 {
 
@@ -68,9 +68,7 @@ namespace RimWorldRealFoW
 
                 //this.def = this.parent.def;
 
-                this.dayVisionEffectiveness = pawn.GetStatValue(FoWDef.DayVisionEffectiveness, false);
-                this.nightVisionEffectiveness = pawn.GetStatValue(FoWDef.NightVisionEffectiveness, true);
-                this.baseViewRange = RFOWSettings.baseViewRange * dayVisionEffectiveness;
+                this.baseViewRange = RFOWSettings.baseViewRange;
 
 
             }
@@ -96,12 +94,12 @@ namespace RimWorldRealFoW
             }
 
             this.initMap();
-            this.lastMovementTick = Find.TickManager.TicksGame;
+            lastMovementTick = Find.TickManager.TicksGame;
 
-            this.lastPositionUpdateTick = this.lastMovementTick;
-            lastStatcheckTick = lastMovementTick;
-            lastHearTick = lastMovementTick;
-            lastHearUpdateTick = lastMovementTick;
+            lastPositionUpdateTick = lastMovementTick;
+            lastStatcheckTick = Find.TickManager.TicksGame;
+            lastHearTick = Find.TickManager.TicksGame;
+            lastHearUpdateTick = Find.TickManager.TicksGame;
             this.updateFoV();
         }
 
@@ -473,24 +471,22 @@ namespace RimWorldRealFoW
                 }
 
                 float currGlow = this.glowGrid.GameGlowAt(position, false);
-                if (gameTick - lastStatcheckTick == 40)
-                {
-                    lastStatcheckTick = gameTick;
-                    this.nightVisionEffectiveness = pawn.GetStatValue(FoWDef.NightVisionEffectiveness, true);
-                }
+
+
+                float totalNightVisionEffectiveness = 0.6f + 0.75f * pawn.GetStatValue(CombatExtended.CE_StatDefOf.NightVisionEfficiency, true);
                 if (currGlow < 1)
                 {
 
-                    if (nightVisionEffectiveness < 1)
+                    if (totalNightVisionEffectiveness < 1)
                     {
                         if (!ignoreDarkness)
                         {
-                            rangeModifier *= Mathf.Lerp(nightVisionEffectiveness, 1f, currGlow);
+                            rangeModifier *= Mathf.Lerp(totalNightVisionEffectiveness, 1f, currGlow);
                         }
                     }
                     else
                     {
-                        rangeModifier *= nightVisionEffectiveness;
+                        rangeModifier *= totalNightVisionEffectiveness;
                     }
                 }
 
@@ -1117,9 +1113,6 @@ namespace RimWorldRealFoW
 
         private Pawn pawn;
 
-        private float dayVisionEffectiveness;
-
-        private float nightVisionEffectiveness;
         //private ThingDef def;
 
 
@@ -1136,13 +1129,10 @@ namespace RimWorldRealFoW
         private RaceProperties raceProps;
 
         private int lastMovementTick;
-
         private int lastStatcheckTick;
         private int lastHearTick;
         private int lastHearUpdateTick;
-
         private int lastPositionUpdateTick;
-
         private bool disabled;
     }
 }
