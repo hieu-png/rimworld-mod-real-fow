@@ -18,6 +18,7 @@ namespace RimWorldRealFoW
 			this.compAffectVision = this.parent.TryGetComp<CompAffectVision>();
 			this.lastPosition = CompComponentsPositionTracker.iv3Invalid;
 			this.lastRotation = CompComponentsPositionTracker.r4Invalid;
+			lastPositionUpdateTick = Find.TickManager.TicksGame;
 			this.updatePosition();
 		}
 
@@ -33,9 +34,9 @@ namespace RimWorldRealFoW
 		{
 			base.CompTick();
 			int ticksGame = Find.TickManager.TicksGame;
-			bool flag = ticksGame % 12 == 0;
-			if (flag)
+			if (ticksGame - lastPositionUpdateTick == 12)
 			{
+				lastPositionUpdateTick = ticksGame;
 				this.updatePosition();
 			}
 		}
@@ -215,6 +216,7 @@ namespace RimWorldRealFoW
 
 		// Token: 0x04000040 RID: 64
 		private CompAffectVision compAffectVision;
+		private int lastPositionUpdateTick;
 
 		// Token: 0x04000041 RID: 65
 		private bool setupDone = false;

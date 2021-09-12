@@ -8,11 +8,11 @@ using Verse.AI;
 
 namespace RimWorldRealFoW
 {
-    
+
     // Token: 0x02000014 RID: 20
     public class CompFieldOfViewWatcher : ThingSubComp
     {
-        
+
         enum ThingType
         {
             turret,
@@ -97,8 +97,12 @@ namespace RimWorldRealFoW
 
             this.initMap();
             this.lastMovementTick = Find.TickManager.TicksGame;
+
             this.lastPositionUpdateTick = this.lastMovementTick;
-                this.updateFoV();
+            lastStatcheckTick = lastMovementTick;
+            lastHearTick = lastMovementTick;
+            lastHearUpdateTick = lastMovementTick;
+            this.updateFoV();
         }
 
         public override void PostExposeData()
@@ -133,10 +137,14 @@ namespace RimWorldRealFoW
                             && pawn.Faction == Faction.OfPlayer
                             && thingType == ThingType.pawn)
                         {
-                            if(ticksGame % 100 == 0)
-                            livePawnHear(pawn, pawn.Faction);
-                            if (ticksGame % 200 == 0)
+                            if (ticksGame - lastHearTick == 100)
                             {
+                                lastHearTick = ticksGame;
+                                livePawnHear(pawn, pawn.Faction);
+                            }
+                            if (ticksGame - lastHearUpdateTick == 200)
+                            {
+                                lastHearUpdateTick = ticksGame;
                                 updateNearbyPawn(
                                 pawn,
                                 RFOWSettings.baseHearingRange,
@@ -364,7 +372,7 @@ namespace RimWorldRealFoW
                         }
                         else
                         {
-                            Log.Warning("Non disabled thing... " + this.parent.ThingID, false);
+                            Log.Warning("Non disabled thing... " + this.parent.ThingID);
                             disabled = true;
                         }
                     }
@@ -395,7 +403,7 @@ namespace RimWorldRealFoW
             float viewRange = baseViewRange;
             //float sightCapacity = ;
             this.initMap();
-            float gameTick = Find.TickManager.TicksGame;
+            int gameTick = Find.TickManager.TicksGame;
 
             List<CompAffectVision> visionAffectingBuilding = this.mapCompSeenFog.compAffectVisionGrid[position.z * this.mapSizeX + position.x];
             bool ignoreWeather = false;
@@ -465,8 +473,9 @@ namespace RimWorldRealFoW
                 }
 
                 float currGlow = this.glowGrid.GameGlowAt(position, false);
-                if (gameTick % 40 == 0)
+                if (gameTick - lastStatcheckTick == 40)
                 {
+                    lastStatcheckTick = gameTick;
                     this.nightVisionEffectiveness = pawn.GetStatValue(FoWDef.NightVisionEffectiveness, true);
                 }
                 if (currGlow < 1)
@@ -920,24 +929,25 @@ namespace RimWorldRealFoW
             if (thisPawn.Map != null)
             {
                 //nearByPawn.Clear();
-                nearByPawn = MapUtils.GetPawnsAround(thisPawn.Position,(int)(range*rangeMod), thisPawn.Map) as List<Pawn>;
-               // foreach (Thing thing in GenRadial.RadialDistinctThingsAround(
-               //     thisPawn.Position, thisPawn.Map, range * rangeMod, true))
-               /*foreach(Pawn other in MapUtils.GetPawnsAround(thisPawn.Position,(int)( range * rangeMod), thisPawn.Map))
-                {
-                    //Pawn other = thing as Pawn;
-                    if (other != null) {
-                        nearByPawn.Add(other);
-                        }
-                }
-                /*
-                this
-                foreach(Pawn other in thisPawn.Map.mapPawns.AllPawnsSpawned) {
-                    if(other.Position.DistanceTo(thisPawn.Position) < range * rangeMod) {
-                        nearByPawn.Add(other);
-                    }
-                }*/
-            } else nearByPawn.Clear();
+                nearByPawn = MapUtils.GetPawnsAround(thisPawn.Position, (int)(range * rangeMod), thisPawn.Map) as List<Pawn>;
+                // foreach (Thing thing in GenRadial.RadialDistinctThingsAround(
+                //     thisPawn.Position, thisPawn.Map, range * rangeMod, true))
+                /*foreach(Pawn other in MapUtils.GetPawnsAround(thisPawn.Position,(int)( range * rangeMod), thisPawn.Map))
+                 {
+                     //Pawn other = thing as Pawn;
+                     if (other != null) {
+                         nearByPawn.Add(other);
+                         }
+                 }
+                 /*
+                 this
+                 foreach(Pawn other in thisPawn.Map.mapPawns.AllPawnsSpawned) {
+                     if(other.Position.DistanceTo(thisPawn.Position) < range * rangeMod) {
+                         nearByPawn.Add(other);
+                     }
+                 }*/
+            }
+            else nearByPawn.Clear();
         }
         private void livePawnHear(
             Pawn thisPawn,
@@ -1107,7 +1117,6 @@ namespace RimWorldRealFoW
 
         private Pawn pawn;
 
-        private float hearingTickFrequency = 120;
         private float dayVisionEffectiveness;
 
         private float nightVisionEffectiveness;
@@ -1127,6 +1136,10 @@ namespace RimWorldRealFoW
         private RaceProperties raceProps;
 
         private int lastMovementTick;
+
+        private int lastStatcheckTick;
+        private int lastHearTick;
+        private int lastHearUpdateTick;
 
         private int lastPositionUpdateTick;
 

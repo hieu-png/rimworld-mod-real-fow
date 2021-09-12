@@ -22,6 +22,7 @@ namespace RimWorldRealFoW
 			this.isSaveable = this.parent.def.isSaveable;
 			this.saveCompressible = this.parent.def.saveCompressible;
 			this.compHiddenable = this.mainComponent.compHiddenable;
+			lastUpdateTick = Find.TickManager.TicksGame;
 			this.updateVisibility(false, false);
 		}
 
@@ -43,12 +44,14 @@ namespace RimWorldRealFoW
 		public override void CompTick()
 		{
 			base.CompTick();
-			bool flag = Find.TickManager.TicksGame % 12 == 0;
-			if (flag)
+			int tickGame = Find.TickManager.TicksGame;
+			if (tickGame-lastUpdateTick==12)
 			{
+				lastUpdateTick = tickGame;
 				this.updateVisibility(false, false);
 			}
 		}
+		private int lastUpdateTick;
 
 		// Token: 0x0600005D RID: 93 RVA: 0x00006564 File Offset: 0x00004764
 		public void forceSeen()

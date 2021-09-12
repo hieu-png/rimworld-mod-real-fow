@@ -67,7 +67,7 @@ namespace RimWorldRealFoW
 		//New addition
 
 		//Camera console
-		int memoryStorage = 0;
+		//int memoryStorage = 0;
 
 		public List<Building_CameraConsole> cameraConsoles = new List<Building_CameraConsole>();
 
