@@ -17,7 +17,7 @@
 		<leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
 		<repairEffect>Sow</repairEffect>
 		<size>(1,1)</size>
-		<altitudeLayer>Building</altitudeLayer>
+		<altitudeLayer>BuildingOnTop</altitudeLayer>
 		<drawerType>RealtimeOnly</drawerType>
 		<rotatable>false</rotatable>
 		<tickerType>Normal</tickerType>

@@ -466,7 +466,13 @@ namespace RimWorldRealFoW
                 foreach (CompAffectVision visionAffecter in visionAffectingBuilding)
                 {
                     if (visionAffecter.Props.denyDarkness)
-                        ignoreDarkness = true;
+                    {
+                        CompPowerTrader cpt = visionAffecter.parent.GetComp<CompPowerTrader>();
+                        if (cpt != null && cpt.PowerOn)
+                        {
+                            ignoreDarkness = true;
+                        }
+                    }
                     if (visionAffecter.Props.denyWeather)
                         ignoreWeather = true;
                     rangeModifier *= visionAffecter.Props.fovMultiplier;
