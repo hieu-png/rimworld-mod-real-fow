@@ -21,7 +21,7 @@ namespace RimWorldRealFoW
 		{
 			this.FailOnDespawnedNullOrForbidden(TargetIndex.A);
 			this.FailOnBurningImmobile(TargetIndex.A);
-			this.FailOn(() => !(this.job.targetA.Thing as Building_CameraConsole).needWatcher());
+			this.FailOn(() => !(this.job.targetA.Thing as Building_CameraConsole).NeedWatcher());
 
 			yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.InteractionCell);
 

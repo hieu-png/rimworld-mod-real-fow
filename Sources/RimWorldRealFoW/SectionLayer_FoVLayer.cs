@@ -139,7 +139,7 @@ namespace RimWorldRealFoW
 					bool flag6 = this.factionShownGrid == null;
 					if (flag6)
 					{
-						this.factionShownGrid = this.pawnFog.getFactionShownCells(Faction.OfPlayer);
+						this.factionShownGrid = this.pawnFog.GetFactionShownCells(Faction.OfPlayer);
 					}
 					short[] array = this.factionShownGrid;
 					int[] playerVisibilityChangeTick = this.pawnFog.playerVisibilityChangeTick;

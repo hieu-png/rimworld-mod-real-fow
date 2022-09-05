@@ -43,7 +43,7 @@ namespace RimWorldRealFoW
                 return FlickUtility.WantsToBeOn(this) && (this.powerComp == null || this.powerComp.PowerOn) && (this.breakdownableComp == null || !this.breakdownableComp.BrokenDown);
             }
         }
-        public bool needWatcher()
+        public bool NeedWatcher()
         {
             //return mapComp.SurveillanceCameraCount() >= 1;
             //Turret need the console to work so just keep it like this

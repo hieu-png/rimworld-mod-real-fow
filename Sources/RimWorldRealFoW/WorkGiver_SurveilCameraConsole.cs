@@ -43,7 +43,7 @@ namespace RimWorldRealFoW
 
 		public override bool HasJobOnThing(Pawn pawn, Thing t, bool forced = false)
 		{
-			if (!(t as Building_CameraConsole).needWatcher())
+			if (!(t as Building_CameraConsole).NeedWatcher())
 			{
 				return false;
 			}

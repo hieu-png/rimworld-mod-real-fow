@@ -162,7 +162,7 @@ namespace RimWorldRealFoW
 										bool flag19 = oldFovGrid == null || num2 < oldFovGridMinX || num < oldFovGridMinY || num2 > oldFovGridMaxX || num > oldFovGridMaxY;
 										if (flag19)
 										{
-											mapCompSeenFog.incrementSeen(faction, factionShownCells, num9);
+											mapCompSeenFog.IncrementSeen(faction, factionShownCells, num9);
 										}
 										else
 										{
@@ -170,7 +170,7 @@ namespace RimWorldRealFoW
 											bool flag20 = !oldFovGrid[num11];
 											if (flag20)
 											{
-												mapCompSeenFog.incrementSeen(faction, factionShownCells, num9);
+												mapCompSeenFog.IncrementSeen(faction, factionShownCells, num9);
 											}
 											else
 											{

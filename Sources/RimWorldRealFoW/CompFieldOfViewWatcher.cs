@@ -35,10 +35,8 @@ namespace RimWorldRealFoW
             this.viewMap2 = null;
             this.viewRect = new CellRect(-1, -1, 0, 0);
             this.viewPositions = new IntVec3[5];
-            this.compHiddenable = this.mainComponent.compHiddenable;
             // this.attackVerbRange = new Dictionary<Verb, float>();
 
-            this.compGlower = this.parent.GetComp<CompGlower>();
             this.compPowerTrader = this.parent.GetComp<CompPowerTrader>();
             this.compRefuelable = this.parent.GetComp<CompRefuelable>();
             this.compFlickable = this.parent.GetComp<CompFlickable>();
@@ -53,7 +51,6 @@ namespace RimWorldRealFoW
             if (this.pawn != null)
             {
                 this.raceProps = this.pawn.RaceProps;
-                this.hediffs = this.pawn.health.hediffSet.hediffs;
                 this.capacities = this.pawn.health.capacities;
                 this.pawnPather = this.pawn.pather;
 
@@ -140,12 +137,12 @@ namespace RimWorldRealFoW
                             if (ticksGame - lastHearTick == 100)
                             {
                                 lastHearTick = ticksGame;
-                                livePawnHear(pawn, pawn.Faction);
+                                LivePawnHear(pawn.Faction);
                             }
                             if (ticksGame - lastHearUpdateTick == 200)
                             {
                                 lastHearUpdateTick = ticksGame;
-                                updateNearbyPawn(
+                                UpdateNearbyPawn(
                                 pawn,
                                 RFOWSettings.baseHearingRange,
                                 capacities.GetLevel(PawnCapacityDefOf.Hearing));
@@ -193,7 +190,7 @@ namespace RimWorldRealFoW
             {
                 if (this.map != null && this.lastFaction != null)
                 {
-                    this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
+                    this.UnseeSeenCells(this.lastFaction, this.lastFactionShownCells);
                 }
                 if (!this.disabled && this.mapCompSeenFog != null)
                 {
@@ -201,11 +198,10 @@ namespace RimWorldRealFoW
                 }
                 this.map = this.parent.Map;
                 this.mapCompSeenFog = this.map.getMapComponentSeenFog();
-                this.thingGrid = this.map.thingGrid;
                 this.glowGrid = this.map.glowGrid;
                 this.roofGrid = this.map.roofGrid;
                 this.weatherManager = this.map.weatherManager;
-                this.lastFactionShownCells = this.mapCompSeenFog.getFactionShownCells(this.parent.Faction);
+                this.lastFactionShownCells = this.mapCompSeenFog.GetFactionShownCells(this.parent.Faction);
                 if (!this.disabled)
                 {
                     this.mapCompSeenFog.fowWatchers.Add(this);
@@ -232,10 +228,14 @@ namespace RimWorldRealFoW
                         {
                             if (RFOWSettings.prisonerGiveVision && pawn.IsPrisonerOfColony)
                             {
-                                livePawnCalculateFov(position, 0.2f, forceUpdate, Faction.OfPlayer);
+                                LivePawnCalculateFov(position, 0.2f, forceUpdate, Faction.OfPlayer);
+                            }
+                            else if (RFOWSettings.allyGiveVision && pawn.Faction != Faction.OfPlayer && pawn.Faction.AllyOrNeutralTo(Faction.OfPlayer))
+                            {
+                                LivePawnCalculateFov(position, 0.5f, forceUpdate, Faction.OfPlayer);
                             }
                             else
-                                livePawnCalculateFov(position, 1, forceUpdate, faction);
+                                LivePawnCalculateFov(position, 1, forceUpdate, faction);
 
                         }
                         else if (thingType == ThingType.animal)
@@ -245,14 +245,14 @@ namespace RimWorldRealFoW
                                 || this.pawn.training == null
                                 || !this.pawn.training.HasLearned(TrainableDefOf.Release)))
                             {
-                                livePawnCalculateFov(position,
+                                LivePawnCalculateFov(position,
                                 0,
                                 forceUpdate,
                                 faction);
                             }
                             else
                             {
-                                livePawnCalculateFov(
+                                LivePawnCalculateFov(
                                     position,
                                     RFOWSettings.animalVisionModifier * Math.Max(raceProps.baseBodySize * 0.7f, 0.4f),
                                     forceUpdate,
@@ -287,19 +287,19 @@ namespace RimWorldRealFoW
                                 {
                                     if (this.lastFaction != null)
                                     {
-                                        this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
+                                        this.UnseeSeenCells(this.lastFaction, this.lastFactionShownCells);
                                     }
                                     this.lastFaction = faction;
-                                    this.lastFactionShownCells = this.mapCompSeenFog.getFactionShownCells(faction);
+                                    this.lastFactionShownCells = this.mapCompSeenFog.GetFactionShownCells(faction);
                                 }
                                 if (sightRange != 0)
                                 {
-                                    this.calculateFoV(parent, sightRange, null);
+                                    this.CalculateFoV(parent, sightRange, null);
                                 }
                                 else
                                 {
-                                    this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
-                                    this.revealOccupiedCells();
+                                    this.UnseeSeenCells(this.lastFaction, this.lastFactionShownCells);
+                                    this.RevealOccupiedCells();
                                 }
                             }
                         }
@@ -328,19 +328,19 @@ namespace RimWorldRealFoW
                                 {
                                     if (this.lastFaction != null)
                                     {
-                                        this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
+                                        this.UnseeSeenCells(this.lastFaction, this.lastFactionShownCells);
                                     }
                                     this.lastFaction = faction;
-                                    this.lastFactionShownCells = this.mapCompSeenFog.getFactionShownCells(faction);
+                                    this.lastFactionShownCells = this.mapCompSeenFog.GetFactionShownCells(faction);
                                 }
                                 if (viewRadius != 0)
                                 {
-                                    this.calculateFoV(parent, viewRadius, null);
+                                    this.CalculateFoV(parent, viewRadius, null);
                                 }
                                 else
                                 {
-                                    this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
-                                    this.revealOccupiedCells();
+                                    this.UnseeSeenCells(this.lastFaction, this.lastFactionShownCells);
+                                    this.RevealOccupiedCells();
                                 }
                             }
                         }
@@ -361,13 +361,13 @@ namespace RimWorldRealFoW
                                 {
                                     if (this.lastFaction != null)
                                     {
-                                        this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
+                                        this.UnseeSeenCells(this.lastFaction, this.lastFactionShownCells);
                                     }
                                     this.lastFaction = faction;
-                                    this.lastFactionShownCells = this.mapCompSeenFog.getFactionShownCells(faction);
+                                    this.lastFactionShownCells = this.mapCompSeenFog.GetFactionShownCells(faction);
                                 }
-                                this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
-                                this.revealOccupiedCells();
+                                this.UnseeSeenCells(this.lastFaction, this.lastFactionShownCells);
+                                this.RevealOccupiedCells();
                             }
                         }
                         else
@@ -382,21 +382,20 @@ namespace RimWorldRealFoW
                         {
                             if (this.lastFaction != null)
                             {
-                                this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
+                                this.UnseeSeenCells(this.lastFaction, this.lastFactionShownCells);
                             }
                             this.lastFaction = faction;
-                            this.lastFactionShownCells = this.mapCompSeenFog.getFactionShownCells(faction);
+                            this.lastFactionShownCells = this.mapCompSeenFog.GetFactionShownCells(faction);
                         }
                     }
                 }
             }
         }
 
-        public float calcPawnSightRange(IntVec3 position, bool forTargeting, bool shouldMove)
+        public float CalcPawnSightRange(IntVec3 position, bool forTargeting, bool shouldMove)
         {
             if (this.pawn == null)
             {
-
                 Log.Message("calcPawnSightRange performed on non pawn thing");
                 return 0f;
             }
@@ -534,12 +533,12 @@ namespace RimWorldRealFoW
             }
             if (this.lastFaction != null)
             {
-                this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
+                this.UnseeSeenCells(this.lastFaction, this.lastFactionShownCells);
             }
         }
 
         // Token: 0x0600006E RID: 110 RVA: 0x00007CB8 File Offset: 0x00005EB8
-        public void calculateFoV(Thing thing, int intRadius, IntVec3[] peekDirections)
+        public void CalculateFoV(Thing thing, int intRadius, IntVec3[] peekDirections)
         {
             if (this.setupDone)
             {
@@ -602,7 +601,7 @@ namespace RimWorldRealFoW
                             || occupiedX > oldViewRecMaxX
                             || occupiedZ > oldViewRecMaxZ)
                         {
-                            this.mapCompSeenFog.incrementSeen(faction, factionShownCells, occupiedZ * mapSizeX + occupiedX);
+                            this.mapCompSeenFog.IncrementSeen(faction, factionShownCells, occupiedZ * mapSizeX + occupiedX);
                         }
                         else
                         {
@@ -610,7 +609,7 @@ namespace RimWorldRealFoW
                             ref bool oldViewMapValue = ref oldMapView[oldViewRecInx];
                             if (!oldViewMapValue)
                             {
-                                this.mapCompSeenFog.incrementSeen(faction, factionShownCells, occupiedZ * mapSizeX + occupiedX);
+                                this.mapCompSeenFog.IncrementSeen(faction, factionShownCells, occupiedZ * mapSizeX + occupiedX);
                             }
                             else
                             {
@@ -680,7 +679,7 @@ namespace RimWorldRealFoW
             }
         }
 
-        public void refreshFovTarget(ref IntVec3 targetPos)
+        public void RefreshFovTarget(ref IntVec3 targetPos)
         {
             if (!setupDone)
             {
@@ -876,16 +875,14 @@ namespace RimWorldRealFoW
         }
 
         // Token: 0x06000070 RID: 112 RVA: 0x000088AC File Offset: 0x00006AAC
-        private void unseeSeenCells(Faction faction, short[] factionShownCells)
+        private void UnseeSeenCells(Faction faction, short[] factionShownCells)
         {
             bool[] array = this.viewMapSwitch ? this.viewMap1 : this.viewMap2;
             bool flag = array != null;
             if (flag)
             {
                 int minZ = this.viewRect.minZ;
-                int maxZ = this.viewRect.maxZ;
                 int minX = this.viewRect.minX;
-                int maxX = this.viewRect.maxX;
                 int x = this.map.Size.x;
                 int z = this.map.Size.z;
                 int width = this.viewRect.Width;
@@ -913,7 +910,7 @@ namespace RimWorldRealFoW
         }
 
         // Token: 0x06000071 RID: 113 RVA: 0x000089F8 File Offset: 0x00006BF8
-        private void revealOccupiedCells()
+        private void RevealOccupiedCells()
         {
             bool flag = this.parent.Faction == Faction.OfPlayer;
             if (flag)
@@ -923,14 +920,14 @@ namespace RimWorldRealFoW
                 {
                     for (int j = cellRect.minZ; j <= cellRect.maxZ; j++)
                     {
-                        this.mapCompSeenFog.revealCell(j * this.mapSizeX + i);
+                        this.mapCompSeenFog.RevealCell(j * this.mapSizeX + i);
                     }
                 }
             }
         }
 
         // Token: 0x0400005E RID: 94
-        public void updateNearbyPawn(Pawn thisPawn, float range, float rangeMod)
+        public void UpdateNearbyPawn(Pawn thisPawn, float range, float rangeMod)
         {
             if (thisPawn.Map != null)
             {
@@ -955,8 +952,7 @@ namespace RimWorldRealFoW
             }
             else nearByPawn.Clear();
         }
-        private void livePawnHear(
-            Pawn thisPawn,
+        private void LivePawnHear(
             Faction faction
             )
         {
@@ -985,20 +981,18 @@ namespace RimWorldRealFoW
         }
 
 
-        private void livePawnCalculateFov(
+        private void LivePawnCalculateFov(
             IntVec3 position,
             float sightRangeMod,
             bool forceUpdate,
             Faction faction
             )
-
         {
             IntVec3[] peekDirection = null;
             int sightRange = -1;
 
-
             if (sightRangeMod != 0)
-                sightRange = Mathf.RoundToInt(sightRangeMod * this.calcPawnSightRange(position, false, false));
+                sightRange = Mathf.RoundToInt(sightRangeMod * this.CalcPawnSightRange(position, false, false));
             if (sightRange != -1)
             {
                 if ((this.pawnPather == null
@@ -1039,17 +1033,17 @@ namespace RimWorldRealFoW
                     {
                         if (this.lastFaction != null)
                         {
-                            this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
+                            this.UnseeSeenCells(this.lastFaction, this.lastFactionShownCells);
                         }
                         this.lastFaction = faction;
-                        this.lastFactionShownCells = this.mapCompSeenFog.getFactionShownCells(faction);
+                        this.lastFactionShownCells = this.mapCompSeenFog.GetFactionShownCells(faction);
                     }
-                    this.calculateFoV(parent, sightRange, peekDirection);
+                    this.CalculateFoV(parent, sightRange, peekDirection);
                 }
             }
             else
             {
-                this.unseeSeenCells(this.lastFaction, this.lastFactionShownCells);
+                this.UnseeSeenCells(this.lastFaction, this.lastFactionShownCells);
             }
         }
         private static readonly IntVec3 iv3Invalid = IntVec3.Invalid;
@@ -1082,7 +1076,6 @@ namespace RimWorldRealFoW
 
         private MapComponentSeenFog mapCompSeenFog;
 
-        private ThingGrid thingGrid;
 
         // Token: 0x0400006E RID: 110
         private GlowGrid glowGrid;
@@ -1100,10 +1093,8 @@ namespace RimWorldRealFoW
         private int mapSizeZ;
 
         // Token: 0x04000073 RID: 115
-        private CompHiddenable compHiddenable;
 
         // Token: 0x04000074 RID: 116
-        private CompGlower compGlower;
 
         // Token: 0x04000075 RID: 117
         private CompPowerTrader compPowerTrader;
@@ -1134,8 +1125,6 @@ namespace RimWorldRealFoW
         private Building building;
 
         private Building_TurretGun turret;
-
-        private List<Hediff> hediffs;
 
         private Pawn_PathFollower pawnPather;
 

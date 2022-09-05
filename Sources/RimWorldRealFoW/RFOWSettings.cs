@@ -38,7 +38,7 @@ namespace RimWorldRealFoW
                     list.Add(new FloatMenuOption(("fogAlphaSetting_" + localValue).Translate(), delegate ()
                     {
                         RFOWSettings.fogAlpha = localValue;
-                        RFOWSettings.applySettings();
+                        RFOWSettings.ApplySettings();
                     }, MenuOptionPriority.Default, null, null, 0f, null, null));
                 }
                 Find.WindowStack.Add(new FloatMenu(list));
@@ -58,7 +58,7 @@ namespace RimWorldRealFoW
                     list2.Add(new FloatMenuOption(("fogFadeSpeedSetting_" + localValue).Translate(), delegate ()
                     {
                         RFOWSettings.fogFadeSpeed = localValue;
-                        RFOWSettings.applySettings();
+                        RFOWSettings.ApplySettings();
                     }, MenuOptionPriority.Default, null, null, 0f, null, null));
                 }
                 Find.WindowStack.Add(new FloatMenu(list2));
@@ -67,30 +67,31 @@ namespace RimWorldRealFoW
             Text.Font = GameFont.Tiny;
             row.Label("fogFadeSpeedSetting_desc".Translate(), -1f, null);
             Text.Font = GameFont.Small;
-            addGap(row);
+            AddGap(row);
             row.Label("baseViewRange".Translate() +": " + baseViewRange.ToString(), -1f, "baseViewRange".Translate());
             baseViewRange = (int)row.Slider((float)RFOWSettings.baseViewRange, 10f, 100);
             row.Label("baseHearingRange".Translate()+": " + Math.Round(baseHearingRange, 1).ToString(), -1f, null);
             baseHearingRange = row.Slider(RFOWSettings.baseHearingRange, 0, 30);
-            addGap(row);
+            AddGap(row);
             row.Label("buildingVisionMod".Translate() +": " + Math.Round(buildingVisionModifier, 2).ToString(), -1f, "buildingVisionModDesc".Translate());
             buildingVisionModifier = row.Slider(buildingVisionModifier, 0.2f, 2);
             row.Label("animalVisionModDesc".Translate() + ": " + Math.Round(animalVisionModifier, 2).ToString(), -1f, null);
             animalVisionModifier = row.Slider(animalVisionModifier, 0.2f, 2);
             row.Label("turretVisionModDesc".Translate() + ": " + Math.Round(turretVisionModifier, 2).ToString(), -1f, null);
             turretVisionModifier = row.Slider(turretVisionModifier, 0.2f, 2);
-            addGap(row);
+            AddGap(row);
+            row.CheckboxLabeled("allyGiveVision".Translate(), ref RFOWSettings.allyGiveVision, "allyGiveVision".Translate());
             row.CheckboxLabeled("prisonerGiveVision".Translate(), ref RFOWSettings.prisonerGiveVision, "prisonerGiveVision".Translate());
             row.CheckboxLabeled("wildLifeTabVisible".Translate(), ref RFOWSettings.wildLifeTabVisible, "wildLifeTabVisibleDesc".Translate());
             row.CheckboxLabeled("NeedWatcher".Translate(), ref RFOWSettings.needWatcher, "NeedWatcherDesc".Translate());
        
-            addGap(row);
+            AddGap(row);
             row.CheckboxLabeled("hideEventNegative".Translate(), ref RFOWSettings.hideEventNegative, "hideEventNegative".Translate());
             row.CheckboxLabeled("hideEventNeutral".Translate(), ref RFOWSettings.hideEventNeutral, "hideEventNeutral".Translate());
             row.CheckboxLabeled("hideEventPositive".Translate(), ref RFOWSettings.hideEventPositive, "hideEventPositive".Translate());     
             row.CheckboxLabeled("hideThreatBig".Translate(), ref RFOWSettings.hideThreatBig, "hideThreatBig".Translate());
             row.CheckboxLabeled("hideThreatSmall".Translate(), ref RFOWSettings.hideThreatSmall, "hideThreatSmall".Translate());
-            addGap(row);
+            AddGap(row);
             row.CheckboxLabeled("censorMode".Translate(), ref RFOWSettings.censorMode, "censorMode".Translate());
             row.CheckboxLabeled("hideSpeakBubble".Translate(), ref RFOWSettings.hideSpeakBubble, "hideSpeakBubbleDesc".Translate());
             row.CheckboxLabeled("aiSmart".Translate(), ref RFOWSettings.aiSmart, "aiSmartDesc".Translate());
@@ -99,12 +100,12 @@ namespace RimWorldRealFoW
             row.End();
             Widgets.EndScrollView();
         }
-        public static void addGap(Listing_Standard listing_Standard, float value = 12f)
+        public static void AddGap(Listing_Standard listing_Standard, float value = 12f)
         {
             listing_Standard.Gap(value);
             listing_Standard.GapLine(value);
         }
-        public static void applySettings()
+        public static void ApplySettings()
         {
             SectionLayer_FoVLayer.prefFadeSpeedMult = (int)RFOWSettings.fogFadeSpeed;
             SectionLayer_FoVLayer.prefEnableFade = (RFOWSettings.fogFadeSpeed != RFOWSettings.FogFadeSpeedEnum.Disabled);
@@ -135,6 +136,7 @@ namespace RimWorldRealFoW
 
             Scribe_Values.Look<bool>(ref RFOWSettings.wildLifeTabVisible, "wildLifeTabVisible", true, false);
             Scribe_Values.Look<bool>(ref RFOWSettings.prisonerGiveVision, "prisonerGiveVision", false, false);
+            Scribe_Values.Look<bool>(ref RFOWSettings.allyGiveVision, "allyGiveVision", false, false);
 
             Scribe_Values.Look<bool>(ref RFOWSettings.needWatcher, "needWatcher", true, false);
             Scribe_Values.Look<bool>(ref RFOWSettings.needMemoryStorage, "needMemoryStorage", true, false);
@@ -148,7 +150,7 @@ namespace RimWorldRealFoW
             Scribe_Values.Look<bool>(ref RFOWSettings.hideSpeakBubble, "hideSpeakBubble", false, false);
             Scribe_Values.Look<bool>(ref RFOWSettings.aiSmart, "aiSmart", false, false);
 
-            RFOWSettings.applySettings();
+            RFOWSettings.ApplySettings();
         }
 
         public static RFOWSettings.FogFadeSpeedEnum fogFadeSpeed = RFOWSettings.FogFadeSpeedEnum.Medium;
@@ -175,6 +177,7 @@ namespace RimWorldRealFoW
         public static bool hideEventNegative = false;
         public static bool hideEventNeutral = false;
         public static bool prisonerGiveVision = false;
+        public static bool allyGiveVision = false;
         public static bool wildLifeTabVisible = true;
         public static bool needMemoryStorage = true;
         public enum FogFadeSpeedEnum

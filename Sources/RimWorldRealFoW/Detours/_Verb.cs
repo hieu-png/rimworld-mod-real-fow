@@ -16,12 +16,12 @@ namespace RimWorldRealFoW.Detours
 			bool flag = __result && __instance.verbProps.requireLineOfSight;
 			if (flag)
 			{
-				__result = ((__instance.caster.Faction != null && _Verb.seenByFaction(__instance.caster, targetLoc)) || _Verb.fovLineOfSight(sourceSq, targetLoc, __instance.caster));
+				__result = ((__instance.caster.Faction != null && _Verb.SeenByFaction(__instance.caster, targetLoc)) || _Verb.fovLineOfSight(sourceSq, targetLoc, __instance.caster));
 			}
 		}
 
 		// Token: 0x0600008E RID: 142 RVA: 0x00009434 File Offset: 0x00007634
-		private static bool seenByFaction(Thing thing, IntVec3 targetLoc)
+		private static bool SeenByFaction(Thing thing, IntVec3 targetLoc)
 		{
 			MapComponentSeenFog mapComponentSeenFog = thing.Map.getMapComponentSeenFog();
 			bool flag = mapComponentSeenFog != null;
@@ -49,7 +49,7 @@ namespace RimWorldRealFoW.Detours
 				MapComponentSeenFog mapComponentSeenFog = thing.Map.getMapComponentSeenFog();
 				CompMainComponent compMainComponent = (CompMainComponent)thing.TryGetComp(CompMainComponent.COMP_DEF);
 				CompFieldOfViewWatcher compFieldOfViewWatcher = compMainComponent.compFieldOfViewWatcher;
-				int num = Mathf.RoundToInt(compFieldOfViewWatcher.calcPawnSightRange(sourceSq, true, !thing.Position.AdjacentToCardinal(sourceSq)));
+				int num = Mathf.RoundToInt(compFieldOfViewWatcher.CalcPawnSightRange(sourceSq, true, !thing.Position.AdjacentToCardinal(sourceSq)));
 				bool flag3 = !sourceSq.InHorDistOf(targetLoc, (float)num);
 				if (flag3)
 				{

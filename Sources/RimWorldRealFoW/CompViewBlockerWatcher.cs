@@ -116,7 +116,7 @@ namespace RimWorldRealFoW
                             bool flag5 = num * num + num2 * num2 < lastSightRange * lastSightRange;
                             if (flag5)
                             {
-                                compFieldOfViewWatcher.refreshFovTarget(ref position);
+                                compFieldOfViewWatcher.RefreshFovTarget(ref position);
                             }
                         }
                     }

@@ -32,6 +32,7 @@
 	<hideThreatBig>Hide big threat event (ex: Raid)</hideThreatBig>
 	<hideThreatSmall>Hide small threat event (ex: single manhunter animal)</hideThreatSmall>
 	<prisonerGiveVision>Prisoner provide vision at reduced range</prisonerGiveVision>
+	<allyGiveVision>Ally provide vision at slightly reduced range</allyGiveVision>
 	<fogAlphaSetting_title>Fog level</fogAlphaSetting_title>
 	<fogAlphaSetting_desc>Fog covering level for discovered but not currently seen places</fogAlphaSetting_desc>
 	<fogAlphaSetting_Black>Black</fogAlphaSetting_Black>
