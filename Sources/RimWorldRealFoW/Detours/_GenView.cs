@@ -8,7 +8,7 @@ namespace RimWorldRealFoW.Detours
 	public static class _GenView
 	{
 		// Token: 0x06000074 RID: 116 RVA: 0x00008AA8 File Offset: 0x00006CA8
-		public static void ShouldSpawnMotesAt_Postfix(IntVec3 loc, Map map, ref bool __result)
+		public static void ShouldSpawnMotesAt_Postfix(IntVec3 loc, Map map, bool drawOffscreen, ref bool __result)
 		{
 			if (__result)
 			{
