@@ -71,14 +71,12 @@ namespace RimWorldRealFoW
 		// Token: 0x0600001F RID: 31 RVA: 0x000033E8 File Offset: 0x000015E8
 		public static void injectDetours()
 		{
-			Log.Message("[RFOW] Patching first section");
 			RealFoWModStarter.patchMethod(typeof(Verb), typeof(_Verb), "CanHitCellFromCellIgnoringRange");
 			RealFoWModStarter.patchMethod(typeof(Selector), typeof(_Selector), "Select");
 			RealFoWModStarter.patchMethod(typeof(MouseoverReadout), typeof(_MouseoverReadout), "MouseoverReadoutOnGUI");
 			RealFoWModStarter.patchMethod(typeof(BeautyUtility), typeof(_BeautyUtility), "FillBeautyRelevantCells");
 			RealFoWModStarter.patchMethod(typeof(MainTabWindow_Wildlife), typeof(_MainTabWindow_Wildlife), "get_Pawns");
 
-            Log.Message("[RFOW] Patching second section");
             RealFoWModStarter.patchMethod(typeof(Pawn), typeof(_Pawn), "DrawGUIOverlay");
 			RealFoWModStarter.patchMethod(typeof(GenMapUI), typeof(_GenMapUI), "DrawThingLabel", new Type[]
 			{
@@ -87,7 +85,6 @@ namespace RimWorldRealFoW
 				typeof(Color)
 			});
 
-            Log.Message("[RFOW] Patching third section");
             RealFoWModStarter.patchMethod(typeof(SectionLayer_ThingsGeneral), typeof(_SectionLayer_ThingsGeneral), "TakePrintFrom");
 			RealFoWModStarter.patchMethod(typeof(SectionLayer_ThingsPowerGrid), typeof(_SectionLayer_ThingsPowerGrid), "TakePrintFrom");
 			RealFoWModStarter.patchMethod(typeof(ReservationUtility), typeof(_ReservationUtility), "CanReserve");
@@ -95,7 +92,6 @@ namespace RimWorldRealFoW
 			RealFoWModStarter.patchMethod(typeof(HaulAIUtility), typeof(_HaulAIUtility), "HaulToStorageJob");
 			RealFoWModStarter.patchMethod(typeof(EnvironmentStatsDrawer), typeof(_EnvironmentStatsDrawer), "ShouldShowWindowNow");
 
-            Log.Message("[RFOW] Patching fourth section");
             RealFoWModStarter.patchMethod(typeof(Messages), typeof(_Messages), "Message", new Type[]
 			{
 				typeof(string),
@@ -115,7 +111,6 @@ namespace RimWorldRealFoW
 				typeof(string)
 			});
 
-            Log.Message("[RFOW] Patching fifth section");
             RealFoWModStarter.patchMethod(typeof(MoteBubble), typeof(_MoteBubble), "Draw", new Type[0]);
 			RealFoWModStarter.patchMethod(typeof(GenView), typeof(_GenView), "ShouldSpawnMotesAt", new Type[]
 			{
@@ -124,19 +119,16 @@ namespace RimWorldRealFoW
 				typeof(bool)
 			});
 
-            Log.Message("[RFOW] Patching sixth section");
             RealFoWModStarter.patchMethod(typeof(FertilityGrid), typeof(_FertilityGrid), "CellBoolDrawerGetBoolInt");
 			RealFoWModStarter.patchMethod(typeof(TerrainGrid), typeof(_TerrainGrid), "CellBoolDrawerGetBoolInt");
 			RealFoWModStarter.patchMethod(typeof(RoofGrid), typeof(_RoofGrid), "GetCellBool");
 
-            Log.Message("[RFOW] Patching seventh section");
             //Area only designator
             RealFoWModStarter.patchMethod(typeof(Designator_AreaBuildRoof), typeof(_Designator_Prefix), "CanDesignateCell");
 			RealFoWModStarter.patchMethod(typeof(Designator_AreaNoRoof), typeof(_Designator_Prefix), "CanDesignateCell");
 			RealFoWModStarter.patchMethod(typeof(Designator_ZoneAdd_Growing), typeof(_Designator_Prefix), "CanDesignateCell");
 			RealFoWModStarter.patchMethod(typeof(Designator_ZoneAddStockpile), typeof(_Designator_Prefix), "CanDesignateCell");
 
-            Log.Message("[RFOW] Patching eight section");
             //Area+Designator
             RealFoWModStarter.patchMethod(typeof(Designator_Claim), typeof(_Designator_Prefix), "CanDesignateCell");
 			RealFoWModStarter.patchMethod(typeof(Designator_Claim), typeof(_Designator_Prefix), "CanDesignateThing");
@@ -156,17 +148,14 @@ namespace RimWorldRealFoW
 			RealFoWModStarter.patchMethod(typeof(Designator_Tame), typeof(_Designator_Prefix), "CanDesignateThing");			
 			RealFoWModStarter.patchMethod(typeof(Designator_Uninstall), typeof(_Designator_Prefix), "CanDesignateCell");
 
-            Log.Message("[RFOW] patching ninth section");
             //PLacing designator
             RealFoWModStarter.patchMethod(typeof(Designator_Uninstall), typeof(_Designator_Prefix), "CanDesignateThing");
 			RealFoWModStarter.patchMethod(typeof(Designator_Build), typeof(_Designator_Place_Postfix), "CanDesignateCell");
 			RealFoWModStarter.patchMethod(typeof(Designator_Install), typeof(_Designator_Place_Postfix), "CanDesignateCell");
 
-            Log.Message("[RFOW] Patching tenth section");
             //Specific designation
             RealFoWModStarter.patchMethod(typeof(Designator_Mine), typeof(_Designator_Mine), "CanDesignateCell");
 
-            Log.Message("[RFOW] patching 11th section");
             //Designation
             RealFoWModStarter.patchMethod(typeof(Designation), typeof(_Designation), "Notify_Added");
 			RealFoWModStarter.patchMethod(typeof(Designation), typeof(_Designation), "Notify_Removing");
@@ -179,7 +168,6 @@ namespace RimWorldRealFoW
 					}),
 				prefix: new HarmonyMethod(typeof(HarmonyPatches).GetMethod("ReceiveLetterPrefix")));
 
-            Log.Message("[RFOW] Patching 12th section");
             if (ModsConfig.IsActive("jaxe.bubbles")) {
 				MethodInfo drawBubble = AccessTools.Method(
 					"Bubbles.Interface.Bubbler:DrawBubble"
