@@ -288,7 +288,7 @@ namespace RimWorldRealFoW
                     }
                 }
             }
-            if (this.map.Biome.defName == "OuterSpaceBiome")
+            if (this.map.Biome.defName == "OuterSpaceBiome" || RFOWSettings.mapRevealAtStart)
             {
                 for (int l = 0; l < this.mapCellLength; l++)
                 {

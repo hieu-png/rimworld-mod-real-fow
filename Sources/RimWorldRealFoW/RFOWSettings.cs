@@ -82,6 +82,8 @@ namespace RimWorldRealFoW
             AddGap(row);
             row.CheckboxLabeled("allyGiveVision".Translate(), ref RFOWSettings.allyGiveVision, "allyGiveVision".Translate());
             row.CheckboxLabeled("prisonerGiveVision".Translate(), ref RFOWSettings.prisonerGiveVision, "prisonerGiveVision".Translate());
+            row.CheckboxLabeled("mapRevealAtStart".Translate(), ref RFOWSettings.mapRevealAtStart, "mapRevealAtStart".Translate());
+          
             row.CheckboxLabeled("wildLifeTabVisible".Translate(), ref RFOWSettings.wildLifeTabVisible, "wildLifeTabVisibleDesc".Translate());
             row.CheckboxLabeled("NeedWatcher".Translate(), ref RFOWSettings.needWatcher, "NeedWatcherDesc".Translate());
        
@@ -128,19 +130,16 @@ namespace RimWorldRealFoW
             Scribe_Values.Look<RFOWSettings.FogFadeSpeedEnum>(ref RFOWSettings.fogFadeSpeed, "fogFadeSpeed", RFOWSettings.FogFadeSpeedEnum.Medium, false);
             Scribe_Values.Look<RFOWSettings.FogAlpha>(ref RFOWSettings.fogAlpha, "fogAlpha", RFOWSettings.FogAlpha.Medium, false);
             Scribe_Values.Look<int>(ref RFOWSettings.baseViewRange, "baseViewRange", 60, false);
-
             Scribe_Values.Look<float>(ref RFOWSettings.buildingVisionModifier, "buildingVisionMod", 1, false);
             Scribe_Values.Look<float>(ref RFOWSettings.animalVisionModifier, "animalVisionMod", 0.5f, false);
             Scribe_Values.Look<float>(ref RFOWSettings.turretVisionModifier, "turretVisionMod", 0.7f, false);
             Scribe_Values.Look<float>(ref RFOWSettings.baseHearingRange, "baseHearingRange", 10, false);
-
             Scribe_Values.Look<bool>(ref RFOWSettings.wildLifeTabVisible, "wildLifeTabVisible", true, false);
             Scribe_Values.Look<bool>(ref RFOWSettings.prisonerGiveVision, "prisonerGiveVision", false, false);
+            Scribe_Values.Look<bool>(ref RFOWSettings.mapRevealAtStart, "mapRevealAtStart", false, false);
             Scribe_Values.Look<bool>(ref RFOWSettings.allyGiveVision, "allyGiveVision", false, false);
-
             Scribe_Values.Look<bool>(ref RFOWSettings.needWatcher, "needWatcher", true, false);
             Scribe_Values.Look<bool>(ref RFOWSettings.needMemoryStorage, "needMemoryStorage", true, false);
-
             Scribe_Values.Look<bool>(ref RFOWSettings.hideEventNegative, "hideEventNegative", false, false);
             Scribe_Values.Look<bool>(ref RFOWSettings.hideEventNeutral, "hideEventNeutral", false, false);
             Scribe_Values.Look<bool>(ref RFOWSettings.hideEventPositive, "hideEventPositive", false, false);
@@ -178,6 +177,7 @@ namespace RimWorldRealFoW
         public static bool hideEventNeutral = false;
         public static bool prisonerGiveVision = false;
         public static bool allyGiveVision = false;
+        public static bool mapRevealAtStart = false;
         public static bool wildLifeTabVisible = true;
         public static bool needMemoryStorage = true;
         public enum FogFadeSpeedEnum
