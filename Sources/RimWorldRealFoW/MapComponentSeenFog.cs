@@ -232,7 +232,7 @@ namespace RimWorldRealFoW
                     this.sections[i * this.sectionsSizeX + j] = array[j, i];
                 }
             }
-            List<Designation> allDesignations = this.map.designationManager.allDesignations;
+            List<Designation> allDesignations = this.map.designationManager.AllDesignations;
             for (int k = 0; k < allDesignations.Count; k++)
             {
                 Designation designation = allDesignations[k];

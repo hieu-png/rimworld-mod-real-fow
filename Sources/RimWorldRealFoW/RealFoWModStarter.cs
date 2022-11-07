@@ -37,8 +37,6 @@ namespace RimWorldRealFoW
 			RFOWSettings.DoSettingsWindowContents(rect);
 		}
 
-
-
 		public static void InjectComponents()
 		{
 			foreach (ThingDef thingDef in DefDatabase<ThingDef>.AllDefs)
@@ -77,24 +75,24 @@ namespace RimWorldRealFoW
 			RealFoWModStarter.patchMethod(typeof(Selector), typeof(_Selector), "Select");
 			RealFoWModStarter.patchMethod(typeof(MouseoverReadout), typeof(_MouseoverReadout), "MouseoverReadoutOnGUI");
 			RealFoWModStarter.patchMethod(typeof(BeautyUtility), typeof(_BeautyUtility), "FillBeautyRelevantCells");
-			
 			RealFoWModStarter.patchMethod(typeof(MainTabWindow_Wildlife), typeof(_MainTabWindow_Wildlife), "get_Pawns");
-			
-			RealFoWModStarter.patchMethod(typeof(Pawn), typeof(_Pawn), "DrawGUIOverlay");
-			
+
+            RealFoWModStarter.patchMethod(typeof(Pawn), typeof(_Pawn), "DrawGUIOverlay");
 			RealFoWModStarter.patchMethod(typeof(GenMapUI), typeof(_GenMapUI), "DrawThingLabel", new Type[]
 			{
 				typeof(Thing),
 				typeof(string),
 				typeof(Color)
 			});
-			RealFoWModStarter.patchMethod(typeof(SectionLayer_ThingsGeneral), typeof(_SectionLayer_ThingsGeneral), "TakePrintFrom");
+
+            RealFoWModStarter.patchMethod(typeof(SectionLayer_ThingsGeneral), typeof(_SectionLayer_ThingsGeneral), "TakePrintFrom");
 			RealFoWModStarter.patchMethod(typeof(SectionLayer_ThingsPowerGrid), typeof(_SectionLayer_ThingsPowerGrid), "TakePrintFrom");
 			RealFoWModStarter.patchMethod(typeof(ReservationUtility), typeof(_ReservationUtility), "CanReserve");
 			RealFoWModStarter.patchMethod(typeof(ReservationUtility), typeof(_ReservationUtility), "CanReserveAndReach");
 			RealFoWModStarter.patchMethod(typeof(HaulAIUtility), typeof(_HaulAIUtility), "HaulToStorageJob");
 			RealFoWModStarter.patchMethod(typeof(EnvironmentStatsDrawer), typeof(_EnvironmentStatsDrawer), "ShouldShowWindowNow");
-			RealFoWModStarter.patchMethod(typeof(Messages), typeof(_Messages), "Message", new Type[]
+
+            RealFoWModStarter.patchMethod(typeof(Messages), typeof(_Messages), "Message", new Type[]
 			{
 				typeof(string),
 				typeof(LookTargets),
@@ -113,24 +111,26 @@ namespace RimWorldRealFoW
 				typeof(string)
 			});
 
-			RealFoWModStarter.patchMethod(typeof(MoteBubble), typeof(_MoteBubble), "Draw", new Type[0]);
+            RealFoWModStarter.patchMethod(typeof(MoteBubble), typeof(_MoteBubble), "Draw", new Type[0]);
 			RealFoWModStarter.patchMethod(typeof(GenView), typeof(_GenView), "ShouldSpawnMotesAt", new Type[]
 			{
 				typeof(IntVec3),
-				typeof(Map)
+				typeof(Map),
+				typeof(bool)
 			});
 
-			RealFoWModStarter.patchMethod(typeof(FertilityGrid), typeof(_FertilityGrid), "CellBoolDrawerGetBoolInt");
+            RealFoWModStarter.patchMethod(typeof(FertilityGrid), typeof(_FertilityGrid), "CellBoolDrawerGetBoolInt");
 			RealFoWModStarter.patchMethod(typeof(TerrainGrid), typeof(_TerrainGrid), "CellBoolDrawerGetBoolInt");
 			RealFoWModStarter.patchMethod(typeof(RoofGrid), typeof(_RoofGrid), "GetCellBool");
-			//Area only designator
-			RealFoWModStarter.patchMethod(typeof(Designator_AreaBuildRoof), typeof(_Designator_Prefix), "CanDesignateCell");
+
+            //Area only designator
+            RealFoWModStarter.patchMethod(typeof(Designator_AreaBuildRoof), typeof(_Designator_Prefix), "CanDesignateCell");
 			RealFoWModStarter.patchMethod(typeof(Designator_AreaNoRoof), typeof(_Designator_Prefix), "CanDesignateCell");
 			RealFoWModStarter.patchMethod(typeof(Designator_ZoneAdd_Growing), typeof(_Designator_Prefix), "CanDesignateCell");
 			RealFoWModStarter.patchMethod(typeof(Designator_ZoneAddStockpile), typeof(_Designator_Prefix), "CanDesignateCell");
 
-			//Area+Designator
-			RealFoWModStarter.patchMethod(typeof(Designator_Claim), typeof(_Designator_Prefix), "CanDesignateCell");
+            //Area+Designator
+            RealFoWModStarter.patchMethod(typeof(Designator_Claim), typeof(_Designator_Prefix), "CanDesignateCell");
 			RealFoWModStarter.patchMethod(typeof(Designator_Claim), typeof(_Designator_Prefix), "CanDesignateThing");
 			RealFoWModStarter.patchMethod(typeof(Designator_Deconstruct), typeof(_Designator_Prefix), "CanDesignateCell");
 			RealFoWModStarter.patchMethod(typeof(Designator_Deconstruct), typeof(_Designator_Prefix), "CanDesignateThing");
@@ -147,19 +147,18 @@ namespace RimWorldRealFoW
 			RealFoWModStarter.patchMethod(typeof(Designator_Tame), typeof(_Designator_Prefix), "CanDesignateCell");
 			RealFoWModStarter.patchMethod(typeof(Designator_Tame), typeof(_Designator_Prefix), "CanDesignateThing");			
 			RealFoWModStarter.patchMethod(typeof(Designator_Uninstall), typeof(_Designator_Prefix), "CanDesignateCell");
-			//PLacing designato
-			RealFoWModStarter.patchMethod(typeof(Designator_Uninstall), typeof(_Designator_Prefix), "CanDesignateThing");
+
+            //PLacing designator
+            RealFoWModStarter.patchMethod(typeof(Designator_Uninstall), typeof(_Designator_Prefix), "CanDesignateThing");
 			RealFoWModStarter.patchMethod(typeof(Designator_Build), typeof(_Designator_Place_Postfix), "CanDesignateCell");
-
 			RealFoWModStarter.patchMethod(typeof(Designator_Install), typeof(_Designator_Place_Postfix), "CanDesignateCell");
-			//Specific designation
-			RealFoWModStarter.patchMethod(typeof(Designator_Mine), typeof(_Designator_Mine), "CanDesignateCell");
 
-			//Designation
-			RealFoWModStarter.patchMethod(typeof(Designation), typeof(_Designation), "Notify_Added");
-			
+            //Specific designation
+            RealFoWModStarter.patchMethod(typeof(Designator_Mine), typeof(_Designator_Mine), "CanDesignateCell");
+
+            //Designation
+            RealFoWModStarter.patchMethod(typeof(Designation), typeof(_Designation), "Notify_Added");
 			RealFoWModStarter.patchMethod(typeof(Designation), typeof(_Designation), "Notify_Removing");
-
 			harmony.Patch(
 				typeof(Verse.AI.AttackTargetFinder).GetMethod("CanSee"),
 				prefix: new HarmonyMethod(typeof(HarmonyPatches).GetMethod("CanSeePreFix")));
@@ -168,8 +167,8 @@ namespace RimWorldRealFoW
 					typeof(Letter), typeof(string)
 					}),
 				prefix: new HarmonyMethod(typeof(HarmonyPatches).GetMethod("ReceiveLetterPrefix")));
-		
-			if(ModsConfig.IsActive("jaxe.bubbles")) {
+
+            if (ModsConfig.IsActive("jaxe.bubbles")) {
 				MethodInfo drawBubble = AccessTools.Method(
 					"Bubbles.Interface.Bubbler:DrawBubble"
 					//,new Type[] {typeof(Pawn), typeof(bool), typeof(float)}
